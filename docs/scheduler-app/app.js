@@ -1,19 +1,19 @@
-// Configuration (update API_BASE_URL after Apps Script deploy)
+// Configuration - Update SUPABASE_URL and SUPABASE_ANON_KEY after setting up Supabase
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
 const CONFIG = {
-  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbwa6c7EIpmalSlvZI2D5YKWPo1C83G1OcggtHRv0ZUByr-SJPTdlI7jaerfZE0klBH6/exec', // e.g., 'https://script.google.com/macros/s/XXXXXXXX/exec'
+  SUPABASE_URL: 'https://indewtgxmkdxaecynamm.supabase.co', // Replace with your Supabase project URL
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluZGV3dGd4bWtkeGFlY3luYW1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyMDE0NDUsImV4cCI6MjA3Nzc3NzQ0NX0.W6Lcfc-EGYwCUVZf4a8ZAXwg03s8g6vxgAP_FR-WqQc', // Replace with your Supabase anon key
   TIMEZONE: 'America/Chicago',
-  PRINTERS: [
-    'R2-3D2 (Bambu X1C)',
-    'C3DPO (Bambu X1C)',
-    'PLA Trooper (Bambu P1S)',
-    'Hydra (Prusa XL)'
-  ],
   LABS: [
     'Master of Science in Robotics (MSR)', 'Robot Design Studio (RDS)', 'Lynch', 'Colgate', 'Rubenstein',
     'Argall', 'Truby', 'Hartmann', 'MacIver', 'Murphey', 'Peshkin', 'Elwin', 'Umbanhowar', 'Kriegman', 'Other'
   ],
   MATERIALS: ['PLA', 'TPU', 'PETG', 'PC', 'ABS/ASA', 'Multi-Material', 'Other']
 };
+
+// Initialize Supabase client
+const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
 // Utilities
 const fmtDateInput = (d) => d.toISOString().slice(0,10);
@@ -28,10 +28,27 @@ function clampTo30(hhmm){
   const m = minutesSinceMidnight(hhmm); const snapped = Math.round(m/30)*30; return hhmmFromMinutes(snapped);
 }
 
+// Format time from timestamp (handles timezone conversion to Chicago)
+function formatTime(timestamp, timezone = 'America/Chicago') {
+  const date = new Date(timestamp);
+  // Convert to Chicago time
+  const chicagoTime = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).formatToParts(date);
+  
+  const hour = chicagoTime.find(p => p.type === 'hour').value.padStart(2, '0');
+  const minute = chicagoTime.find(p => p.type === 'minute').value.padStart(2, '0');
+  return `${hour}:${minute}`;
+}
+
 // State
 let state = {
   date: fmtDateInput(new Date()),
   reservations: [], // [{printer,start,end}]
+  printers: [], // [{id, display_name, printer_type, status, notes}]
   selection: null,  // {printer, startMin, endMin}
   drag: null        // {mode:'creating'|'resize-top'|'resize-bottom', printer, startMin, endMin}
 };
@@ -97,21 +114,43 @@ function buildTimeColumn(){
 function buildPrinters(){
   printersHeader.innerHTML = '';
   printersWrap.innerHTML = '';
-  CONFIG.PRINTERS.forEach(pr => {
+  
+  // Use operational printers from state
+  const operationalPrinters = state.printers.filter(p => p.status === 'operational');
+  
+  operationalPrinters.forEach(pr => {
     // Header in separate row
-    const head = document.createElement('div'); head.className='printer-header'; head.textContent = pr;
+    const head = document.createElement('div'); 
+    head.className='printer-header';
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'printer-name';
+    nameDiv.textContent = pr.display_name;
+    head.appendChild(nameDiv);
+    
+    const typeDiv = document.createElement('div');
+    typeDiv.className = 'printer-type';
+    typeDiv.textContent = pr.printer_type;
+    head.appendChild(typeDiv);
+    
     printersHeader.appendChild(head);
+    
     // Column with slots
-    const col = document.createElement('div'); col.className='printer-col';
-    const slots = document.createElement('div'); slots.className='slots';
+    const col = document.createElement('div'); 
+    col.className='printer-col';
+    const slots = document.createElement('div'); 
+    slots.className='slots';
+    
     // grid rows for hit targets
     for(let i=0;i<48;i++){
-      const s = document.createElement('div'); s.className='slot';
-      s.dataset.printer = pr; s.dataset.index = String(i);
+      const s = document.createElement('div'); 
+      s.className='slot';
+      s.dataset.printer = pr.display_name; 
+      s.dataset.index = String(i);
       s.addEventListener('click', onSlotClick);
       slots.appendChild(s);
     }
-    attachPointerHandlers(slots, pr);
+    attachPointerHandlers(slots, pr.display_name);
     col.appendChild(slots);
     printersWrap.appendChild(col);
   });
@@ -165,11 +204,12 @@ function renderReservations(){
   const timeRowHeight = timeSlots?.querySelector('.time')?.getBoundingClientRect().height || 28;
 
   // For each printer column, overlay blocks
-  CONFIG.PRINTERS.forEach((pr, colIdx) => {
+  const operationalPrinters = state.printers.filter(p => p.status === 'operational');
+  operationalPrinters.forEach((pr, colIdx) => {
     const col = printersWrap.children[colIdx]; if(!col) return;
     const slots = col.querySelector('.slots');
     const rowHeight = slots.querySelector('.slot')?.getBoundingClientRect().height || 28;
-    const blocks = state.reservations.filter(r => r.printer===pr);
+    const blocks = state.reservations.filter(r => r.printer===pr.display_name);
     blocks.forEach(r => {
       const top = (minutesSinceMidnight(r.start)/30)*rowHeight;
       const height = ((minutesSinceMidnight(r.end)-minutesSinceMidnight(r.start))/30)*rowHeight;
@@ -177,12 +217,12 @@ function renderReservations(){
       slots.appendChild(el);
     });
 
-    if(state.selection && state.selection.printer===pr){
+    if(state.selection && state.selection.printer===pr.display_name){
       const top = (state.selection.startMin/30)*rowHeight;
       const height = ((state.selection.endMin-state.selection.startMin)/30)*rowHeight;
       const sel = document.createElement('div'); sel.className='selection'; sel.style.top = `${top}px`; sel.style.height=`${height}px`;
-      const hTop = document.createElement('div'); hTop.className='handle top'; hTop.dataset.printer = pr; hTop.addEventListener('pointerdown', (ev)=>startResize(ev, pr, 'resize-top'));
-      const hBot = document.createElement('div'); hBot.className='handle bottom'; hBot.dataset.printer = pr; hBot.addEventListener('pointerdown', (ev)=>startResize(ev, pr, 'resize-bottom'));
+      const hTop = document.createElement('div'); hTop.className='handle top'; hTop.dataset.printer = pr.display_name; hTop.addEventListener('pointerdown', (ev)=>startResize(ev, pr.display_name, 'resize-top'));
+      const hBot = document.createElement('div'); hBot.className='handle bottom'; hBot.dataset.printer = pr.display_name; hBot.addEventListener('pointerdown', (ev)=>startResize(ev, pr.display_name, 'resize-bottom'));
       sel.appendChild(hTop); sel.appendChild(hBot);
       slots.appendChild(sel);
     }
@@ -197,38 +237,85 @@ function renderReservations(){
   });
 }
 
-async function fetchReservations(){
-  // Clear existing reservations immediately when fetching new date
-  state.reservations = [];
-  renderReservations(); // Clear the display immediately
-  
-  // Show loading indicator
-  if(loadingEl) loadingEl.classList.add('active');
-  
-  if(!CONFIG.API_BASE_URL){ 
-    if(loadingEl) loadingEl.classList.remove('active');
-    return; 
-  }
-  const url = `${CONFIG.API_BASE_URL}?action=reservations&date=${encodeURIComponent(state.date)}`;
+// Fetch printers from database
+async function fetchPrinters() {
   try {
-    const res = await fetch(url, { method:'GET' });
-    if(!res.ok) { 
-      console.warn('Fetch reservations failed:', res.status, res.statusText); 
-      if(loadingEl) loadingEl.classList.remove('active');
-      return; 
-    }
-    const data = await res.json();
-    console.log('Fetched reservations for', state.date, ':', data);
-    state.reservations = (data.reservations||[]).map(r => ({ printer:r.printer, start:r.start, end:r.end }));
-    console.log('Parsed reservations:', state.reservations);
+    const { data, error } = await supabase
+      .from('printers')
+      .select('id, display_name, printer_type, status, notes')
+      .eq('is_active', true)
+      .eq('status', 'operational') // Only show operational printers
+      .order('sort_order', { ascending: true, nullsLast: true })
+      .order('display_name', { ascending: true }); // Fallback to display_name if sort_order is null
+    
+    if (error) throw error;
+    
+    state.printers = data || [];
+    return data || [];
+  } catch (err) {
+    console.error('Error fetching printers:', err);
+    state.printers = [];
+    return [];
+  }
+}
+
+// Fetch reservations for a date
+async function fetchReservations(){
+  // Clear existing reservations immediately
+  state.reservations = [];
+  renderReservations();
+  
+  if (loadingEl) loadingEl.classList.add('active');
+  
+  try {
+    // Convert date to timezone-aware timestamps
+    // Parse date as YYYY-MM-DD and create range for Chicago timezone
+    const dateStr = state.date;
+    
+    // Query reservations that overlap with this date
+    // A reservation overlaps if: start_at <= endOfDay AND end_at >= startOfDay
+    // Use Chicago timezone offset (UTC-6 for standard time)
+    const startOfDay = `${dateStr}T00:00:00-06:00`;
+    const endOfDay = `${dateStr}T23:59:59-06:00`;
+    
+    const { data, error } = await supabase
+      .from('public_reservations')
+      .select('start_at, end_at, printer_display_name')
+      .gte('end_at', startOfDay)
+      .lte('start_at', endOfDay);
+    
+    if (error) throw error;
+    
+    // Transform to frontend format
+    state.reservations = (data || []).map(r => {
+      const start = new Date(r.start_at);
+      const end = new Date(r.end_at);
+      
+      // Calculate time range for this specific day
+      const dayStart = new Date(`${dateStr}T00:00:00`);
+      const dayEnd = new Date(`${dateStr}T23:59:59`);
+      
+      let displayStart = start < dayStart ? dayStart : start;
+      let displayEnd = end > dayEnd ? dayEnd : end;
+      
+      // Format times in Chicago timezone
+      const startTime = formatTime(displayStart);
+      const endTime = formatTime(displayEnd);
+      
+      return {
+        printer: r.printer_display_name,
+        start: startTime,
+        end: endTime
+      };
+    });
+    
     renderReservations();
   } catch(err) {
     console.error('Error fetching reservations:', err);
     state.reservations = [];
     renderReservations();
   } finally {
-    // Hide loading indicator
-    if(loadingEl) loadingEl.classList.remove('active');
+    if (loadingEl) loadingEl.classList.remove('active');
   }
 }
 
@@ -278,12 +365,19 @@ function toggleOtherInputs(){
 }
 
 function openReservationDialog(){
-  // seed select options
-  resPrinter.innerHTML = CONFIG.PRINTERS.map(p=>`<option>${p}</option>`).join('');
+  // Seed select options from state.printers
+  resPrinter.innerHTML = state.printers
+    .filter(p => p.status === 'operational')
+    .map(p => `<option>${p.display_name}</option>`)
+    .join('');
   resLab.innerHTML = CONFIG.LABS.map(p=>`<option>${p}</option>`).join('');
   resMaterial.innerHTML = CONFIG.MATERIALS.map(p=>`<option>${p}</option>`).join('');
 
-  const sel = state.selection || {printer:CONFIG.PRINTERS[0], startMin:8*60, endMin:8*60+30};
+  const sel = state.selection || {
+    printer: state.printers[0]?.display_name || '',
+    startMin:8*60, 
+    endMin:8*60+30
+  };
   resPrinter.value = sel.printer;
   resDate.value = state.date;
   resStart.value = hhmmFromMinutes(sel.startMin);
@@ -342,6 +436,70 @@ function validateForm(){
   return '';
 }
 
+// Create reservation
+async function createReservation(reservationData) {
+  try {
+    // Find printer by display_name
+    const printer = state.printers.find(p => p.display_name === reservationData.printer);
+    if (!printer) {
+      throw new Error('Printer not found');
+    }
+    
+    // Parse date and time
+    const dateStr = reservationData.date; // YYYY-MM-DD
+    const startTime = reservationData.start; // HH:mm
+    const endTime = reservationData.end; // HH:mm
+    const endDateStr = reservationData.endDate || dateStr; // YYYY-MM-DD
+    
+    // Create timestamps in Chicago timezone
+    // Create Date objects assuming the date/time strings are in Chicago time
+    // Then convert to ISO string for PostgreSQL
+    const startAt = new Date(`${dateStr}T${startTime}:00`);
+    const endAt = new Date(`${endDateStr}T${endTime}:00`);
+    
+    // Adjust for Chicago timezone offset (UTC-6 for CST, UTC-5 for CDT)
+    // For simplicity, we'll use UTC-6 (standard time) and let PostgreSQL handle DST
+    // Create a proper ISO string with timezone offset
+    const startAtISO = `${dateStr}T${startTime}:00-06:00`;
+    const endAtISO = `${endDateStr}T${endTime}:00-06:00`;
+    
+    // Check for overlaps
+    const { data: overlaps, error: checkError } = await supabase
+      .rpc('check_reservation_overlap', {
+        p_printer_id: printer.id,
+        p_start_at: startAtISO,
+        p_end_at: endAtISO
+      });
+    
+    if (checkError) throw checkError;
+    if (overlaps && overlaps.length > 0) {
+      throw new Error('Time overlaps an existing reservation');
+    }
+    
+    // Insert reservation
+    const { data, error } = await supabase
+      .from('reservations')
+      .insert({
+        printer_id: printer.id,
+        start_at: startAtISO,
+        end_at: endAtISO,
+        user_name: reservationData.name,
+        user_contact: reservationData.contact,
+        lab: reservationData.lab,
+        material: reservationData.material,
+        notes: reservationData.notes,
+        status: 'confirmed'
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return { ok: true, id: data.id };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const err = validateForm(); if(err){ formError.textContent = err; return; }
@@ -362,8 +520,7 @@ form.addEventListener('submit', async (e)=>{
   const labValue = resLab.value === 'Other' ? resLabOther.value.trim() : resLab.value;
   const materialValue = resMaterial.value === 'Other' ? resMaterialOther.value.trim() : resMaterial.value;
   
-  const payload = new URLSearchParams({
-    action: 'reserve',
+  const reservationData = {
     date: resDate.value,
     start: start,
     end: end,
@@ -374,16 +531,13 @@ form.addEventListener('submit', async (e)=>{
     lab: labValue,
     material: materialValue,
     notes: resNotes.value
-  });
-  if(!CONFIG.API_BASE_URL){ formError.textContent='Backend not configured yet.'; return; }
-  const resp = await fetch(CONFIG.API_BASE_URL, {
-    method:'POST',
-    headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
-    body: payload
-  });
-  if(!resp.ok){ formError.textContent='Failed to reserve. Try again.'; return; }
-  const data = await resp.json().catch(()=>({ok:false}));
-  if(!data.ok){ formError.textContent = data.error || 'Reservation rejected.'; return; }
+  };
+  
+  const result = await createReservation(reservationData);
+  if(!result.ok){ 
+    formError.textContent = result.error || 'Reservation rejected.'; 
+    return; 
+  }
   closeDialog();
   await refresh();
 });
@@ -394,12 +548,15 @@ async function refresh(){
   await fetchReservations();
 }
 
-function init(){
+async function init(){
+  // Fetch printers first
+  await fetchPrinters();
+  
   // Populate time column and printers
   buildTimeColumn();
   buildPrinters();
   initControls();
-  refresh();
+  await refresh();
   updateStickyOffset();
   window.addEventListener('resize', updateStickyOffset);
   
@@ -485,5 +642,3 @@ function startResize(ev, printer, mode){
   // set drag mode then synthesize a move to the same point
   state.drag = { mode, printer, startMin: state.selection?.startMin || 0, endMin: state.selection?.endMin || 30 };
 }
-
-

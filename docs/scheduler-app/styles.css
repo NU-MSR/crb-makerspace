@@ -38,9 +38,14 @@ body{
   min-width:fit-content;
 }
 .printers-header .printer-header{
-  padding:8px; font-weight:600; background:#fafafa; border:1px solid var(--border); border-radius:8px 8px 0 0;
-  height:44px; display:flex; align-items:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  color:var(--nw-purple);
+  padding:8px; background:#fafafa; border:1px solid var(--border); border-radius:8px 8px 0 0;
+  min-height:44px; display:flex; flex-direction:column; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.printers-header .printer-header .printer-name{
+  font-weight:600; color:var(--nw-purple); font-size:14px; line-height:1.3;
+}
+.printers-header .printer-header .printer-type{
+  font-size:11px; color:var(--muted); line-height:1.2; margin-top:2px;
 }
 .printers{ display:grid; grid-auto-flow:column; grid-auto-columns:minmax(180px,1fr); gap:8px; position:relative; overflow-x:auto; margin-top:0; }
 .printer-col{ border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:visible; background:#fff; display:flex; flex-direction:column; margin-top:0; }

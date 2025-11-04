@@ -1,84 +1,170 @@
 # CRB Makerspace – 3D Printer Scheduler
 
-A simple, mobile-first single-page web app to reserve 3D printers. Data is stored in a Google Sheet via a Google Apps Script Web App.
+A simple, mobile-first single-page web app to reserve 3D printers. Data is stored in Supabase (PostgreSQL database).
 
 - Frontend: static files in `docs/scheduler-app/` (works on GitHub Pages and can be embedded via iframe)
-- Backend: Google Apps Script (`appsscript/Code.gs`) reading/writing a Sheet
+- Backend: Supabase (PostgreSQL database with Row-Level Security)
 
 ## Quick Start
 
-1) Create the Google Sheet
-- Add a new Google Sheet. Note its ID (the part between `/d/` and `/edit`).
-- Create a sheet (tab) named `Reservations` with headers in row 1:
-  `id, start_date, start, end_date, end, printer, status, created_at, updated_at, name, contact, lab, material, notes`
+### 1) Set up Supabase Database
 
-2) Create Apps Script Web App
-- In the Google Sheet, open **Extensions → Apps Script** (this binds the script to your sheet).
-- Replace the default `Code.gs` contents with `appsscript/Code.gs` from this repo.
-- In Apps Script: **Project Settings** → set:
-  - Time zone: `Central Time - Chicago`
-  - Runtime: `Enable Chrome V8 runtime` (if not already set)
-- **Authorize the script** (first time only):
-  - Click the **Run** button (▶) next to `doGet` function
-  - Click **Review Permissions** → choose your account → **Advanced** → **Go to [Project Name] (unsafe)** → **Allow**
-- In Apps Script: **Project Settings** → **Script properties** → **Add script property**:
-  - `SHEET_NAME` = `Reservations` (the name of the sheet tab - must match exactly)
-  - `TIMEZONE` = `America/Chicago`
-  - `ALLOWED_ORIGIN` = `*` (for local/testing). Later, change to your final site origin.
-  - `PRINTERS` = `R2-3D2 (Bambu X1C),C3DPO (Bambu X1C),PLA Trooper (Bambu P1S),Hydra (Prusa XL)`
-  - `SHEET_ID` = (optional - only needed if script is standalone, not bound to sheet)
-- **Deploy the Web App** (critical for CORS to work):
-  - Click **Deploy** → **New deployment** (or **Manage deployments** if you already have one)
-  - Click the gear icon ⚙️ next to "Select type" → choose **Web app**
-  - Set:
-    - **Execute as**: `Me` (runs with your authorization)
-    - **Who has access**: `Anyone` (this is required for CORS!)
-  - Click **Deploy** (or **Update** if editing existing deployment)
-  - Copy the **Web app URL** (not the script editor URL - it should look like `https://script.google.com/macros/s/.../exec`)
-  - **Important**: After any code changes or authorization, you must:
-    1. Create a **new version** (click the version dropdown → "New version")
-    2. Update the deployment to use the new version
-    3. Or create a completely new deployment
+1. **Create a Supabase project** at [supabase.com](https://supabase.com) (or use your existing project)
 
-3) Configure frontend
-- Open `docs/scheduler-app/app.js` and set:
-  ```js
-  API_BASE_URL: 'YOUR_WEB_APP_URL'
-  ```
+2. **Run the schema SQL**:
+   - In your Supabase dashboard, go to **SQL Editor**
+   - Open and run `schema.sql` from this repo
+   - This creates:
+     - `printers` table (with `display_name`, `printer_type`, `notes`, `status`)
+     - `reservations` table (with proper timestamps)
+     - Indexes for performance
+     - Row-Level Security (RLS) policies
+     - Database functions for overlap checking
+     - Initial printer data
 
-4) Local testing
-- Serve the `docs/` folder (or open `docs/scheduler-app/index.html` directly). For MkDocs, this will be available under `/scheduler-app/`.
+3. **Get your Supabase credentials**:
+   - Go to **Project Settings** → **Data API**
+   - Copy your **Project URL** (e.g., `https://xxxxx.supabase.co`)
+   - Go to **Project Settings** → **API Keys**
+   - Copy your **anon/public key** from  (starts with `eyJ...`)
 
-5) GitHub Pages
-- Commit and push. With MkDocs Material, the app is at `/scheduler-app/` and can be embedded in a page via iframe:
-  ```html
-  <iframe src="/scheduler-app/index.html" style="width:100%;height:80vh;border:0;" loading="lazy"></iframe>
-  ```
+### 2) Configure Frontend
 
-## API Contract
+1. **Update `app.js`** with your Supabase credentials:
+   ```javascript
+   const CONFIG = {
+     SUPABASE_URL: 'https://your-project.supabase.co', // Your Project URL
+     SUPABASE_ANON_KEY: 'your-anon-key', // Your anon key
+     TIMEZONE: 'America/Chicago',
+     // ... rest of config
+   };
+   ```
 
-- GET `?action=reservations&date=YYYY-MM-DD`
-  - Response:
-    ```json
-    { "date":"YYYY-MM-DD", "timezone":"America/Chicago", "printers":[...], "reservations":[{"printer":"...","start":"HH:mm","end":"HH:mm"}] }
-    ```
-- POST with form body (`application/x-www-form-urlencoded`) to avoid CORS preflight:
-  - Body: `action=reserve&date=YYYY-MM-DD&start=HH:mm&end=HH:mm&endDate=YYYY-MM-DD&printer=...&name=...&contact=...&lab=...&material=...&notes=...`
-  - Response:
-    ```json
-    { "ok": true, "id": "..." }
-    ```
+2. **Test locally**:
+   - Open `docs/scheduler-app/index.html` in a browser (or serve via local server)
+   - The app will fetch printers from Supabase and display the calendar
 
-PII (`name, contact, lab, material, notes`) is stored in the Sheet but is never returned by the GET endpoint.
+### 3) Deploy to GitHub Pages (MkDocs)
 
-## CORS
-- The Web App returns `Access-Control-Allow-Origin` using the `ALLOWED_ORIGIN` Script Property.
-- For local/testing: set to `*`.
-- When your final domain is known, set it to that origin, e.g., `https://example.github.io`.
+1. **Commit and push** your changes
+
+2. **Embed in MkDocs pages**:
+   ```html
+   <iframe src="/scheduler-app/index.html" style="width:100%;height:80vh;border:0;" loading="lazy"></iframe>
+   ```
+
+3. The app is available at `/scheduler-app/` on your GitHub Pages site
+
+## Database Schema
+
+### Printers Table
+- `id` (UUID, primary key)
+- `display_name` (TEXT, unique) - e.g., "R2-3D2 (Bambu X1C)"
+- `printer_type` (TEXT) - e.g., "Bambu X1C", "Bambu P1S"
+- `notes` (TEXT, nullable) - Additional info about the printer
+- `status` (TEXT) - One of: `'operational'`, `'down'`, `'maintenance'`, `'reserved'`
+- `is_active` (BOOLEAN) - Whether the printer appears in the scheduler
+- `created_at`, `updated_at` (timestamps)
+
+### Reservations Table
+- `id` (UUID, primary key)
+- `printer_id` (UUID, foreign key to printers)
+- `start_at` (TIMESTAMPTZ) - Start time in Chicago timezone
+- `end_at` (TIMESTAMPTZ) - End time in Chicago timezone
+- `status` (TEXT) - One of: `'confirmed'`, `'cancelled'`, `'completed'`
+- `user_name` (TEXT) - User's name (PII, not returned in public queries)
+- `user_contact` (TEXT) - Email or phone (PII, not returned in public queries)
+- `lab` (TEXT, nullable) - Lab/program name
+- `material` (TEXT, nullable) - Filament material
+- `notes` (TEXT, nullable) - Additional notes
+- `created_at`, `updated_at` (timestamps)
+
+### Constraints
+- Minimum duration: 30 minutes
+- Maximum duration: 168 hours (7 days)
+- Time slots must be in 30-minute increments
+- No overlapping reservations for the same printer
+
+## Security (Row-Level Security)
+
+- **Public read access**: Anyone can view reservation times (without PII) and operational printers
+- **Public write access**: Anyone can create reservations
+- **PII protection**: `user_name`, `user_contact`, `lab`, `material`, and `notes` are stored but never returned in public queries (via the `public_reservations` view)
+
+## API (Direct Supabase Client)
+
+The frontend uses the Supabase JavaScript client directly. No custom API endpoints needed.
+
+### Key Functions
+
+- **`fetchPrinters()`**: Fetches active, operational printers from the `printers` table
+- **`fetchReservations(date)`**: Fetches reservations that overlap with a given date
+- **`createReservation(data)`**: Creates a new reservation with overlap checking
+
+### Overlap Detection
+
+The database function `check_reservation_overlap()` ensures no two confirmed reservations overlap for the same printer. This happens server-side for security and accuracy.
+
+## Timezone Handling
+
+- All timestamps are stored as `TIMESTAMPTZ` (timezone-aware)
+- The `chicago_timestamp()` function converts date + time strings to proper timestamps in the `America/Chicago` timezone
+- The frontend displays times in Chicago timezone using `Intl.DateTimeFormat`
+
+## Managing Printers
+
+You can manage printers directly in the Supabase dashboard:
+
+1. Go to **Table Editor** → **printers**
+2. Add new printers, update status, or edit notes
+3. Set `is_active = false` to hide a printer from the scheduler
+4. Set `status = 'down'` or `'maintenance'` to temporarily disable reservations
+
+### Changing Printer Order
+
+Printers are ordered by the `sort_order` column (lower numbers appear first, left to right).
+
+**To change the order:**
+
+1. Go to **Table Editor** → **printers**
+2. Edit the `sort_order` value for each printer:
+   - Lower numbers appear first (left to right)
+   - Example: `sort_order = 1` appears before `sort_order = 2`
+   - You can use any integers (1, 2, 3, 10, 20, etc.) to allow reordering later
+3. Save the changes - the UI will automatically update
+
+## Performance
+
+- **Indexed queries**: Fast lookups by printer and date range
+- **Efficient overlap checks**: Database function performs overlap detection server-side
+- **No cold starts**: Unlike Google Apps Script, Supabase has no cold start delays
+- **Typical response time**: 50-200ms (vs 1-5 seconds with Google Sheets)
+
+## Troubleshooting
+
+### Printers not showing
+- Check that printers have `is_active = true` and `status = 'operational'`
+- Verify your Supabase credentials in `app.js`
+- Check browser console for errors
+
+### Reservations not loading
+- Verify RLS policies are enabled
+- Check that the `public_reservations` view exists and is accessible
+- Check browser console for Supabase errors
+
+### Overlap errors
+- The database enforces no overlaps for confirmed reservations
+- Check that `check_reservation_overlap()` function exists
+- Verify timezone handling is correct
+
+### CORS issues
+- Supabase handles CORS automatically for public access
+- Ensure your `SUPABASE_ANON_KEY` is correct
+- Check that RLS policies allow public access
 
 ## Notes
-- Time resolution is 30 minutes, 24-hour view.
-- Client performs a simple overlap check; server is authoritative.
-- No cookies or credentials used.
 
-
+- Time resolution is 30 minutes, 24-hour view
+- Client performs a simple overlap check for UX; server is authoritative
+- No cookies or credentials used (public access via anon key)
+- PII is stored but protected by RLS policies
