@@ -10,9 +10,9 @@ const CONFIG = {
   ],
   LABS: [
     'Master of Science in Robotics (MSR)', 'Robot Design Studio (RDS)', 'Lynch', 'Colgate', 'Rubenstein',
-    'Argall', 'Truby', 'Hartmann', 'MacIver', 'Murphey', 'Peshkin', 'Elwin', 'Umbanhowar', 'Kriegman', 'Other (add to Notes)'
+    'Argall', 'Truby', 'Hartmann', 'MacIver', 'Murphey', 'Peshkin', 'Elwin', 'Umbanhowar', 'Kriegman', 'Other'
   ],
-  MATERIALS: ['PLA', 'TPU', 'PETG', 'PC', 'ABS/ASA', 'Multi-Material', 'Other (add to Notes)']
+  MATERIALS: ['PLA', 'TPU', 'PETG', 'PC', 'ABS/ASA', 'Multi-Material', 'Other']
 };
 
 // Utilities
@@ -60,6 +60,8 @@ const resName = document.getElementById('resName');
 const resContact = document.getElementById('resContact');
 const resLab = document.getElementById('resLab');
 const resMaterial = document.getElementById('resMaterial');
+const resLabOther = document.getElementById('resLabOther');
+const resMaterialOther = document.getElementById('resMaterialOther');
 const resNotes = document.getElementById('resNotes');
 
 // Initialize controls
@@ -243,6 +245,38 @@ function calculateEndTime(){
   if(note){ note.textContent = days > 0 ? `(+${days} day${days>1?'s':''})` : ''; }
 }
 
+function toggleOtherInputs(){
+  // Show/hide Lab "Other" input
+  const wasLabHidden = resLabOther.style.display === 'none' || resLabOther.style.display === '';
+  if(resLab.value === 'Other'){
+    resLabOther.style.display = 'block';
+    resLabOther.required = true;
+    // Only clear if it was previously hidden (user just selected "Other")
+    if(wasLabHidden) {
+      resLabOther.value = '';
+    }
+  } else {
+    resLabOther.style.display = 'none';
+    resLabOther.required = false;
+    resLabOther.value = '';
+  }
+  
+  // Show/hide Material "Other" input
+  const wasMaterialHidden = resMaterialOther.style.display === 'none' || resMaterialOther.style.display === '';
+  if(resMaterial.value === 'Other'){
+    resMaterialOther.style.display = 'block';
+    resMaterialOther.required = true;
+    // Only clear if it was previously hidden (user just selected "Other")
+    if(wasMaterialHidden) {
+      resMaterialOther.value = '';
+    }
+  } else {
+    resMaterialOther.style.display = 'none';
+    resMaterialOther.required = false;
+    resMaterialOther.value = '';
+  }
+}
+
 function openReservationDialog(){
   // seed select options
   resPrinter.innerHTML = CONFIG.PRINTERS.map(p=>`<option>${p}</option>`).join('');
@@ -256,6 +290,12 @@ function openReservationDialog(){
   const durationHours = (sel.endMin - sel.startMin) / 60;
   resDuration.value = durationHours;
   calculateEndTime();
+  
+  // Reset and toggle "Other" inputs
+  resLabOther.value = '';
+  resMaterialOther.value = '';
+  toggleOtherInputs();
+  
   formError.textContent='';
   if(typeof dialog.showModal === 'function') dialog.showModal();
 }
@@ -263,6 +303,10 @@ function openReservationDialog(){
 // Update end time display when start or duration changes
 resStart.addEventListener('input', calculateEndTime);
 resDuration.addEventListener('input', calculateEndTime);
+
+// Toggle "Other" text inputs when select values change
+resLab.addEventListener('change', toggleOtherInputs);
+resMaterial.addEventListener('change', toggleOtherInputs);
 
 function closeDialog(){
   if(dialog.open) dialog.close();
@@ -283,6 +327,14 @@ function validateForm(){
   const end = hhmmFromMinutes(endMin % (24*60));
   
   if(endMin <= startMin) return 'End must be after start';
+  
+  // Validate "Other" text inputs
+  if(resLab.value === 'Other' && !resLabOther.value.trim()) {
+    return 'Please specify the lab/program';
+  }
+  if(resMaterial.value === 'Other' && !resMaterialOther.value.trim()) {
+    return 'Please specify the filament material';
+  }
   
   // client-side overlap hint
   const overlap = state.reservations.some(r => r.printer===resPrinter.value && !(minutesSinceMidnight(end) <= minutesSinceMidnight(r.start) || minutesSinceMidnight(start) >= minutesSinceMidnight(r.end)));
@@ -306,6 +358,10 @@ form.addEventListener('submit', async (e)=>{
   startDateObj.setDate(startDateObj.getDate() + addDays);
   const endDateStr = fmtDateInput(startDateObj);
   
+  // Use "Other" text input values if "Other" is selected, otherwise use select value
+  const labValue = resLab.value === 'Other' ? resLabOther.value.trim() : resLab.value;
+  const materialValue = resMaterial.value === 'Other' ? resMaterialOther.value.trim() : resMaterial.value;
+  
   const payload = new URLSearchParams({
     action: 'reserve',
     date: resDate.value,
@@ -315,8 +371,8 @@ form.addEventListener('submit', async (e)=>{
     printer: resPrinter.value,
     name: resName.value,
     contact: resContact.value,
-    lab: resLab.value,
-    material: resMaterial.value,
+    lab: labValue,
+    material: materialValue,
     notes: resNotes.value
   });
   if(!CONFIG.API_BASE_URL){ formError.textContent='Backend not configured yet.'; return; }
