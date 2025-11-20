@@ -13,7 +13,7 @@ body{
   margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif; color:var(--text); background:var(--bg);
 }
 .app-header{
-  position:sticky; top:0; z-index:2; background:#fff; border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:100; background:#fff; border-bottom:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between; padding:8px 12px;
 }
 .app-header h1{ font-size:18px; margin:0; }
@@ -29,7 +29,10 @@ body{
 .time-col-header{ height:44px; padding-bottom:0; box-sizing:border-box; flex-shrink:0; margin-bottom:0; }
 .time-col-slots{ display:grid; grid-template-rows:repeat(48,28px); position:relative; }
 .time-col .time{
-  font-size:11px; color:var(--muted); border-top:1px solid var(--border); padding-top:4px;
+  font-size:11px; color:var(--muted); border-top:1px solid var(--border); padding-top:3px; line-height:1.2; overflow:visible;
+}
+.time-col .time-text{
+  display:inline-block;
 }
 .calendar-right{ display:flex; flex-direction:column; padding:8px 8px 8px 0; gap:0; }
 .printers-header{ 

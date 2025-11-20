@@ -19,10 +19,10 @@ The CRB Makerspace has a Delta 11-980 8" drill press.
 
 - Always wear safety glasses.
 - Workpieces must always be secured.
-- Do not wear gloves, neckties, loose clothing, or jewlery.
+- Do not wear gloves, neckties, loose clothing, or jewelry.
 - Keep fingers safe distance from blade.
 
-## Instuctions for use
+## Instructions for use
 
 !!! info
     
@@ -43,6 +43,10 @@ Wait for the machine to come to a complete stop.
 - Clean up your workspace.
 
 ## Manual
+
+!!! info
+    
+    This manual is for a Delta 11-950 instead of the 11-980, but they appear to be almost the same.
 
 <iframe
     src="/manuals/delta-11-950-manual.pdf"

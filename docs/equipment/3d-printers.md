@@ -10,8 +10,8 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 !!! warning
 
-    - Hot surfaces: nozzle (180-260°C) and heated bed (50-110°C) cause severe burns
-    - Moving parts can pinch or crush
+    - Hot surfaces: nozzle (180-260°C) and heated bed (50-110°C) can cause severe burns
+    - Moving parts can pinch or crush fingers
     - Risk of inhalation of ultrafine particles and VOCs during printing
 
 ## Safety
@@ -27,36 +27,32 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 ## Printers
 
-| Device | Image | Resources |
-| --- | --- | --- |
-| Bambu Lab X1 Carbon | ![Bambu Lab X1 Carbon](../assets/bambu-x1c.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/x1/manual) |
-| Bambu Lab P1S | ![Bambu Lab P1S](../assets/bambu-p1s.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/p1/manual) |
-| Bambu Lab A1 mini | ![Bambu Lab A1 mini](../assets/bambu-a1-mini.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/a1-mini) |
-| Original Prusa XL | ![Original Prusa XL](../assets/prusa-xl.jpg){ width="200" } | [Manual](https://help.prusa3d.com/product/xl) |
+| Device | Image | Resources | Notes |
+| --- | --- | --- | --- |
+| Bambu Lab X1 Carbon | ![Bambu Lab X1 Carbon](../assets/bambu-x1c.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/x1/manual) | Support for multi-material prints with AMS. |
+| Bambu Lab P1S | ![Bambu Lab P1S](../assets/bambu-p1s.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/p1/manual) | Great for general purpose prints in PLA |
+| Bambu Lab A1 mini | ![Bambu Lab A1 mini](../assets/bambu-a1-mini.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/a1-mini) | AMS Lite available. Smaller print area. |
+| Original Prusa XL | ![Original Prusa XL](../assets/prusa-xl.jpg){ width="200" } | [Manual](https://help.prusa3d.com/product/xl) | Largest print volume. Multi-material support with independent printheads. |
 | Ultimaker 3 | ![Ultimaker 3](../assets/ultimaker-3.jpg){ width="200" } | [Manual](../manuals/ultimaker-3-manual.pdf) |
 
 ## Materials
 
-Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request.
+Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request. We usually use a 0.4mm nozzle, though smaller or larger nozzles may be available if needed for specific projects.
 
-**Do not attempt to change or reload filaments yourself.** Ask for assistance if a change or replacement is needed.
+**Do not attempt to change or reload filaments yourself without authorization.** Ask for assistance if a change or replacement is needed.
 
 ## Guide
 
-- **The clipboard must be filled out for every print job.**
+- **You must schedule the printer for every print job.** This helps us track usage and provides contact information if there are issues.
 - Ask for assistance for changing filament.
-- Long or large prints (3+ hours) must be coordinated with Raphael.
+- Long or large prints (4+ hours) must be coordinated with Raphael.
 - Remove parts and clean the build surface when your print is done; leave the printer ready for the next user.
-- The 3D printers must be started in person. They are not connected to the nextwork (on purpose). Set up the print with the printers software, add the file to a microSD card or USB drive, and start the print on the device. ##Ensure the correct material is selected for use.
-- Watch the first layer complete before leaving. Most failures occuer on the first layer.
+- The 3D printers must be started in person. They are not connected to the network (on purpose). Set up the print with the printers software (e.g. [Bambu Studio](https://bambulab.com/en/download/studio) or [PrusaSlicer](https://www.prusa3d.com/page/prusaslicer_424/)), add the file to a microSD card or USB drive, and start the print on the device. ## Ensure the correct printer type, material, and build plate is selected for use.
+- Watch the first layer complete before leaving. Most failures occur on the first layer.
 - Promptly remove prints when complete. **Do not use metal tools to remove parts from the print bed.** Use plastic tools instead to prevent damage to the print surfaces.
-- Clean up all pieces and return the print bed in the printer before leaving.
+- Clean up all pieces and reinstall the build plate in the printer before leaving.
+- [Report any issues to management](../report-issue.md); do not attempt to repair yourself.
 
-## Report Issue
+## Schedule Printer Time
 
-Button here
-
-<iframe src="https://calendar.google.com/calendar/embed?src=724d65f6eb3dc9f40ef13b9883a210bd3d9845eeaa23a565231e7dc7f97d9f61%40group.calendar.google.com&src=788918014326b46f028cf718f4c77542c0d9d6dde10b40c84e19d506aba04c74%40group.calendar.google.com&mode=WEEK&showTabs=0&showCalendars=0&showTitle=0&bgcolor=%23ffffff" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-
-
-<iframe src="/assets/scheduler.html" width="100%" height="780" style="border:0; border-radius:12px;"></iframe>
+<iframe src="/scheduler-app/index.html" width="100%" height="780" style="border:0; border-radius:12px;"></iframe>

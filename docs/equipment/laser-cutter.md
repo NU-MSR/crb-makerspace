@@ -13,17 +13,9 @@ The Makerspace has one [Lasersaur](https://www.lasersaur.cc/) laser cutter with 
 
 ## Safety
 
-!!! warning
-
-    Always ensure proper ventilation before starting the laser cutter.
-
-!!! warning
-
-    NEVER leave the laser cutter operating unattended.
-
-!!! info
-
-    There is a fire extinguisher by the door of the CRB Makerspace.
+- Always ensure proper ventilation before starting the laser cutter.
+- NEVER leave the laser cutter operating unattended.
+- There is a fire extinguisher by the door of the CRB Makerspace.
 
 ## Manual
 

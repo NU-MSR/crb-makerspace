@@ -30,12 +30,12 @@ repo_url: https://github.com/northwestern-crb/makerspace-docs
 nav:
   - Home: index.md
   - Policies: policies.md
-  - Request Training: mailto:raphael.cherney@northwestern.edu?subject=CRB%20Makerspace%20Training
+  - Request Training: training.md
   - Equipment:
     - 3D Printers: equipment/3d-printers.md
     - Hand and Power Tools: 
       - Overview: equipment/hand-and-power-tools.md
-      - Dremel Rotary Tool: equipment/rotary-tool.md
+      - Rotary Tool: equipment/rotary-tool.md
     - Machine Tools:
       - Drill Press: equipment/drill-press.md
       - Vertical Band Saw: equipment/vertical-band-saw.md
@@ -46,11 +46,11 @@ nav:
       - Laser Cutter: equipment/laser-cutter.md
     - Electronics:
       - Overview: electronics.md
-      - Soldering Stations: equipment/soldering-stations.md
-      - Oscilloscopes: equipment/oscilloscopes.md
-      - Power Supplies: equipment/power-supplies.md
-  - Checkout Tool: checkout.md
-  - Report Issue or Request Materials: report-issues/report-issue.md
+      #- Soldering Stations: equipment/soldering-stations.md
+      #- Oscilloscopes: equipment/oscilloscopes.md
+      #- Power Supplies: equipment/power-supplies.md
+  - Tool Checkout: checkout.md
+  - Report Issue or Request Materials: report-issue.md
 
 
 

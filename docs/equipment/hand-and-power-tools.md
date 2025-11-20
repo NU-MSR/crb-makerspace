@@ -1,6 +1,6 @@
 # Hand and Power Tools
 
-The CRB Makerscapce is equipmented with a wide variety of hand tools. Most are available in labeled drawers. If you need help finding a tool, ask the Makerspace Manager.
+The CRB Makerspace is equipped with a wide variety of hand tools. Most are available in labeled drawers. If you need help finding a tool, ask the Makerspace Manager.
 
 Equipment includes:
 

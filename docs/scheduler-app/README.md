@@ -26,7 +26,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
    - Go to **Project Settings** → **Data API**
    - Copy your **Project URL** (e.g., `https://xxxxx.supabase.co`)
    - Go to **Project Settings** → **API Keys**
-   - Copy your **anon/public key** from  (starts with `eyJ...`)
+   - Copy your **anon/public key** (starts with `eyJ...`)
 
 ### 2) Configure Frontend
 
@@ -59,7 +59,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
 
 ### Printers Table
 - `id` (UUID, primary key)
-- `display_name` (TEXT, unique) - e.g., "R2-3D2 (Bambu X1C)"
+- `display_name` (TEXT, unique) - e.g., "R2-3D2"
 - `printer_type` (TEXT) - e.g., "Bambu X1C", "Bambu P1S"
 - `notes` (TEXT, nullable) - Additional info about the printer
 - `status` (TEXT) - One of: `'operational'`, `'down'`, `'maintenance'`, `'reserved'`
@@ -162,9 +162,33 @@ Printers are ordered by the `sort_order` column (lower numbers appear first, lef
 - Ensure your `SUPABASE_ANON_KEY` is correct
 - Check that RLS policies allow public access
 
+## Preventing Supabase Project Pause (Keepalive)
+
+Free Supabase projects are paused after 1 week of inactivity. This repository includes a GitHub Actions workflow that runs daily to keep the project active.
+
+### Setting Up the Keepalive Workflow
+
+1. **Add GitHub Secrets**:
+   - Go to your repository on GitHub
+   - Navigate to **Settings** → **Secrets and variables** → **Actions**
+   - Click **New repository secret**
+   - Add the following secrets:
+     - `SUPABASE_URL`: Your Supabase project URL (e.g., `https://xxxxx.supabase.co`)
+     - `SUPABASE_ANON_KEY`: Your Supabase anon/public key (starts with `eyJ...`)
+
+2. **Verify the Workflow**:
+   - The workflow is located at `.github/workflows/supabase-keepalive.yml`
+   - It runs daily at 2:00 AM UTC
+   - You can manually trigger it from the **Actions** tab in GitHub
+   - The workflow makes a simple query to the `printers` table to count as activity
+
+3. **Monitor the Workflow**:
+   - Check the **Actions** tab to ensure the workflow runs successfully
+   - If it fails, verify that your GitHub secrets are set correctly
+
 ## Notes
 
 - Time resolution is 30 minutes, 24-hour view
 - Client performs a simple overlap check for UX; server is authoritative
 - No cookies or credentials used (public access via anon key)
-- PII is stored but protected by RLS policies
+- Submitted PII (name and contact) is stored in database but protected by RLS policies

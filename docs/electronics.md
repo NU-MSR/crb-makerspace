@@ -2,7 +2,7 @@
 
 ## Workbenches
 
-There are two workbenches for use. Each workbench should be equiped with the following:
+There are two workbenches for use. Each workbench should be equipped with the following:
 
 ### Core tools
 
@@ -23,13 +23,13 @@ There are two workbenches for use. Each workbench should be equiped with the fol
 - Bench power supply (Keithley 2231A-30-3)
 - Oscilloscope (Rigol DS1054Z and Tektronix MSO 2012B)
 - Microscope (Nikon SMZ-U)
-- Solder stations (Metcal MX-500P and Matcal MFR-PS1300)
+- Solder stations (Metcal MX-500P and Metcal MFR-PS1300)
 - Hot air rework station (Aoyue 852)
 
 ### Consumables
 
-- Solder (spool)
-- Flux pen and/or liquid flux
+- Solder (spools)
+- Flux (pen, paste, and/or liquid)
 - Isopropyl alcohol (IPA)
 - Disposable swabs
 - Desoldering braid

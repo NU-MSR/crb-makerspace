@@ -10,7 +10,7 @@ Welcome to the website for the Makerspace / Machine Shop / Prototyping Lab for t
 
 - Hand tools and basic power tools
 - Fasteners and common components
-- FDM 3D printers with PLA filament
+- FDM 3D printers with (mostly) PLA filament
 - Machine tools
     - Drill press
     - Bandsaws
@@ -27,7 +27,7 @@ The CRB Makerspace is for students, staff, and faculty of the [Center for Roboti
 ## Getting started
 
 1. Review and agree to the [CRB Makerspace Policies](policies.md).
-2. [Arrange](mailto:raphael.cherney@northwestern.edu?subject=CRB%20Makerspace%20Training) and complete orientation with the Makerspace Manager.
+2. [Arrange](training.md) and complete orientation with the Makerspace Manager.
 3. Request keycard access after training is approved.
 4. Build cool things (while following all procedures and safety instructions).
 

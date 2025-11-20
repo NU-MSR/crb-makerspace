@@ -19,11 +19,11 @@ The CRB Makerspace has a JET HVBS-56V variable speed band saw to cut plastics an
 ## Safety
 
 - Always wear safety glasses.
-- Do not wear gloves, neckties, loose clothing, or jewlery.
-- Hold the workpiece securly in the vise.
+- Do not wear gloves, neckties, loose clothing, or jewelry.
+- Hold the workpiece securely in the vise.
 - Keep fingers safe distance from blade.
 
-## Instuctions for use
+## Instructions for use
 
 !!! info
     

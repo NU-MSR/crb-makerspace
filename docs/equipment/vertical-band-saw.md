@@ -20,13 +20,13 @@ The CRB Makerspace has a Powertec BS900 9" vertical band saw to cut plastics and
 ## Safety
 
 - Always wear safety glasses.
-- Do not wear gloves, neckties, loose clothing, or jewlery.
+- Do not wear gloves, neckties, loose clothing, or jewelry.
 - Adjust the upper guide to just clear of workpiece.
 - Handle workpiece correctly. Hold workpiece firmly against the table. Use push stick or push blocks when needed.
 - Round stock can get caught and spin. Prevent rotation or use the horizontal bandsaw (with vise) instead.
 - Keep fingers safe distance from blade path. Do not push with your fingers in line with the blade.
 
-## Instuctions for use
+## Instructions for use
 
 !!! info
     
@@ -41,6 +41,33 @@ The CRB Makerspace has a Powertec BS900 9" vertical band saw to cut plastics and
 - No backing out while running. Stop the machine first or you risk pulling out a moving blade.
 - Turn off the machine and return the key.
 - Clean up your workspace.
+
+## Teeth per inch
+
+Fewer teeth per inch (TPI) provides a faster feed rate and a rougher finish. More teeth per inch provide a smooth finish but slower cut. **At least three teeth should be in the material when cutting.**
+
+### Minimum material thickness
+
+| Teeth per inch | Minimum material thickness |
+| --- | --- |
+| 6 TPI | 1/2" thick |
+| 10 TPI | 5/16" thick |
+| 14 TPI | 1/4" thick |
+| 18 TPI | 5/32" thick |
+| 24 TPI | 1/8" thick |
+
+## Blade width
+
+When making straight cuts, use the widest blade available. For contour or scroll work, select a blade that fits the minimum radius requirement:
+
+### Minimum cutting radius
+
+| Blade thickness | Minimum cutting radius |
+| --- | --- |
+| 1/8" blade | 3/16" radius |
+| 1/4" blade | 5/8" radius |
+| 3/8" blade | 1-1/2" radius |
+| 1/2" blade | 2-1/2" radius |
 
 ## Manual
 

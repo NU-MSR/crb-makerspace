@@ -1,4 +1,4 @@
-# Dremel Rotary Tool
+# Rotary Tools (e.g. Dremel)
 
 ## Hazard level
 
@@ -14,7 +14,7 @@
 
 ## Safety
 - Always secure your workpiece (vise, clamp, or fixture).
-- Always wear ANSI Z87.1 safety glasses; use a dust mask/respirator for sanding/cutting that generates dust.
+- Always wear ANSI Z87.1 safety glasses and/or a face shield; use a dust mask/respirator for sanding/cutting that generates dust.
 - Hearing protection recommended for extended use.
 - Tie back long hair and remove/secure loose clothing and jewelry.
 
@@ -23,8 +23,8 @@
 - Unplug (or remove battery) before changing bits.
 - Ensure the collet is properly sized and tightened; remove the wrench before powering on.
 - Let the tool reach full speed before contacting the work; do not stall the motor—let the tool do the work.
-- Keep your hands and body out of the rotationbehind the bit and direct sparks/debris away from yourself and others.
-- Do not apply pressure to the sides ("side‑load") cut‑off wheels; use guards where provided.
+- Direct sparks/debris away from yourself and others.
+- Do not apply pressure to the sides of cut‑off wheels ("side‑load").
 
 ## Materials & Fumes
 - Avoid materials that produce hazardous fumes (e.g., PVC/vinyl). Use fume extraction when cutting plastics.

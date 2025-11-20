@@ -52,12 +52,15 @@ CREATE INDEX idx_printers_status ON printers(status) WHERE is_active = true;
 
 -- Function to automatically update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = public, pg_catalog
+AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE TRIGGER update_reservations_updated_at
   BEFORE UPDATE ON reservations
@@ -76,7 +79,11 @@ CREATE OR REPLACE FUNCTION check_reservation_overlap(
   p_end_at TIMESTAMPTZ,
   p_exclude_id UUID DEFAULT NULL
 )
-RETURNS TABLE(id UUID) AS $$
+RETURNS TABLE(id UUID)
+LANGUAGE plpgsql
+STABLE
+SET search_path = public, pg_catalog
+AS $$
 BEGIN
   RETURN QUERY
   SELECT r.id
@@ -86,15 +93,19 @@ BEGIN
     AND (p_exclude_id IS NULL OR r.id != p_exclude_id)
     AND NOT (r.end_at <= p_start_at OR r.start_at >= p_end_at);
 END;
-$$ LANGUAGE plpgsql STABLE;
+$$;
 
 -- Helper function to convert date + time to timestamptz in Chicago timezone
 CREATE OR REPLACE FUNCTION chicago_timestamp(date_str TEXT, time_str TEXT)
-RETURNS TIMESTAMPTZ AS $$
+RETURNS TIMESTAMPTZ
+LANGUAGE plpgsql
+IMMUTABLE
+SET search_path = public, pg_catalog
+AS $$
 BEGIN
   RETURN (date_str || ' ' || time_str)::TIMESTAMP AT TIME ZONE 'America/Chicago';
 END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$;
 
 -- Row-Level Security
 ALTER TABLE reservations ENABLE ROW LEVEL SECURITY;
@@ -116,6 +127,8 @@ CREATE POLICY "Anyone can create reservations"
   WITH CHECK (true);
 
 -- View that excludes PII and joins with printers
+-- Created as SECURITY INVOKER (default) to ensure RLS policies are enforced for the querying user
+DROP VIEW IF EXISTS public_reservations;
 CREATE VIEW public_reservations AS
 SELECT 
   r.id,

@@ -50,7 +50,7 @@ The CRB Makerspace Shop has a Model 3540 HiTorque Bench Lathe for basic turning 
 - Do not force or overload machinery.
 - Use appropriate cutting tools with appropriate feeds and speed.
 - Cutting tools get hot during use and can cause burns if handled inappropriately.
-- Do not attempt to use work pieces that are too large or two heavy for the
+- Do not attempt to use work pieces that are too large or too heavy for the
 machine.
 - Clear chips with a brush or other tool, never with your hands or with compressed air.
 - Clamp work securely. Cutting forces are significant and can turn work pieces that are not secured into projectiles.

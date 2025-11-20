@@ -105,7 +105,15 @@ function buildTimeColumn(){
   for(let i=0;i<48;i++){
     const min = i*30; const h = Math.floor(min/60); const m = min%60;
     const el = document.createElement('div'); el.className='time';
-    el.textContent = m===0 ? `${pad2(h)}:00` : '';
+    if(m===0){
+      const textSpan = document.createElement('span');
+      textSpan.className = 'time-text';
+      // Convert to 12-hour format with AM/PM
+      const hour12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+      const ampm = h < 12 ? 'AM' : 'PM';
+      textSpan.textContent = `${hour12}:00 ${ampm}`;
+      el.appendChild(textSpan);
+    }
     slots.appendChild(el);
   }
   timeCol.appendChild(slots);

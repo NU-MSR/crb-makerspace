@@ -17,7 +17,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - **Do not use tools in the Makerspace alone.** There must be someone in the lab who can see you AND has access to the makerspace.
 - Use the right tool for the job. If you are unsure of **anything** or need refreshing on procedure, just ask! Raphael is the most expensive and useful tool in the shop. **Ask questions often.**
 - Report broken or malfunctioning equipment immediately. **Do not attempt repairs yourself.**
-- **Leave the Makerspace cleaner and better than when you entered.** Put away tools when done, clean up all chips/debris, and spend an additional 10% of your time contributing to improving the state of the shared space. No one should know what type of tools and materials you used because your workspace should be clean.
+- **Leave the Makerspace cleaner and better than when you entered.** Put away tools when done, clean up all chips/debris, and spend an additional 5 minutes of your time contributing to improving the state of the shared space. No one should know what type of tools and materials you used because your workspace should be clean.
 - **Do not remove tools from the space without explicit approval and a documented equipment checkout.** It is generally best to bring your project to the space rather than take tools away. If you do need tools, just ask, as some tools are available for checkout.
 - No food or drink in the Makerspace.
 
@@ -26,7 +26,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="general-checkbox" class="policies-checkbox"> I have read and agree to the general rules.
 
 ## Access
-- The Makerspace is only open to authorized individuals. **Do NOT allow unauthorized personnel into the makerspace unless management invites them in.**
+- The Makerspace is only open to authorized individuals. **Do not allow unauthorized personnel into the makerspace unless management invites them in.**
 - You must complete training with Raphael and be authorized to receive access.
 
 !!! note ""
@@ -48,16 +48,16 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - **All drilling or cutting must be done on fixed parts.** You may not drill or cut without properly securing the workpiece in a vise or appropriate fixture.
 - Return all tools to their designated locations after use. **Drill bits must be re-indexed after use.**
 - Treat all tools with respect and careful attention; inspect for damage before use.
-- Components and parts may be used as needed;. If quantities run low or something is missing, please notify Raphael.
+- Components and parts may be used as needed. If quantities run low or something is missing, please notify Raphael.
 
 !!! note ""
 
     <input type="checkbox" id="hand-power-tools-checkbox" class="policies-checkbox"> I have read and agree to the rules around hand and power tools.
 
 ## Machine Tools
-- Formal training is required to operate the  drill press, vertical bandsaw, horizontal bandsaw,mill, lathe, and rotary tools (e.g., Dremel).
+- Formal training is required to operate the  drill press, vertical bandsaw, horizontal bandsaw, mill, lathe, and rotary tools (e.g., Dremel).
 - Training and authorization are provided by Raphael. Additional training may be required to be completed at the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
-- **Do not machine steel in the CRB Makerspace.** Use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html) instead.
+- **Do not machine steel in the CRB Makerspace.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
 - The drill press, bandsaws, mini‑mill, and mini‑lathe require permission from management and a key to operate. Check out the key from Raphael or authorized personnel before use and return it immediately after.
 - When using any machine tools:
     - Securely fix parts before machining.
@@ -73,21 +73,22 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="machine-tools-checkbox" class="policies-checkbox"> I have read and agree to the rules around machine tools.
 
 ## Electronics Workstations
-- Use the fume extraction hoses when soldering.
+- Use fume extractors when soldering.
 - Keep benches clean and organized. **Always clean up the space and put away tools when done.**
-    - Return cables, probes, and accessories to the racks/bins after use.
-    - Respool solder and wire after use; dispose of wire trimmings.
     - Power down soldering irons and store tools when finished.
+    - Return equipment, cables, probes, and accessories to the racks/bins after use.
+    - Respool solder and wire.
+    - Dispose of wire trimmings.
 
 !!! note ""
 
     <input type="checkbox" id="electronics-checkbox" class="policies-checkbox"> I have read and agree to the rules around electronics workstations.
 
 ## 3D Printing
-- **The clipboard must be filled out for every print job.**
+- **The printer must be reserved for every print job.**
 - Ask for assistance for changing filament.
-- Long or large prints (3+ hours) must be coordinated with Raphael.
-- Remove parts and clean the build surface when your print is done; leave the printer ready for the next user.
+- Particularly long or large prints (4+ hours) should be coordinated with Raphael.
+- When your print is done, remove parts, clean the build surface, and leave the printer ready for the next user.
 
 !!! note ""
 
@@ -127,7 +128,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 
 ## Accept Policies
 
-You must submit the following form and complete trainging with Raphael in order to gain access to the Makerspace.
+You must submit the following form and complete training with Raphael in order to gain access to the Makerspace.
 
 !!! info "Help"
 
