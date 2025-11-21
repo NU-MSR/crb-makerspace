@@ -39,7 +39,6 @@ mkdocs serve
 - Frontend: `docs/schedule-app/index.html` (static page served at `/schedule-app/index.html`).
 - Backend: `docs/schedule-app/apps-script.gs` (Google Apps Script for a Google Sheet).
 - Setup steps are documented in `docs/schedule-app/README.md`.
-- Before deploying, set `SHEET_API` in `docs/schedule-app/index.html` to your Apps Script Web App `/exec` URL.
 
 ### Testing Before Deploy
 ```bash
