@@ -29,11 +29,11 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 | Device | Image | Resources | Notes |
 | --- | --- | --- | --- |
-| Bambu Lab X1 Carbon | ![Bambu Lab X1 Carbon](../assets/bambu-x1c.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/x1/manual) | Support for multi-material prints with AMS. |
-| Bambu Lab P1S | ![Bambu Lab P1S](../assets/bambu-p1s.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/p1/manual) | Great for general purpose prints in PLA |
-| Bambu Lab A1 mini | ![Bambu Lab A1 mini](../assets/bambu-a1-mini.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/a1-mini) | AMS Lite available. Smaller print area. |
-| Original Prusa XL | ![Original Prusa XL](../assets/prusa-xl.jpg){ width="200" } | [Manual](https://help.prusa3d.com/product/xl) | Largest print volume. Multi-material support with independent printheads. |
-| Ultimaker 3 | ![Ultimaker 3](../assets/ultimaker-3.jpg){ width="200" } | [Manual](../manuals/ultimaker-3-manual.pdf) |
+| Bambu Lab X1 Carbon | ![Bambu Lab X1 Carbon](../assets/bambu-x1c.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/x1/manual) | High speed FDM printing. Support for up to 4 materials with AMS. |
+| Bambu Lab P1S | ![Bambu Lab P1S](../assets/bambu-p1s.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/p1/manual) | High speed FDM workhorse. Great for general purpose prints in PLA. |
+| Bambu Lab A1 mini | ![Bambu Lab A1 mini](../assets/bambu-a1-mini.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/a1-mini) | Smallest print volume. AMS Lite available. |
+| Original Prusa XL | ![Original Prusa XL](../assets/prusa-xl.jpg){ width="200" } | [Manual](https://help.prusa3d.com/product/xl) | Largest print volume. Multi-material support with 5 independent printheads. |
+| Ultimaker 3 | ![Ultimaker 3](../assets/ultimaker-3.jpg){ width="200" } | [Manual](../manuals/ultimaker-3-manual.pdf) | Dual nozzle printing. Compatible with large Ultimaker library of materials. |
 
 ## Materials
 
