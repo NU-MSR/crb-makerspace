@@ -1,4 +1,5 @@
-name: ci 
+name: Deploy MkDocs site to GitHub Pages
+
 on:
   push:
     branches:
@@ -7,6 +8,7 @@ on:
 
 permissions:
   contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
