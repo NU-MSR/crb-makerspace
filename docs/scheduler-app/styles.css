@@ -321,9 +321,9 @@ html, body{
 /* Reserve Button */
 .selection .reserve-btn{
   position:absolute;
-  top:8px;
+  top:50%;
   left:50%;
-  transform:translateX(-50%);
+  transform:translate(-50%, -50%);
   padding:8px 16px;
   min-height:44px;
   background:var(--accent);
@@ -342,15 +342,14 @@ html, body{
 }
 .selection .reserve-btn:hover{
   background:#3d1f6b;
-  transform:translateX(-50%) scale(1.05);
+  transform:translate(-50%, -50%) scale(1.05);
 }
 .selection .reserve-btn:active{
-  transform:translateX(-50%) scale(0.98);
+  transform:translate(-50%, -50%) scale(0.98);
 }
 /* Ensure button is visible even for small selections */
 .selection[style*="height: 28px"] .reserve-btn,
 .selection[style*="height: 26px"] .reserve-btn{
-  top:2px;
   padding:4px 12px;
   min-height:auto;
   font-size:12px;
