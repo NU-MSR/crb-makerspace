@@ -297,6 +297,9 @@ html, body{
   right:0;
   height:10px;
   cursor:ns-resize;
+  pointer-events:auto;
+  touch-action:none;
+  z-index:20;
 }
 .selection .handle.top{
   top:-6px;
@@ -313,6 +316,44 @@ html, body{
   opacity:0.6;
   margin:3px auto;
   border-radius:4px;
+}
+
+/* Reserve Button */
+.selection .reserve-btn{
+  position:absolute;
+  top:8px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:8px 16px;
+  min-height:44px;
+  background:var(--accent);
+  color:#fff;
+  border:1px solid var(--accent);
+  border-radius:6px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  z-index:25;
+  white-space:nowrap;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  transition:background-color 0.2s, transform 0.1s;
+  pointer-events:auto;
+  touch-action:manipulation;
+}
+.selection .reserve-btn:hover{
+  background:#3d1f6b;
+  transform:translateX(-50%) scale(1.05);
+}
+.selection .reserve-btn:active{
+  transform:translateX(-50%) scale(0.98);
+}
+/* Ensure button is visible even for small selections */
+.selection[style*="height: 28px"] .reserve-btn,
+.selection[style*="height: 26px"] .reserve-btn{
+  top:2px;
+  padding:4px 12px;
+  min-height:auto;
+  font-size:12px;
 }
 
 /* Current Time Indicator */
@@ -479,6 +520,32 @@ select{
   }
   .row{
     grid-template-columns:1fr;
+  }
+  /* Larger touch targets for resize handles on mobile */
+  .selection .handle{
+    height:44px;
+    min-height:44px;
+    left:50%;
+    right:auto;
+    width:80px;
+    margin-left:-40px;
+  }
+  .selection .handle.top{
+    top:-22px;
+  }
+  .selection .handle.bottom{
+    bottom:-22px;
+  }
+  .selection .handle::after{
+    width:50px;
+    height:5px;
+    margin:19.5px auto;
+  }
+  /* Smaller Reserve button on mobile */
+  .selection .reserve-btn{
+    padding:6px 12px;
+    min-height:36px;
+    font-size:13px;
   }
 }
 

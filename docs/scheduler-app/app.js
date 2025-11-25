@@ -50,7 +50,8 @@ let state = {
   reservations: [], // [{printer,start,end}]
   printers: [], // [{id, display_name, printer_type, status, notes}]
   selection: null,  // {printer, startMin, endMin}
-  drag: null        // {mode:'creating'|'resize-top'|'resize-bottom', printer, startMin, endMin}
+  drag: null,        // {mode:'creating'|'resize-top'|'resize-bottom', printer, startMin, endMin}
+  isScrolling: false // Track if user is currently scrolling
 };
 
 // Elements
@@ -170,11 +171,27 @@ function buildPrinters(){
 }
 
 function onSlotClick(e){
+  // Don't handle clicks on the Reserve button
+  if(e.target.closest('.reserve-btn')){
+    return;
+  }
+  // Prevent slot clicks if user was just scrolling (only for touch)
+  if(state.isScrolling && e.pointerType === 'touch'){
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
   const printer = e.currentTarget.dataset.printer;
   const idx = Number(e.currentTarget.dataset.index);
-  const startMin = idx*30; const endMin = startMin+30;
+  const startMin = idx*30; const endMin = startMin+60; // Default to 1 hour
   state.selection = { printer, startMin, endMin };
-  openReservationDialog();
+  renderReservations();
+  // Don't auto-open dialog - user must click Reserve button
+}
+
+function clearSelection(){
+  state.selection = null;
+  renderReservations();
 }
 
 function renderReservations(){
@@ -221,9 +238,36 @@ function renderReservations(){
       const top = (state.selection.startMin/30)*rowHeight;
       const height = ((state.selection.endMin-state.selection.startMin)/30)*rowHeight;
       const sel = document.createElement('div'); sel.className='selection'; sel.style.top = `${top}px`; sel.style.height=`${height}px`;
-      const hTop = document.createElement('div'); hTop.className='handle top'; hTop.dataset.printer = pr.display_name; hTop.addEventListener('pointerdown', (ev)=>startResize(ev, pr.display_name, 'resize-top'));
-      const hBot = document.createElement('div'); hBot.className='handle bottom'; hBot.dataset.printer = pr.display_name; hBot.addEventListener('pointerdown', (ev)=>startResize(ev, pr.display_name, 'resize-bottom'));
+      const hTop = document.createElement('div'); hTop.className='handle top'; hTop.dataset.printer = pr.display_name;
+      const hBot = document.createElement('div'); hBot.className='handle bottom'; hBot.dataset.printer = pr.display_name;
+      
+      // Attach resize handlers to both handles
+      hTop.addEventListener('pointerdown', (ev) => startResize(ev, pr.display_name, 'resize-top', slots));
+      hBot.addEventListener('pointerdown', (ev) => startResize(ev, pr.display_name, 'resize-bottom', slots));
+      
       sel.appendChild(hTop); sel.appendChild(hBot);
+      
+      // Add Reserve button inside selection
+      const reserveBtn = document.createElement('button');
+      reserveBtn.className = 'reserve-btn';
+      reserveBtn.textContent = 'Reserve';
+      reserveBtn.type = 'button';
+      // Stop all pointer events from propagating to underlying slots
+      reserveBtn.addEventListener('pointerdown', (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      });
+      reserveBtn.addEventListener('pointerup', (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      });
+      reserveBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        if(dialog && !dialog.open) openReservationDialog();
+      });
+      sel.appendChild(reserveBtn);
+      
       slots.appendChild(sel);
     }
 
@@ -322,7 +366,7 @@ async function fetchReservations(){
 function calculateEndTime(){
   if(!resStart.value || !resDuration.value) return;
   const startMin = minutesSinceMidnight(resStart.value);
-  const durationHours = parseFloat(resDuration.value) || 0.5;
+  const durationHours = parseFloat(resDuration.value) || 1;
   const durationMin = Math.round(durationHours * 60);
   const endMin = startMin + durationMin;
   const days = Math.floor(endMin / (24*60));
@@ -376,7 +420,7 @@ function openReservationDialog(){
   const sel = state.selection || {
     printer: state.printers[0]?.display_name || '',
     startMin:8*60, 
-    endMin:8*60+30
+    endMin:8*60+60
   };
   resPrinter.value = sel.printer;
   resDate.value = state.date;
@@ -404,6 +448,7 @@ resMaterial.addEventListener('change', toggleOtherInputs);
 
 function closeDialog(){
   if(dialog.open) dialog.close();
+  clearSelection();
 }
 
 function validateForm(){
@@ -542,7 +587,7 @@ form.addEventListener('submit', async (e)=>{
   await refresh();
 });
 
-document.getElementById('cancelBtn').addEventListener('click', (e)=>{ e.preventDefault(); closeDialog(); });
+document.getElementById('cancelBtn').addEventListener('click', (e)=>{ e.preventDefault(); closeDialog(); clearSelection(); });
 
 async function refresh(){
   await fetchReservations();
@@ -567,6 +612,32 @@ async function init(){
       renderReservations();
     }
   }, 60000);
+  
+  // Clear selection on Escape key
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && state.selection && !dialog.open){
+      clearSelection();
+    }
+  });
+  
+  // Clear selection when clicking outside calendar slots
+  document.addEventListener('click', (e) => {
+    if(state.selection && !dialog.open){
+      // Check if click is outside the calendar slots area (but allow header controls)
+      const calendar = document.querySelector('.calendar');
+      const printers = document.querySelector('.printers');
+      const timeCol = document.querySelector('.time-col');
+      // Don't clear if clicking on calendar elements, header controls, or Reserve button
+      if(calendar && printers && timeCol &&
+         !calendar.contains(e.target) && 
+         !printers.contains(e.target) &&
+         !timeCol.contains(e.target) &&
+         !e.target.closest('.reserve-btn') &&
+         !e.target.closest('.app-header')){
+        clearSelection();
+      }
+    }
+  });
 }
 
 // Populate selects at load for accessibility
@@ -594,51 +665,194 @@ function attachPointerHandlers(slotsEl, printer){
   }
   function onPointerDown(ev){
     if(ev.button !== 0 && ev.pointerType !== 'touch') return;
+    // Don't handle pointer events on the Reserve button
+    if(ev.target.closest('.reserve-btn')){
+      return;
+    }
+    // Don't handle if clicking on resize handles - they have their own handlers
+    if(ev.target.closest('.handle')){
+      return;
+    }
+    // Don't overwrite an existing resize operation
+    if(state.drag && (state.drag.mode === 'resize-top' || state.drag.mode === 'resize-bottom')){
+      return;
+    }
     updateMetrics();
     slotsEl.setPointerCapture(ev.pointerId);
     const startMin = yToMinutes(ev.clientY);
-    const endMin = Math.min(startMin + 30, 24*60);
-    state.drag = { mode:'creating', printer, startMin, endMin };
-    state.selection = { printer, startMin, endMin };
-    renderReservations();
+    const endMin = Math.min(startMin + 60, 24*60);
+    // Store initial pointer position to track movement distance
+    state.drag = { 
+      mode:'creating', 
+      printer, 
+      startMin, 
+      endMin,
+      startX: ev.clientX,
+      startY: ev.clientY
+    };
+    // Reset scrolling flag
+    state.isScrolling = false;
+    
+    // For mouse clicks (not touch), create selection immediately since it's not a scroll gesture
+    if(ev.pointerType === 'mouse'){
+      state.selection = { printer, startMin, endMin };
+      renderReservations();
+      // Stop click event from also firing
+      ev.stopPropagation();
+    }
+    // For touch, wait to see if it's a scroll before creating selection
     ev.preventDefault();
   }
   function onPointerMove(ev){
     if(!state.drag || state.drag.printer!==printer) return;
     updateMetrics();
     const cur = yToMinutes(ev.clientY);
-    if(state.drag.mode === 'creating'){
-      const a = Math.min(state.drag.startMin, cur);
-      const b = Math.max(state.drag.startMin, cur);
-      state.selection = { printer, startMin:a, endMin: Math.max(a+30, b) };
-    } else if(state.drag.mode === 'resize-top' && state.selection){
+    
+    // Handle resize operations - these should never be treated as scrolling
+    if(state.drag.mode === 'resize-top' && state.selection){
       const endMin = state.selection.endMin;
       const startMin = Math.min(cur, endMin-30);
       state.selection = { printer, startMin, endMin };
+      renderReservations();
+      return;
     } else if(state.drag.mode === 'resize-bottom' && state.selection){
       const startMin = state.selection.startMin;
       const endMin = Math.max(cur, startMin+30);
       state.selection = { printer, startMin, endMin };
+      renderReservations();
+      return;
     }
-    renderReservations();
+    
+    // Only apply scroll detection for 'creating' mode
+    if(state.drag.mode === 'creating'){
+      // Calculate movement distance
+      const deltaX = Math.abs(ev.clientX - state.drag.startX);
+      const deltaY = Math.abs(ev.clientY - state.drag.startY);
+      const movementDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      // If movement is significant (>10px), treat as scroll and don't create/update selection
+      if(movementDistance > 10){
+        // Cancel the drag - user is scrolling
+        state.isScrolling = true;
+        try{ slotsEl.releasePointerCapture(ev.pointerId); }catch(e){}
+        state.drag = null;
+        state.selection = null;
+        renderReservations();
+        // Clear scrolling flag after a short delay
+        setTimeout(() => { state.isScrolling = false; }, 300);
+        return;
+      }
+      
+      // Only create/update selection if movement is minimal (intentional tap/drag)
+      const a = Math.min(state.drag.startMin, cur);
+      const b = Math.max(state.drag.startMin, cur);
+      // Default to 60 minutes (1 hour) if drag distance is small, otherwise use drag distance with 30 min minimum
+      const dragDuration = b - a;
+      const endMin = dragDuration < 60 ? a + 60 : Math.max(a + 30, b);
+      state.selection = { printer, startMin:a, endMin: Math.min(endMin, 24*60) };
+      renderReservations();
+    }
   }
   function onPointerUp(ev){
     if(!state.drag || state.drag.printer!==printer) return;
     try{ slotsEl.releasePointerCapture(ev.pointerId); }catch(e){}
+    
+    // Don't apply scroll detection for resize operations - they always involve movement
+    if(state.drag.mode === 'resize-top' || state.drag.mode === 'resize-bottom'){
+      // Resize operation completed - just clear the drag state, keep the selection
+      state.drag = null;
+      renderReservations();
+      if(ev.pointerType === 'mouse'){
+        ev.stopPropagation();
+      }
+      return;
+    }
+    
+    // Check if this was a scroll (significant movement) - only for 'creating' mode
+    const deltaX = Math.abs(ev.clientX - state.drag.startX);
+    const deltaY = Math.abs(ev.clientY - state.drag.startY);
+    const movementDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    
+    if(movementDistance > 10){
+      // User was scrolling, clear selection and set flag
+      state.isScrolling = true;
+      state.selection = null;
+      // Clear scrolling flag after a short delay
+      setTimeout(() => { state.isScrolling = false; }, 300);
+    } else if(movementDistance <= 10 && state.drag.mode === 'creating'){
+      // Small movement - this was an intentional tap, create selection if not already created
+      // (mouse clicks already have selection created in onPointerDown)
+      if(!state.selection){
+        const startMin = state.drag.startMin;
+        const endMin = state.drag.endMin;
+        state.selection = { printer, startMin, endMin };
+      }
+    }
+    // Don't auto-open dialog - user must click Reserve button
     state.drag = null;
-    if(dialog && !dialog.open) openReservationDialog();
+    renderReservations();
+    
+    // For mouse, stop click event from also firing
+    if(ev.pointerType === 'mouse'){
+      ev.stopPropagation();
+    }
+  }
+  function onPointerCancel(ev){
+    // Pointer cancel usually means scroll or gesture, treat as scroll
+    if(state.drag && state.drag.printer === printer){
+      state.isScrolling = true;
+      state.drag = null;
+      state.selection = null;
+      renderReservations();
+      // Clear scrolling flag after a short delay
+      setTimeout(() => { state.isScrolling = false; }, 300);
+    }
   }
   slotsEl.addEventListener('pointerdown', onPointerDown);
   slotsEl.addEventListener('pointermove', onPointerMove);
   slotsEl.addEventListener('pointerup', onPointerUp);
-  slotsEl.addEventListener('pointercancel', onPointerUp);
+  slotsEl.addEventListener('pointercancel', onPointerCancel);
 }
 
-function startResize(ev, printer, mode){
+function startResize(ev, printer, mode, slotsEl){
   ev.stopPropagation();
-  const col = Array.from(printersWrap.children).find(c => c.querySelector('.printer-header')?.textContent === printer);
-  const slots = col?.querySelector('.slots');
-  if(!slots) return;
-  // set drag mode then synthesize a move to the same point
-  state.drag = { mode, printer, startMin: state.selection?.startMin || 0, endMin: state.selection?.endMin || 30 };
+  ev.preventDefault();
+  if(!slotsEl || !state.selection || state.selection.printer !== printer) return;
+  
+  // Capture pointer on the slots element so we can track movement
+  try {
+    slotsEl.setPointerCapture(ev.pointerId);
+  } catch(e) {
+    // Fallback if pointer capture fails
+  }
+  
+  // Set up drag state for resize operation
+  // Store initial pointer position to track movement
+  const rect = slotsEl.getBoundingClientRect();
+  const first = slotsEl.querySelector('.slot');
+  const rowHeight = first ? first.getBoundingClientRect().height : 28;
+  const y = ev.clientY - rect.top;
+  const rows = Math.max(0, Math.min(48, Math.round(y / rowHeight)));
+  const curMin = rows * 30;
+  
+  state.drag = { 
+    mode, 
+    printer, 
+    startMin: state.selection.startMin, 
+    endMin: state.selection.endMin,
+    startX: ev.clientX,
+    startY: ev.clientY
+  };
+  
+  // Trigger initial resize calculation
+  if(mode === 'resize-top'){
+    const endMin = state.selection.endMin;
+    const startMin = Math.min(curMin, endMin-30);
+    state.selection = { printer, startMin, endMin };
+  } else if(mode === 'resize-bottom'){
+    const startMin = state.selection.startMin;
+    const endMin = Math.max(curMin, startMin+30);
+    state.selection = { printer, startMin, endMin };
+  }
+  renderReservations();
 }
