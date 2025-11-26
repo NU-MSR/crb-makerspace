@@ -28,6 +28,24 @@ function clampTo30(hhmm){
   const m = minutesSinceMidnight(hhmm); const snapped = Math.round(m/30)*30; return hhmmFromMinutes(snapped);
 }
 
+// Get current date in Chicago timezone
+function getCurrentDateInChicago(){
+  const now = new Date();
+  // Format date in Chicago timezone
+  const chicagoDate = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(now);
+  
+  const year = chicagoDate.find(p => p.type === 'year').value;
+  const month = chicagoDate.find(p => p.type === 'month').value;
+  const day = chicagoDate.find(p => p.type === 'day').value;
+  
+  return `${year}-${month}-${day}`;
+}
+
 // Format time from timestamp (handles timezone conversion to Chicago)
 function formatTime(timestamp, timezone = 'America/Chicago') {
   const date = new Date(timestamp);
@@ -46,7 +64,7 @@ function formatTime(timestamp, timezone = 'America/Chicago') {
 
 // State
 let state = {
-  date: fmtDateInput(new Date()),
+  date: getCurrentDateInChicago(),
   reservations: [], // [{printer,start,end}]
   printers: [], // [{id, display_name, printer_type, status, notes}]
   selection: null,  // {printer, startMin, endMin}
@@ -87,7 +105,7 @@ function initControls(){
   datePicker.value = state.date;
   datePicker.addEventListener('change', ()=>{ state.date = datePicker.value; refresh(); });
   prevDayBtn.addEventListener('click', ()=>{ shiftDate(-1); });
-  todayBtn.addEventListener('click', ()=>{ state.date = fmtDateInput(new Date()); datePicker.value = state.date; refresh(); });
+  todayBtn.addEventListener('click', ()=>{ state.date = getCurrentDateInChicago(); datePicker.value = state.date; refresh(); });
   nextDayBtn.addEventListener('click', ()=>{ shiftDate(1); });
 }
 function shiftDate(delta){
@@ -200,7 +218,7 @@ function renderReservations(){
   document.querySelectorAll('.selection').forEach(el => el.remove());
   document.querySelectorAll('.current-time').forEach(el => el.remove());
 
-  const today = fmtDateInput(new Date());
+  const today = getCurrentDateInChicago();
   const isToday = state.date === today;
   let currentTimePos = null;
   if(isToday){
@@ -607,7 +625,7 @@ async function init(){
   
   // Update current time indicator every minute (only when viewing today)
   setInterval(() => {
-    const today = fmtDateInput(new Date());
+    const today = getCurrentDateInChicago();
     if(state.date === today){
       renderReservations();
     }
