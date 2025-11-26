@@ -105,7 +105,16 @@ function initControls(){
   datePicker.value = state.date;
   datePicker.addEventListener('change', ()=>{ state.date = datePicker.value; refresh(); });
   prevDayBtn.addEventListener('click', ()=>{ shiftDate(-1); });
-  todayBtn.addEventListener('click', ()=>{ state.date = getCurrentDateInChicago(); datePicker.value = state.date; refresh(); });
+  todayBtn.addEventListener('click', ()=>{ 
+    state.date = getCurrentDateInChicago(); 
+    datePicker.value = state.date; 
+    refresh().then(() => {
+      // Scroll to current time after refresh completes
+      setTimeout(() => {
+        scrollToCurrentTime();
+      }, 100);
+    });
+  });
   nextDayBtn.addEventListener('click', ()=>{ shiftDate(1); });
 }
 function shiftDate(delta){
@@ -222,8 +231,19 @@ function renderReservations(){
   const isToday = state.date === today;
   let currentTimePos = null;
   if(isToday){
+    // Get current time in Chicago timezone
     const now = new Date();
-    const currentMin = now.getHours() * 60 + now.getMinutes();
+    const chicagoTime = new Intl.DateTimeFormat('en-US', {
+      timeZone: CONFIG.TIMEZONE,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).formatToParts(now);
+    
+    const hour = parseInt(chicagoTime.find(p => p.type === 'hour').value);
+    const minute = parseInt(chicagoTime.find(p => p.type === 'minute').value);
+    const currentMin = hour * 60 + minute;
+    
     const firstCol = printersWrap.children[0];
     if(firstCol){
       const slots = firstCol.querySelector('.slots');
@@ -611,6 +631,40 @@ async function refresh(){
   await fetchReservations();
 }
 
+function scrollToCurrentTime(){
+  const today = getCurrentDateInChicago();
+  if(state.date !== today) return; // Only scroll if viewing today
+  
+  // Wait a bit for rendering to complete
+  setTimeout(() => {
+    const calendarContainer = document.querySelector('.calendar-container');
+    const currentTimeLine = document.querySelector('.current-time');
+    
+    if(calendarContainer && currentTimeLine){
+      // Get the position of the current time line
+      // The line is positioned relative to its parent slots container
+      const slots = currentTimeLine.parentElement;
+      if(!slots) return;
+      
+      // Get the offset of the slots container within the calendar
+      const slotsOffsetTop = slots.offsetTop;
+      const lineOffsetTop = parseFloat(currentTimeLine.style.top) || 0;
+      
+      // Total position from top of calendar
+      const totalOffset = slotsOffsetTop + lineOffsetTop;
+      
+      // Calculate scroll position to center the line in the viewport
+      const containerHeight = calendarContainer.clientHeight;
+      const scrollPosition = totalOffset - (containerHeight / 2);
+      
+      calendarContainer.scrollTo({
+        top: Math.max(0, scrollPosition),
+        behavior: 'smooth'
+      });
+    }
+  }, 100);
+}
+
 async function init(){
   // Fetch printers first
   await fetchPrinters();
@@ -622,6 +676,12 @@ async function init(){
   await refresh();
   updateStickyOffset();
   window.addEventListener('resize', updateStickyOffset);
+  
+  // Scroll to current time on initial load if viewing today
+  // Wait a bit longer to ensure everything is rendered
+  setTimeout(() => {
+    scrollToCurrentTime();
+  }, 200);
   
   // Update current time indicator every minute (only when viewing today)
   setInterval(() => {
