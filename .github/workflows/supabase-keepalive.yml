@@ -1,0 +1,56 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    # Run daily at 2:00 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install @supabase/supabase-js
+      
+      - name: Keep Supabase active
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+          
+          (async () => {
+            try {
+              // Make a simple query to the printers table to keep the project active
+              const { data, error } = await supabase
+                .from('printers')
+                .select('id')
+                .eq('is_active', true)
+                .limit(1);
+              
+              if (error) {
+                console.error('Error querying Supabase:', error);
+                process.exit(1);
+              }
+              
+              console.log('✓ Supabase keepalive successful');
+              console.log('✓ Query returned', data ? data.length : 0, 'active printer(s)');
+            } catch (err) {
+              console.error('Error:', err);
+              process.exit(1);
+            }
+          })();
+          "
+
