@@ -448,12 +448,20 @@ select{
   justify-content:flex-end;
   gap:10px;
   margin-top:8px;
+  width:100%;
+  box-sizing:border-box;
 }
 .dialog-actions button{
   padding:8px 12px;
   border:1px solid var(--border);
   border-radius:8px;
   background:#fff;
+  box-sizing:border-box;
+  min-width:0;
+  flex-shrink:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 #reserveBtn{
   background:var(--accent);
@@ -519,6 +527,23 @@ select{
   }
   .row{
     grid-template-columns:1fr;
+  }
+  /* Fix dialog buttons on mobile */
+  dialog{
+    width:min(560px,95vw);
+    max-width:95vw;
+  }
+  form#reservationForm{
+    padding:12px;
+  }
+  .dialog-actions{
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .dialog-actions button{
+    flex:1 1 auto;
+    min-width:100px;
+    max-width:100%;
   }
   /* Larger touch targets for resize handles on mobile */
   .selection .handle{
