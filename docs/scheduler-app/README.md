@@ -26,7 +26,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
    - Go to **Project Settings** → **Data API**
    - Copy your **Project URL** (e.g., `https://xxxxx.supabase.co`)
    - Go to **Project Settings** → **API Keys**
-   - Copy your **anon/public key** (starts with `eyJ...`)
+   - Copy your **publishable key** (starts with `sb_publishable_...`)
 
 ### 2) Configure Frontend
 
@@ -34,7 +34,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
    ```javascript
    const CONFIG = {
      SUPABASE_URL: 'https://your-project.supabase.co', // Your Project URL
-     SUPABASE_ANON_KEY: 'your-anon-key', // Your anon key
+     SUPABASE_PUBLISHABLE_KEY: 'your-publishable-key', // Your publishable key
      TIMEZONE: 'America/Chicago',
      // ... rest of config
    };
@@ -161,7 +161,7 @@ Printers are ordered by the `sort_order` column (lower numbers appear first, lef
 
 ### CORS issues
 - Supabase handles CORS automatically for public access
-- Ensure your `SUPABASE_ANON_KEY` is correct
+- Ensure your `SUPABASE_PUBLISHABLE_KEY` is correct
 - Check that RLS policies allow public access
 
 ## Preventing Supabase Project Pause (Keepalive)
@@ -176,7 +176,7 @@ Free Supabase projects are paused after 1 week of inactivity. This repository in
    - Click **New repository secret**
    - Add the following secrets:
      - `SUPABASE_URL`: Your Supabase project URL (e.g., `https://xxxxx.supabase.co`)
-     - `SUPABASE_ANON_KEY`: Your Supabase anon/public key (starts with `eyJ...`)
+     - `SUPABASE_PUBLISHABLE_KEY`: Your Supabase publishable key (starts with `sb_publishable_...`)
 
 2. **Verify the Workflow**:
    - The workflow is located at `.github/workflows/supabase-keepalive.yml`
@@ -192,5 +192,5 @@ Free Supabase projects are paused after 1 week of inactivity. This repository in
 
 - Time resolution is 30 minutes, 24-hour view
 - Client performs a simple overlap check for UX; server is authoritative
-- No cookies or credentials used (public access via anon key)
+- No cookies or credentials used (public access via publishable key)
 - Submitted PII (name and contact) is stored in database but protected by RLS policies

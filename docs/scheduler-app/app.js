@@ -1,9 +1,9 @@
-// Configuration - Update SUPABASE_URL and SUPABASE_ANON_KEY after setting up Supabase
+// Configuration - Update SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY after setting up Supabase
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 const CONFIG = {
   SUPABASE_URL: 'https://indewtgxmkdxaecynamm.supabase.co', // Replace with your Supabase project URL
-  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluZGV3dGd4bWtkeGFlY3luYW1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyMDE0NDUsImV4cCI6MjA3Nzc3NzQ0NX0.W6Lcfc-EGYwCUVZf4a8ZAXwg03s8g6vxgAP_FR-WqQc', // Replace with your Supabase anon key
+  SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_KAlsObC8ClTx4BTY2rxvjQ_L_ECjpbT', // Replace with your Supabase publishable key
   TIMEZONE: 'America/Chicago',
   LABS: [
     'Master of Science in Robotics (MSR)', 'Robot Design Studio (RDS)', 'Lynch', 'Colgate', 'Rubenstein',
@@ -13,7 +13,7 @@ const CONFIG = {
 };
 
 // Initialize Supabase client
-const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_PUBLISHABLE_KEY);
 
 // Utilities
 const fmtDateInput = (d) => d.toISOString().slice(0,10);
