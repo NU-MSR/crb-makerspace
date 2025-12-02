@@ -4,7 +4,7 @@ The Makerspace has one [Lasersaur](https://www.lasersaur.cc/) laser cutter with 
 
 ## Hazard level
 
-<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">HIGH</span>
+<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">RED</span>
 
 !!! warning
 

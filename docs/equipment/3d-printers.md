@@ -6,7 +6,7 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 ## Hazard level
 
-<span style="background-color: green; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">LOW</span>
+<span style="background-color: green; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">GREEN</span>
 
 !!! warning
 

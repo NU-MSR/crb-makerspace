@@ -6,7 +6,7 @@ The CRB Makerspace has a Powertec BS900 9" vertical band saw to cut plastics and
 
 ## Hazard level
 
-<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">HIGH</span>
+<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">RED</span>
 
 !!! warning
 

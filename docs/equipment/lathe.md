@@ -6,7 +6,7 @@ The CRB Makerspace Shop has a Model 3540 HiTorque Bench Lathe for basic turning 
 
 ## Hazard level
 
-<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">HIGH</span>
+<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">RED</span>
 
 !!! warning
 

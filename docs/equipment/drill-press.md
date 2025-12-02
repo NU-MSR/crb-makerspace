@@ -6,7 +6,7 @@ The CRB Makerspace has a Delta 11-980 8" drill press.
 
 ## Hazard level
 
-<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">HIGH</span>
+<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">RED</span>
 
 !!! warning
 

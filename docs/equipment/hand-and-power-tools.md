@@ -14,7 +14,7 @@ Equipment includes:
 
 ## Hazard level
 
-<span style="background-color: orange; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">MEDIUM</span>
+<span style="background-color: orange; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">ORANGE</span>
 
 !!! warning
 

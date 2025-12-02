@@ -6,7 +6,7 @@ The CRB Makerspace has a JET HVBS-56V variable speed band saw to cut plastics an
 
 ## Hazard level
 
-<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">HIGH</span>
+<span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">RED</span>
 
 !!! warning
 
