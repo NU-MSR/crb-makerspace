@@ -20,7 +20,6 @@ The CRB Makerspace has a Delta 11-980 8" drill press.
 - Always wear safety glasses.
 - Workpieces must always be secured.
 - Do not wear gloves, neckties, loose clothing, or jewelry.
-- Keep fingers safe distance from blade.
 
 ## Instructions for use
 
@@ -30,16 +29,20 @@ The CRB Makerspace has a Delta 11-980 8" drill press.
 
 !!! failure "Do not cut steel in the CRB Makerspace"
 
-Wait for the machine to come to a complete stop.
-
 - Always use eye protection.
 - Request the key from the lab manager and unlock the device.
-- Raise the bow and secure it in an elevated position using the support plate.
-- Position your workpiece in vise and tighten the vise. Ensure the piece is held tightly in place.
-- Release the support plate and turn on the saw by holding the green button. **Do not start the saw with the blade touching the workpiece.**
-- Let the weight of the bow in conjunction with the spring tension cut through the workpiece. Do not apply additional pressure.
-- The saw will turn off when the cut is complete.
-- Reattach the lock to the green button and return the key.
+- Select the appropriate drill bit for your material and hole size. Insert the bit into the chuck and tighten securely using the chuck key. **Remove the chuck key immediately after use and store it safely.**
+- Adjust the table height so the workpiece will be at a comfortable working height. Lock the table in place.
+- Secure your workpiece firmly to the table using clamps or a vise. **Never hold the workpiece by hand.**
+- Adjust the speed if needed (slower speeds for larger bits and harder materials, faster speeds for smaller bits and softer materials).
+- If you need to limit the drilling depth, mark the depth with tape on the drill bit (no depth stop available).
+- Turn on the drill press and allow it to reach full speed.
+- Lower the quill slowly and steadily using the feed handle. Apply consistent, moderate pressure—let the bit do the cutting.
+- For deep holes, periodically retract the bit to clear chips and allow the bit to cool.
+- When finished, retract the quill fully and turn off the machine.
+- Wait for the machine to come to a complete stop before touching the workpiece or tool.
+- Remove the drill bit using the chuck key, and return the drill bit to its storage location.
+- Return the key to the lab manager.
 - Clean up your workspace.
 
 ## Manual
