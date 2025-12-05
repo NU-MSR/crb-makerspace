@@ -1,5 +1,5 @@
 // Configuration - Update SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY after setting up Supabase
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const CONFIG = {
   SUPABASE_URL: 'https://indewtgxmkdxaecynamm.supabase.co', // Replace with your Supabase project URL
