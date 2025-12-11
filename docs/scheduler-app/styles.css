@@ -622,17 +622,38 @@ select {
 
   /* Fix dialog buttons on mobile */
   dialog {
-    width: min(560px, 95vw);
-    max-width: 95vw;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+    margin: 0;
+  }
+
+  /* Ensure inputs have 16px font size to prevent iOS zoom */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 
   form#reservationForm {
-    padding: 12px;
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-sizing: border-box;
   }
 
   .dialog-actions {
+    margin-top: auto;
+    /* Push to bottom */
+    padding-top: 16px;
     flex-wrap: wrap;
     gap: 8px;
+    flex-shrink: 0;
   }
 
   .dialog-actions button {
