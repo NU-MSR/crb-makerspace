@@ -648,18 +648,32 @@ select {
   }
 
   .dialog-actions {
+    margin: 0;
     margin-top: auto;
     /* Push to bottom */
-    padding-top: 16px;
-    flex-wrap: wrap;
-    gap: 8px;
+    padding: 16px 0 0 0;
+    /* Top padding only, no side padding (which might come from menu defaults) */
+    flex-wrap: nowrap;
+    /* Force single row */
+    gap: 12px;
     flex-shrink: 0;
+    display: flex;
+    /* Ensure flex is active */
+    width: 100%;
+  }
+
+  /* Reset menu default padding if browser applies it */
+  menu.dialog-actions {
+    padding-inline-start: 0;
   }
 
   .dialog-actions button {
-    flex: 1 1 auto;
-    min-width: 100px;
-    max-width: 100%;
+    flex: 1 1 0;
+    /* Grow, shrink, and start from 0 basis to ensure equality */
+    width: 100%;
+    min-width: 0;
+    /* Allow shrinking if needed */
+    max-width: none;
   }
 
   /* Larger touch targets for resize handles on mobile */
