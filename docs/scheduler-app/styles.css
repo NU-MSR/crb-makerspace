@@ -507,6 +507,8 @@ select {
   appearance: none;
   background-color: #fff;
   /* ensure background is white after appearance removal */
+  color: var(--text);
+  /* Force text color to match theme (overriding iOS blue default) */
 }
 
 /* Restore arrow for selects since appearance:none removes it */
