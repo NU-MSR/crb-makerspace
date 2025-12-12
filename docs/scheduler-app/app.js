@@ -483,6 +483,13 @@ resStart.addEventListener('change', () => {
   calculateEndTime();
 });
 resDuration.addEventListener('input', calculateEndTime);
+resDuration.addEventListener('change', () => {
+  const val = parseFloat(resDuration.value);
+  if (!isNaN(val)) {
+    resDuration.value = Math.ceil(val / 0.5) * 0.5;
+  }
+  calculateEndTime();
+});
 
 // Toggle "Other" text inputs when select values change
 resLab.addEventListener('change', toggleOtherInputs);
