@@ -478,18 +478,7 @@ function openReservationDialog() {
 
 // Update end time display when start or duration changes
 resStart.addEventListener('input', calculateEndTime);
-resStart.addEventListener('change', () => {
-  resStart.value = clampTo30(resStart.value);
-  calculateEndTime();
-});
 resDuration.addEventListener('input', calculateEndTime);
-resDuration.addEventListener('change', () => {
-  const val = parseFloat(resDuration.value);
-  if (!isNaN(val)) {
-    resDuration.value = Math.ceil(val / 0.5) * 0.5;
-  }
-  calculateEndTime();
-});
 
 // Toggle "Other" text inputs when select values change
 resLab.addEventListener('change', toggleOtherInputs);
@@ -501,13 +490,13 @@ function closeDialog() {
 }
 
 function validateForm() {
-  const start = clampTo30(resStart.value);
-  resStart.value = start;
+  const start = resStart.value;
+  // resStart.value = start; // No longer needed
   const durationHours = parseFloat(resDuration.value) || 0;
-  if (durationHours < 0.5) return 'Duration must be at least 0.5 hours';
+  if (durationHours <= 0) return 'Duration must be positive';
   if (durationHours > 168) return 'Duration cannot exceed 168 hours';
-  // Ensure duration is in 0.5 hour increments
-  if (durationHours % 0.5 !== 0) return 'Duration must be in 30-minute increments';
+  // Ensure duration is in 0.5 hour increments - REMOVED restriction
+  // if (durationHours % 0.5 !== 0) return 'Duration must be in 30-minute increments';
 
   const startMin = minutesSinceMidnight(start);
   const durationMin = Math.round(durationHours * 60);
