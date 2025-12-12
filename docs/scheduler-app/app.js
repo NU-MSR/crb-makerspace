@@ -478,6 +478,10 @@ function openReservationDialog() {
 
 // Update end time display when start or duration changes
 resStart.addEventListener('input', calculateEndTime);
+resStart.addEventListener('change', () => {
+  resStart.value = clampTo30(resStart.value);
+  calculateEndTime();
+});
 resDuration.addEventListener('input', calculateEndTime);
 
 // Toggle "Other" text inputs when select values change
