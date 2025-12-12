@@ -67,6 +67,7 @@ let state = {
   date: getCurrentDateInChicago(),
   reservations: [], // [{printer,start,end}]
   printers: [], // [{id, display_name, printer_type, status, notes}]
+  visiblePrinters: [], // [subset of printers to display]
   selection: null,  // {printer, startMin, endMin}
   drag: null,        // {mode:'creating'|'resize-top'|'resize-bottom', printer, startMin, endMin}
   isScrolling: false // Track if user is currently scrolling
@@ -153,8 +154,8 @@ function buildPrinters() {
   printersHeader.innerHTML = '';
   printersWrap.innerHTML = '';
 
-  // Use operational printers from state
-  const operationalPrinters = state.printers.filter(p => p.status === 'operational');
+  // Use operational printers from visiblePrinters (which respects URL filters)
+  const operationalPrinters = state.visiblePrinters.filter(p => p.status === 'operational');
 
   operationalPrinters.forEach(pr => {
     // Header in separate row
@@ -258,8 +259,8 @@ function renderReservations() {
   const timeSlots = timeCol.querySelector('.time-col-slots');
   const timeRowHeight = timeSlots?.querySelector('.time')?.getBoundingClientRect().height || 28;
 
-  // For each printer column, overlay blocks
-  const operationalPrinters = state.printers.filter(p => p.status === 'operational');
+  // For each visible printer column, overlay blocks
+  const operationalPrinters = state.visiblePrinters.filter(p => p.status === 'operational');
   operationalPrinters.forEach((pr, colIdx) => {
     const col = printersWrap.children[colIdx]; if (!col) return;
     const slots = col.querySelector('.slots');
@@ -333,10 +334,13 @@ async function fetchPrinters() {
     if (error) throw error;
 
     state.printers = data || [];
+    // Initialize visible printers to all by default
+    state.visiblePrinters = state.printers;
     return data || [];
   } catch (err) {
     console.error('Error fetching printers:', err);
     state.printers = [];
+    state.visiblePrinters = [];
     return [];
   }
 }
@@ -447,7 +451,7 @@ function toggleOtherInputs() {
 }
 
 function openReservationDialog() {
-  // Seed select options from state.printers
+  // Seed select options from state.printers (ALL printers, not just visible ones)
   resPrinter.innerHTML = state.printers
     .filter(p => p.status === 'operational')
     .map(p => `<option>${p.display_name}</option>`)
@@ -456,7 +460,7 @@ function openReservationDialog() {
   resMaterial.innerHTML = CONFIG.MATERIALS.map(p => `<option>${p}</option>`).join('');
 
   const sel = state.selection || {
-    printer: state.printers[0]?.display_name || '',
+    printer: state.visiblePrinters[0]?.display_name || '', // Use visiblePrinters for default selection
     startMin: 8 * 60,
     endMin: 8 * 60 + 60
   };
@@ -678,9 +682,15 @@ function getUrlParams() {
 
 function filterPrintersFromParams() {
   const { printerNames, printerIds } = getUrlParams();
-  if (printerNames.length === 0 && printerIds.length === 0) return;
 
-  state.printers = state.printers.filter(p => {
+  if (printerNames.length === 0 && printerIds.length === 0) {
+    // If no filters, show all printers
+    state.visiblePrinters = state.printers;
+    return;
+  }
+
+  // Filter visible printers based on params, but keep state.printers intact
+  state.visiblePrinters = state.printers.filter(p => {
     // Check if printer matches any of the provided names or IDs
     // Case-insensitive match for names to be user-friendly
     const nameMatch = printerNames.some(name => p.display_name.toLowerCase() === name.toLowerCase());
