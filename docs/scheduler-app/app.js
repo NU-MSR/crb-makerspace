@@ -665,9 +665,93 @@ function scrollToCurrentTime() {
   }, 100);
 }
 
+// URL Parameter Handling
+
+function getUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const newReservation = params.get('new-reservation') === 'true';
+  // Split by comma and trim whitespace
+  const printerNames = (params.get('printer-name') || '').split(',').map(s => s.trim()).filter(Boolean);
+  const printerIds = (params.get('printer-id') || '').split(',').map(s => s.trim()).filter(Boolean);
+  return { newReservation, printerNames, printerIds };
+}
+
+function filterPrintersFromParams() {
+  const { printerNames, printerIds } = getUrlParams();
+  if (printerNames.length === 0 && printerIds.length === 0) return;
+
+  state.printers = state.printers.filter(p => {
+    // Check if printer matches any of the provided names or IDs
+    // Case-insensitive match for names to be user-friendly
+    const nameMatch = printerNames.some(name => p.display_name.toLowerCase() === name.toLowerCase());
+    const idMatch = printerIds.includes(p.id);
+    return nameMatch || idMatch;
+  });
+}
+
+function handleAutoOpenParams() {
+  const { newReservation, printerNames, printerIds } = getUrlParams();
+  if (!newReservation) return;
+
+  // Determine which printer to pre-select
+  // Prioritize the first one specified in params, if available in the filtered list
+  let targetPrinterName = null;
+
+  // Try to find a match from URL params in the available (filtered) printers
+  if (printerNames.length > 0) {
+    const match = state.printers.find(p => p.display_name.toLowerCase() === printerNames[0].toLowerCase());
+    if (match) targetPrinterName = match.display_name;
+  } else if (printerIds.length > 0) {
+    const match = state.printers.find(p => p.id === printerIds[0]);
+    if (match) targetPrinterName = match.display_name;
+  }
+
+  // If no specific printer requested or found, default to first available (standard behavior)
+  if (!targetPrinterName && state.printers.length > 0) {
+    targetPrinterName = state.printers[0].display_name;
+  }
+
+  if (targetPrinterName) {
+    // Set up selection for the dialog
+    // Default to next 30-minute slot from now
+    const now = new Date();
+    // Use Chicago time for logic consistency
+    const chicagoNow = new Intl.DateTimeFormat('en-US', {
+      timeZone: CONFIG.TIMEZONE,
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false
+    }).formatToParts(now);
+    const h = parseInt(chicagoNow.find(p => p.type === 'hour').value);
+    const m = parseInt(chicagoNow.find(p => p.type === 'minute').value);
+    const currentMin = h * 60 + m;
+
+    // Snap to next 30 min
+    const startMin = Math.ceil(currentMin / 30) * 30;
+    const endMin = startMin + 60; // Default 1 hour duration
+
+    state.selection = {
+      printer: targetPrinterName,
+      startMin: startMin,
+      endMin: endMin
+    };
+
+    openReservationDialog();
+  }
+}
+
 async function init() {
   // Fetch printers first
   await fetchPrinters();
+
+  // Helper for users to find printer IDs/Names for QR codes
+  console.group('Printer Information for QR Codes');
+  console.log('Use these names or IDs in your URL parameters (e.g., ?printer-name=Name)');
+  console.table(state.printers.map(p => ({ Name: p.display_name, ID: p.id, Status: p.status })));
+  console.groupEnd();
+
+  // Filter printers based on URL params
+  filterPrintersFromParams();
 
   // Populate time column and printers
   buildTimeColumn();
@@ -720,6 +804,9 @@ async function init() {
       }
     }
   });
+
+  // Handle auto-open if requested
+  handleAutoOpenParams();
 }
 
 // Populate selects at load for accessibility
