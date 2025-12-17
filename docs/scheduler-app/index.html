@@ -52,17 +52,21 @@
           <label for="resStart">Start</label>
           <input id="resStart" type="time" step="60" required />
         </div>
+      </div>
+      <div class="row">
         <div class="field">
           <label for="resDuration">Duration Estimate (h)</label>
           <input id="resDuration" type="number" min="0.1" max="168" step="0.01" value="1" required />
         </div>
-      </div>
-      <div class="row">
         <div class="field" style="opacity: 0.6;">
           <label for="resEndDisplay">End (calculated)</label>
           <input id="resEndDisplay" type="time" readonly />
           <div id="endMultiDayNote" style="font-size:12px; color: var(--muted);"></div>
         </div>
+      </div>
+
+      <div class="field">
+        <div id="conflictStatus" class="conflict-status"></div>
       </div>
       <div class="field">
         <label for="resName">Name</label>

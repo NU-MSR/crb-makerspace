@@ -418,6 +418,56 @@ function calculateEndTime() {
   if (note) { note.textContent = days > 0 ? `(+${days} day${days > 1 ? 's' : ''})` : ''; }
 }
 
+function checkConflicts() {
+  const statusEl = document.getElementById('conflictStatus');
+  if (!statusEl) return;
+
+  // Clear status if inputs are invalid or incomplete
+  if (!resStart.value || !resDuration.value || !resPrinter.value || !resDate.value) {
+    statusEl.textContent = '';
+    statusEl.className = 'conflict-status';
+    return;
+  }
+
+  // If date doesn't match current view, we can't rely on loaded reservations
+  if (resDate.value !== state.date) {
+    statusEl.textContent = 'Date changed - check on save';
+    statusEl.className = 'conflict-status'; // Neutral
+    return;
+  }
+
+  const startMin = minutesSinceMidnight(resStart.value);
+  const durationHours = parseFloat(resDuration.value) || 0;
+  const durationMin = Math.round(durationHours * 60);
+  const endMin = startMin + durationMin;
+
+  // Calculate end time for overlap check (HH:mm format isn't enough, we need minutes)
+  // Check overlap with loaded reservations
+  const hasOverlap = state.reservations.some(r => {
+    if (r.printer !== resPrinter.value) return false;
+
+    // Convert reservation times to minutes for comparison
+    const rStart = minutesSinceMidnight(r.start);
+    const rEnd = minutesSinceMidnight(r.end);
+
+    // Check overlap: (StartA < EndB) and (EndA > StartB)
+    return (startMin < rEnd) && (endMin > rStart);
+  });
+
+  if (hasOverlap) {
+    statusEl.textContent = 'Overlaps an existing reservation';
+    statusEl.className = 'conflict-status error';
+  } else {
+    statusEl.textContent = 'No conflicts';
+    statusEl.className = 'conflict-status success';
+  }
+}
+
+function onReservationInput() {
+  calculateEndTime();
+  checkConflicts();
+}
+
 function toggleOtherInputs() {
   // Show/hide Lab "Other" input
   const wasLabHidden = resLabOther.style.display === 'none' || resLabOther.style.display === '';
@@ -477,12 +527,16 @@ function openReservationDialog() {
   toggleOtherInputs();
 
   formError.textContent = '';
+  formError.textContent = '';
+  checkConflicts(); // Check immediately on open
   if (typeof dialog.showModal === 'function') dialog.showModal();
 }
 
 // Update end time display when start or duration changes
-resStart.addEventListener('input', calculateEndTime);
-resDuration.addEventListener('input', calculateEndTime);
+resStart.addEventListener('input', onReservationInput);
+resDuration.addEventListener('input', onReservationInput);
+resPrinter.addEventListener('change', checkConflicts);
+resDate.addEventListener('input', checkConflicts);
 
 // Toggle "Other" text inputs when select values change
 resLab.addEventListener('change', toggleOtherInputs);

@@ -494,7 +494,7 @@ form h2 {
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
@@ -562,9 +562,51 @@ select {
 }
 
 .error {
-  color: #b91c1c;
-  font-size: 13px;
-  min-height: 18px;
+  color: #991b1b;
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
+  text-align: center;
+}
+
+.error:empty {
+  display: none;
+}
+
+.conflict-status {
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 38px;
+  /* Match input height roughly */
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+
+.conflict-status.success {
+  color: #166534;
+  background-color: #dcfce7;
+  border-color: #166534;
+}
+
+.conflict-status.error {
+  color: #991b1b;
+  background-color: #fee2e2;
+  border-color: #ef4444;
 }
 
 /* Mobile Responsive */
