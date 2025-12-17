@@ -6,7 +6,7 @@ const CONFIG = {
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_KAlsObC8ClTx4BTY2rxvjQ_L_ECjpbT', // Replace with your Supabase publishable key
   TIMEZONE: 'America/Chicago',
   LABS: [
-    'Master of Science in Robotics (MSR)', 'Robot Design Studio (RDS)', 'Lynch', 'Colgate', 'Rubenstein',
+    'Master of Science in Robotics (MSR)', 'Lynch', 'Colgate', 'Rubenstein',
     'Argall', 'Truby', 'Hartmann', 'MacIver', 'Murphey', 'Peshkin', 'Elwin', 'Umbanhowar', 'Kriegman', 'Other'
   ],
   MATERIALS: ['PLA', 'TPU', 'PETG', 'PC', 'ABS/ASA', 'Multi-Material', 'Other']
