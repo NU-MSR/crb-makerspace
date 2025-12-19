@@ -38,7 +38,7 @@
 
   <dialog id="reservationDialog">
     <form method="dialog" id="reservationForm">
-      <h2>New Reservation</h2>
+      <h2>New 3D Printer Reservation</h2>
       <div class="field">
         <label for="resPrinter">Printer</label>
         <select id="resPrinter" required></select>
@@ -89,6 +89,10 @@
           <input id="resMaterialOther" type="text" placeholder="Specify material" maxlength="80"
             style="display:none; margin-top:6px;" />
         </div>
+      </div>
+      <div class="field">
+        <label for="resProjectPart">Project / Part</label>
+        <input id="resProjectPart" type="text" maxlength="120" />
       </div>
       <div class="field">
         <label for="resNotes">Notes</label>

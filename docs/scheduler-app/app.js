@@ -99,6 +99,7 @@ const resLab = document.getElementById('resLab');
 const resMaterial = document.getElementById('resMaterial');
 const resLabOther = document.getElementById('resLabOther');
 const resMaterialOther = document.getElementById('resMaterialOther');
+const resProjectPart = document.getElementById('resProjectPart');
 const resNotes = document.getElementById('resNotes');
 
 // Initialize controls
@@ -524,6 +525,7 @@ function openReservationDialog() {
   // Reset and toggle "Other" inputs
   resLabOther.value = '';
   resMaterialOther.value = '';
+  resProjectPart.value = '';
   toggleOtherInputs();
 
   formError.textContent = '';
@@ -628,6 +630,7 @@ async function createReservation(reservationData) {
         user_contact: reservationData.contact,
         lab: reservationData.lab,
         material: reservationData.material,
+        project_part: reservationData.project_part,
         notes: reservationData.notes,
         status: 'confirmed'
       })
@@ -671,6 +674,7 @@ form.addEventListener('submit', async (e) => {
     contact: resContact.value,
     lab: labValue,
     material: materialValue,
+    project_part: resProjectPart.value.trim(),
     notes: resNotes.value
   };
 

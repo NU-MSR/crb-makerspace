@@ -31,6 +31,7 @@ CREATE TABLE reservations (
   user_contact TEXT NOT NULL,
   lab TEXT,
   material TEXT,
+  project_part TEXT,
   notes TEXT,
   
   -- Metadata
@@ -151,9 +152,10 @@ GRANT SELECT ON public_reservations TO anon, authenticated;
 -- Seed initial printers (adjust as needed)
 -- sort_order: lower numbers appear first (left to right)
 INSERT INTO printers (display_name, printer_type, status, is_active, sort_order) VALUES
-  ('R2-3D2', 'Bambu X1C', 'operational', true, 1),
-  ('C3DPO', 'Bambu X1C', 'operational', true, 2),
-  ('PLA Trooper', 'Bambu P1S', 'operational', true, 3),
-  ('Hydra', 'Prusa XL', 'operational', true, 4)
+  ('C-3DPO', 'Bambu X1C', 'operational', true, 1),
+  ('R2-3D2', 'Bambu X1C', 'operational', true, 2),
+  ('Trooper', 'Bambu P1S', 'operational', true, 3),
+  ('Vader', 'Bambu P1S', 'operational', true, 4),
+  ('Hydra', 'Prusa XL', 'operational', true, 5)
 ON CONFLICT (display_name) DO NOTHING;
 
