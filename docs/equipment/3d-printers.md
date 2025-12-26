@@ -20,7 +20,7 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 - Keep hands, hair, and clothing away from moving parts. Tie back long hair and secure loose sleeves or jewelry.
 - **Use only approved materials.** PLA is the default; other filaments must be approved by staff due to fumes and print settings.
 - Ensure that the first layer prints correctly before leaving.
-- **Do not use metal tools on print surfaces.** They can damage the finish and affect adhesion. Use the provided plastic tools to remove parts and adhesives as directed.
+- **Avoid using metal tools on print surfaces.** They can damage the surface layer and affect adhesion. Use the provided plastic tools to remove parts and adhesives as directed.
 - If something seems wrong (unusual noises, smoke/odors, spaghetti print), pause the job and notify staff immediately.
 - Know how to pause/stop. Familiarize yourself with the emergency stop/pause on the specific printer before starting.
 - Remove parts, replace print bed, and tidy up when finished.
@@ -29,15 +29,15 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 | Device | Image | Resources | Notes |
 | --- | --- | --- | --- |
-| Bambu Lab X1 Carbon | ![Bambu Lab X1 Carbon](../assets/bambu-x1c.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/x1/manual) | High speed FDM printing. Support for up to 4 materials with AMS. |
-| Bambu Lab P1S | ![Bambu Lab P1S](../assets/bambu-p1s.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/p1/manual) | High speed FDM workhorse. Great for general purpose prints in PLA. |
+| Bambu Lab X1 Carbon | ![Bambu Lab X1 Carbon](../assets/bambu-x1c.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/x1/manual) | High speed FDM printing. Support for up to 4 materials with AMS (but less effiecient than Prusa XL). |
+| Bambu Lab P1S | ![Bambu Lab P1S](../assets/bambu-p1s.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/p1/manual) | High speed FDM workhorse. Great for general purpose prints. |
 | Bambu Lab A1 mini | ![Bambu Lab A1 mini](../assets/bambu-a1-mini.jpg){ width="200" } | [Manual](https://wiki.bambulab.com/en/a1-mini) | Smallest print volume. AMS Lite available. |
 | Original Prusa XL | ![Original Prusa XL](../assets/prusa-xl.jpg){ width="200" } | [Manual](https://help.prusa3d.com/product/xl) | Largest print volume. Multi-material support with 5 independent printheads. |
 | Ultimaker 3 | ![Ultimaker 3](../assets/ultimaker-3.jpg){ width="200" } | [Manual](../manuals/ultimaker-3-manual.pdf) | Dual nozzle printing. Compatible with large Ultimaker library of materials. |
 
 ## Materials
 
-Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request. We usually use a 0.4mm nozzle, though smaller or larger nozzles may be available if needed for specific projects.
+Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request. We usually use a 0.4mm nozzle, though smaller or larger nozzles may be available if needed for specific projects. [This filament guide](https://bambulab.com/en-us/filament/guide) provides a high level comparison of the properties of different FDM filaments.
 
 **Do not attempt to change or reload filaments yourself without authorization.** Ask for assistance if a change or replacement is needed.
 
