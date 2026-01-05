@@ -9,7 +9,7 @@ const CONFIG = {
     'Master of Science in Robotics (MSR)', 'Lynch', 'Colgate', 'Rubenstein',
     'Argall', 'Truby', 'Hartmann', 'MacIver', 'Murphey', 'Peshkin', 'Elwin', 'Umbanhowar', 'Kriegman', 'Other'
   ],
-  MATERIALS: ['PLA', 'TPU', 'PETG', 'PC', 'ABS/ASA', 'Multi-Material', 'Other']
+  MATERIALS: ['PLA', 'TPU', 'PETG', 'PC', 'Multi-Material', 'Other']
 };
 
 // Initialize Supabase client
