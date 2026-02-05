@@ -37,7 +37,11 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request. We usually use a 0.4mm nozzle, though smaller or larger nozzles may be available if needed for specific projects. [This filament guide](https://bambulab.com/en-us/filament/guide) provides a high level comparison of the properties of different FDM filaments.
 
+### Changing Filaments
+
 **Do not attempt to change or reload filaments yourself without authorization.** Ask for assistance if a change or replacement is needed.
+
+When using a refill without a spool, be sure to follow [instructions](https://www.youtube.com/watch?v=8MMZstVnBOY) carefully to prevent issues with the filament wrapping.
 
 ## Guide
 
