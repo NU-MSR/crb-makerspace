@@ -122,10 +122,19 @@ CREATE POLICY "Reservations are viewable by everyone (without PII)"
   ON reservations FOR SELECT
   USING (true);
 
--- Reservations: Public can create
+-- Reservations: Public can create (with validation)
 CREATE POLICY "Anyone can create reservations"
   ON reservations FOR INSERT
-  WITH CHECK (true);
+  TO anon, authenticated
+  WITH CHECK (
+    -- Printer must exist and be active/operational
+    EXISTS (
+      SELECT 1 FROM printers
+      WHERE id = printer_id
+        AND is_active = true
+        AND status = 'operational'
+    )
+  );
 
 -- View that excludes PII and joins with printers
 -- Created as SECURITY INVOKER (default) to ensure RLS policies are enforced for the querying user
