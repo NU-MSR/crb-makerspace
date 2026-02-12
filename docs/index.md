@@ -6,7 +6,7 @@ Welcome to the website for the Makerspace / Machine Shop / Prototyping Lab for t
 
 ![Makerspace overview](assets/lab-overview.jpg)
 
-## What’s here
+## Equipment & Resources
 
 - Hand tools and basic power tools
 - Fasteners and common components
@@ -14,8 +14,8 @@ Welcome to the website for the Makerspace / Machine Shop / Prototyping Lab for t
 - Machine tools
     - Drill press
     - Bandsaws
-    - Mini‑mill
-    - Mini‑lathe
+    - Mini-mill
+    - Mini-lathe
     - Mini-CNC
     - Laser cutter (acrylic only)
 - Electronics benches with soldering stations, power supplies, scopes, meters, etc.
@@ -26,10 +26,11 @@ The CRB Makerspace is for students, staff, and faculty of the [Center for Roboti
 
 ## Getting started
 
-1. Review and agree to the [CRB Makerspace Policies](policies.md).
-2. [Arrange](training.md) and complete orientation with the Makerspace Manager.
-3. Request keycard access after training is approved.
-4. Build cool things (while following all procedures and safety instructions).
+1. Get approval from your PI, PhD student, or postdoc to use the Makerspace.
+2. Review and agree to the [CRB Makerspace Policies](policies.md).
+3. [Arrange](training.md) and complete orientation with the Makerspace Manager.
+4. [Request](https://forms.gle/EH5W5A1yqQB9HeNMA) keycard access after training is complete.
+5. Build cool things (while following all procedures and safety instructions).
 
 ## Location
 
