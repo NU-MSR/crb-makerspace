@@ -24,8 +24,14 @@ function minutesSinceMidnight(hhmm) {
 function hhmmFromMinutes(min) {
   const h = Math.floor(min / 60); const m = min % 60; return `${pad2(h)}:${pad2(m)}`;
 }
-function clampTo30(hhmm) {
-  const m = minutesSinceMidnight(hhmm); const snapped = Math.round(m / 30) * 30; return hhmmFromMinutes(snapped);
+function getCurrentMinutesInChicago() {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE, hour: '2-digit', minute: '2-digit', hour12: false
+  }).formatToParts(now);
+  const h = parseInt(parts.find(p => p.type === 'hour').value);
+  const m = parseInt(parts.find(p => p.type === 'minute').value);
+  return h * 60 + m;
 }
 
 // Get current date in Chicago timezone
@@ -510,10 +516,11 @@ function openReservationDialog() {
   resLab.innerHTML = CONFIG.LABS.map(p => `<option>${p}</option>`).join('');
   resMaterial.innerHTML = CONFIG.MATERIALS.map(p => `<option>${p}</option>`).join('');
 
+  const nowMin = getCurrentMinutesInChicago();
   const sel = state.selection || {
     printer: state.visiblePrinters[0]?.display_name || '', // Use visiblePrinters for default selection
-    startMin: 8 * 60,
-    endMin: 8 * 60 + 60
+    startMin: nowMin,
+    endMin: nowMin + 60
   };
   resPrinter.value = sel.printer;
   resDate.value = state.date;
@@ -780,22 +787,8 @@ function handleAutoOpenParams() {
   }
 
   if (targetPrinterName) {
-    // Set up selection for the dialog
-    // Default to next 30-minute slot from now
-    const now = new Date();
-    // Use Chicago time for logic consistency
-    const chicagoNow = new Intl.DateTimeFormat('en-US', {
-      timeZone: CONFIG.TIMEZONE,
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: false
-    }).formatToParts(now);
-    const h = parseInt(chicagoNow.find(p => p.type === 'hour').value);
-    const m = parseInt(chicagoNow.find(p => p.type === 'minute').value);
-    const currentMin = h * 60 + m;
-
-    // Snap to next 30 min
-    const startMin = Math.ceil(currentMin / 30) * 30;
+    // Set up selection for the dialog using current time
+    const startMin = getCurrentMinutesInChicago();
     const endMin = startMin + 60; // Default 1 hour duration
 
     state.selection = {
@@ -915,8 +908,9 @@ function attachPointerHandlers(slotsEl, printer) {
   }
   function yToMinutes(clientY) {
     const y = clientY - rect.top;
-    const rows = Math.max(0, Math.min(48, Math.round(y / rowHeight)));
-    return rows * 30;
+    const totalHeight = rowHeight * 48;
+    const minutes = Math.max(0, Math.min(1440, Math.round((y / totalHeight) * 1440)));
+    return minutes;
   }
   function onPointerDown(ev) {
     if (ev.button !== 0 && ev.pointerType !== 'touch') return;
@@ -1087,8 +1081,8 @@ function startResize(ev, printer, mode, slotsEl) {
   const first = slotsEl.querySelector('.slot');
   const rowHeight = first ? first.getBoundingClientRect().height : 28;
   const y = ev.clientY - rect.top;
-  const rows = Math.max(0, Math.min(48, Math.round(y / rowHeight)));
-  const curMin = rows * 30;
+  const totalHeight = rowHeight * 48;
+  const curMin = Math.max(0, Math.min(1440, Math.round((y / totalHeight) * 1440)));
 
   state.drag = {
     mode,
