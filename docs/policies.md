@@ -39,7 +39,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - Safety glasses must be worn any time management requires it.
 - Masks are available for dust/particle-generating activities. Use local fume extraction when soldering or cutting materials that generate fumes.
 - Use hearing protection as posted or directed.
-- Gloves are available when using hand tools. **Do not wear gloves near rotating machine tools.**
+- Gloves are available when using hand tools. **Do not wear gloves near rotating machine tools.** A glove can catch on a spinning bit, blade, or chuck and pull your hand into the machine far faster than you can react.
 
 !!! note ""
 
