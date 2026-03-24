@@ -17,15 +17,6 @@ const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_PUBLISHABLE_K
 
 // Utilities
 // Format date as YYYY-MM-DD in Chicago timezone (avoids UTC date shift near midnight)
-function fmtDateInput(d) {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit'
-  }).formatToParts(d);
-  const y = parts.find(p => p.type === 'year').value;
-  const m = parts.find(p => p.type === 'month').value;
-  const dd = parts.find(p => p.type === 'day').value;
-  return `${y}-${m}-${dd}`;
-}
 // Get the current UTC offset string for Chicago (e.g. "-05:00" CDT or "-06:00" CST)
 function getChicagoOffset(date) {
   const utc = date.getTime();
@@ -39,6 +30,12 @@ function getChicagoOffset(date) {
   return `${sign}${h}:${m}`;
 }
 const pad2 = (n) => String(n).padStart(2, '0');
+// Add days to a YYYY-MM-DD string without timezone conversion
+function addDaysToDateStr(dateStr, days) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(y, m - 1, d + days);
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
 function minutesSinceMidnight(hhmm) {
   const [h, m] = hhmm.split(':').map(Number); return h * 60 + m;
 }
@@ -147,7 +144,7 @@ function initControls() {
   nextDayBtn.addEventListener('click', () => { shiftDate(1); });
 }
 function shiftDate(delta) {
-  const d = new Date(state.date); d.setDate(d.getDate() + delta); state.date = fmtDateInput(d); datePicker.value = state.date; refresh();
+  state.date = addDaysToDateStr(state.date, delta); datePicker.value = state.date; refresh();
 }
 
 function buildTimeColumn() {
@@ -684,9 +681,7 @@ form.addEventListener('submit', async (e) => {
   const endAbsMin = startMin + durationMin;
   const end = hhmmFromMinutes(endAbsMin % (24 * 60));
   const addDays = Math.floor(endAbsMin / (24 * 60));
-  const startDateObj = new Date(resDate.value + 'T12:00:00');
-  startDateObj.setDate(startDateObj.getDate() + addDays);
-  const endDateStr = fmtDateInput(startDateObj);
+  const endDateStr = addDaysToDateStr(resDate.value, addDays);
 
   // Use "Other" text input values if "Other" is selected, otherwise use select value
   const labValue = resLab.value === 'Other' ? resLabOther.value.trim() : resLab.value;
