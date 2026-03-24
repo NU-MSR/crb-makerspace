@@ -19,15 +19,13 @@ const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_PUBLISHABLE_K
 // Format date as YYYY-MM-DD in Chicago timezone (avoids UTC date shift near midnight)
 // Get the current UTC offset string for Chicago (e.g. "-05:00" CDT or "-06:00" CST)
 function getChicagoOffset(date) {
-  const utc = date.getTime();
-  const chicagoStr = date.toLocaleString('en-US', { timeZone: CONFIG.TIMEZONE });
-  const chicagoTime = new Date(chicagoStr).getTime();
-  const offsetMin = Math.round((chicagoTime - utc) / 60000);
-  const sign = offsetMin >= 0 ? '+' : '-';
-  const absMin = Math.abs(offsetMin);
-  const h = String(Math.floor(absMin / 60)).padStart(2, '0');
-  const m = String(absMin % 60).padStart(2, '0');
-  return `${sign}${h}:${m}`;
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE,
+    timeZoneName: 'longOffset'
+  }).formatToParts(date);
+  const tz = parts.find(p => p.type === 'timeZoneName').value;
+  // tz is like "GMT-05:00" or "GMT-06:00"
+  return tz.replace('GMT', '') || '+00:00';
 }
 const pad2 = (n) => String(n).padStart(2, '0');
 // Add days to a YYYY-MM-DD string without timezone conversion
@@ -619,13 +617,7 @@ async function createReservation(reservationData) {
     const endTime = reservationData.end; // HH:mm
     const endDateStr = reservationData.endDate || dateStr; // YYYY-MM-DD
 
-    // Create timestamps in Chicago timezone
-    // Create Date objects assuming the date/time strings are in Chicago time
-    // Then convert to ISO string for PostgreSQL
-    const startAt = new Date(`${dateStr}T${startTime}:00`);
-    const endAt = new Date(`${endDateStr}T${endTime}:00`);
-
-    // Use the correct Chicago timezone offset (handles DST automatically)
+    // Build Chicago-offset ISO strings for PostgreSQL
     const startOffset = getChicagoOffset(new Date(`${dateStr}T${startTime}:00`));
     const endOffset = getChicagoOffset(new Date(`${endDateStr}T${endTime}:00`));
     const startAtISO = `${dateStr}T${startTime}:00${startOffset}`;
