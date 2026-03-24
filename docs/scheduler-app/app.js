@@ -16,7 +16,28 @@ const CONFIG = {
 const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_PUBLISHABLE_KEY);
 
 // Utilities
-const fmtDateInput = (d) => d.toISOString().slice(0, 10);
+// Format date as YYYY-MM-DD in Chicago timezone (avoids UTC date shift near midnight)
+function fmtDateInput(d) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(d);
+  const y = parts.find(p => p.type === 'year').value;
+  const m = parts.find(p => p.type === 'month').value;
+  const dd = parts.find(p => p.type === 'day').value;
+  return `${y}-${m}-${dd}`;
+}
+// Get the current UTC offset string for Chicago (e.g. "-05:00" CDT or "-06:00" CST)
+function getChicagoOffset(date) {
+  const utc = date.getTime();
+  const chicagoStr = date.toLocaleString('en-US', { timeZone: CONFIG.TIMEZONE });
+  const chicagoTime = new Date(chicagoStr).getTime();
+  const offsetMin = Math.round((chicagoTime - utc) / 60000);
+  const sign = offsetMin >= 0 ? '+' : '-';
+  const absMin = Math.abs(offsetMin);
+  const h = String(Math.floor(absMin / 60)).padStart(2, '0');
+  const m = String(absMin % 60).padStart(2, '0');
+  return `${sign}${h}:${m}`;
+}
 const pad2 = (n) => String(n).padStart(2, '0');
 function minutesSinceMidnight(hhmm) {
   const [h, m] = hhmm.split(':').map(Number); return h * 60 + m;
@@ -367,9 +388,9 @@ async function fetchReservations() {
 
     // Query reservations that overlap with this date
     // A reservation overlaps if: start_at <= endOfDay AND end_at >= startOfDay
-    // Use Chicago timezone offset (UTC-6 for standard time)
-    const startOfDay = `${dateStr}T00:00:00-06:00`;
-    const endOfDay = `${dateStr}T23:59:59-06:00`;
+    const offset = getChicagoOffset(new Date(`${dateStr}T12:00:00`));
+    const startOfDay = `${dateStr}T00:00:00${offset}`;
+    const endOfDay = `${dateStr}T23:59:59${offset}`;
 
     const { data, error } = await supabase
       .from('public_reservations')
@@ -384,9 +405,9 @@ async function fetchReservations() {
       const start = new Date(r.start_at);
       const end = new Date(r.end_at);
 
-      // Calculate time range for this specific day
-      const dayStart = new Date(`${dateStr}T00:00:00`);
-      const dayEnd = new Date(`${dateStr}T23:59:59`);
+      // Calculate time range for this specific day in Chicago timezone
+      const dayStart = new Date(`${dateStr}T00:00:00${offset}`);
+      const dayEnd = new Date(`${dateStr}T23:59:59${offset}`);
 
       let displayStart = start < dayStart ? dayStart : start;
       let displayEnd = end > dayEnd ? dayEnd : end;
@@ -607,11 +628,11 @@ async function createReservation(reservationData) {
     const startAt = new Date(`${dateStr}T${startTime}:00`);
     const endAt = new Date(`${endDateStr}T${endTime}:00`);
 
-    // Adjust for Chicago timezone offset (UTC-6 for CST, UTC-5 for CDT)
-    // For simplicity, we'll use UTC-6 (standard time) and let PostgreSQL handle DST
-    // Create a proper ISO string with timezone offset
-    const startAtISO = `${dateStr}T${startTime}:00-06:00`;
-    const endAtISO = `${endDateStr}T${endTime}:00-06:00`;
+    // Use the correct Chicago timezone offset (handles DST automatically)
+    const startOffset = getChicagoOffset(new Date(`${dateStr}T${startTime}:00`));
+    const endOffset = getChicagoOffset(new Date(`${endDateStr}T${endTime}:00`));
+    const startAtISO = `${dateStr}T${startTime}:00${startOffset}`;
+    const endAtISO = `${endDateStr}T${endTime}:00${endOffset}`;
 
     // Check for overlaps
     const { data: overlaps, error: checkError } = await supabase
