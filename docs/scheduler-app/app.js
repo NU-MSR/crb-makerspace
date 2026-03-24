@@ -684,7 +684,7 @@ form.addEventListener('submit', async (e) => {
   const endAbsMin = startMin + durationMin;
   const end = hhmmFromMinutes(endAbsMin % (24 * 60));
   const addDays = Math.floor(endAbsMin / (24 * 60));
-  const startDateObj = new Date(resDate.value);
+  const startDateObj = new Date(resDate.value + 'T12:00:00');
   startDateObj.setDate(startDateObj.getDate() + addDays);
   const endDateStr = fmtDateInput(startDateObj);
 
