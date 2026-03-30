@@ -19,6 +19,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - Report broken or malfunctioning equipment immediately. **Do not attempt repairs yourself.**
 - Leave the Makerspace cleaner and better than when you entered. **No one should know what type of tools and materials you used because your workspace should be clean.** Put away tools when done, clean up all chips/debris, and spend an additional few minutes of your time contributing to improving the state of the shared space.
 - **Do not remove tools from the space without explicit approval and a documented equipment checkout.** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, please ask management and fill out the checkout form.
+- **Do not remove complete stocks of consumable components** (e.g., tape, glue, jumper cables, specific screws) **from the space without checking them out.** Taking individual items for a project is fine, but if you need the last of something or a large quantity (like a full roll), check it out and confirm with management so supplies can be replenished.
 - No food or drink in the Makerspace.
 - Do not store project materials in the Makerspace for extended periods without explicit permission. If you leave something in the Makerspace, please label it with your name, phone number, and the time you expect to be back.
 
@@ -58,7 +59,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 ## Machine Tools
 - Formal training is required to operate the  drill press, vertical bandsaw, horizontal bandsaw, mill, lathe, and rotary tools (e.g., Dremel).
 - Training and authorization are provided by Raphael. Additional training may be required to be completed at the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
-- **Do not machine steel on the Makerspace machines.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
+- **Do not machine steel on the Makerspace machines.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html). If you need to cut a steel shaft, use a vise and hack saw to cut it by hand.
 - The drill press, bandsaws, mini‑mill, and mini‑lathe require permission from management and a key to operate. Check out the key from Raphael or authorized personnel before use and return it immediately after.
 - When using any machine tools:
     - Securely fix parts before machining.
