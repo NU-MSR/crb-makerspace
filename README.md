@@ -1,6 +1,8 @@
 ## CRB Makerspace Docs (Material for MkDocs)
 
-A lightweight documentation site built with Material for MkDocs.
+A lightweight documentation site for the Makerspace of the [Northwestern University Center for Robotics and Biosystems (CRB)](https://robotics.northwestern.edu/). Built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
+
+**Live site:** [https://nu-msr.github.io/crb-makerspace/](https://nu-msr.github.io/crb-makerspace/)
 
 ### Prerequisites
 - Python 3.9+
