@@ -49,7 +49,7 @@ When using a refill without a spool, be sure to follow [instructions](https://ww
 - Ask for assistance for changing filament.
 - Long or large prints (4+ hours) must be coordinated with Raphael.
 - Remove parts and clean the build surface when your print is done; leave the printer ready for the next user.
-- The 3D printers must be started in person. They are not connected to the network (on purpose). Set up the print with the printers software (e.g. [Bambu Studio](https://bambulab.com/en/download/studio) or [PrusaSlicer](https://www.prusa3d.com/page/prusaslicer_424/)), add the file to a microSD card or USB drive, and start the print on the device. ## Ensure the correct printer type, material, and build plate is selected for use.
+- The 3D printers must be started in person. They are not connected to the network (on purpose). Set up the print with the printers software (e.g. [Bambu Studio](https://bambulab.com/en/download/studio) or [PrusaSlicer](https://www.prusa3d.com/page/prusaslicer_424/)), add the file to a microSD card or USB drive, and start the print on the device. **Ensure the correct printer type, material, and build plate is selected for use.**
 - Watch the first layer complete before leaving. Most failures occur on the first layer.
 - Promptly remove prints when complete. **Do not use metal tools to remove parts from the print bed.** Use plastic tools instead to prevent damage to the print surfaces.
 - Clean up all pieces and reinstall the build plate in the printer before leaving.
