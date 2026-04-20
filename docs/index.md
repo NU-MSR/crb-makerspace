@@ -26,7 +26,7 @@ The CRB Makerspace is for students, staff, and faculty of the [Center for Roboti
 
 ## Getting started
 
-1. Get approval from your PI, PhD student, or postdoc to use the Makerspace.
+1. Get approval from your PI, PhD student, and/or postdoc to use the Makerspace.
 2. Review and agree to the [CRB Makerspace Policies](policies.md).
 3. [Arrange](training.md) and complete orientation with the Makerspace Manager.
 4. [Request](https://forms.gle/EH5W5A1yqQB9HeNMA) keycard access after training is complete.
