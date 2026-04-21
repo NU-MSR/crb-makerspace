@@ -492,7 +492,9 @@ function checkConflicts() {
 }
 
 function updateReserveButtonState() {
-  reserveBtn.disabled = !form.checkValidity();
+  const conflictEl = document.getElementById('conflictStatus');
+  const hasConflict = conflictEl && conflictEl.classList.contains('error');
+  reserveBtn.disabled = !form.checkValidity() || hasConflict;
 }
 
 function onReservationInput() {
