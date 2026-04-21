@@ -17,7 +17,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - **Do not use tools in the Makerspace alone.** There must be someone in the lab who can see you AND has access to the makerspace.
 - Use the right tool for the job. If you are unsure of **anything** or need refreshing on procedure, just ask! Raphael is the most expensive and useful tool in the shop. **Ask questions often.**
 - Report broken or malfunctioning equipment immediately. **Do not attempt repairs yourself.**
-- Leave the Makerspace cleaner and better than when you entered. **No one should know what type of tools and materials you used because your workspace should be clean when you leave.** Put away tools when done, clean up all chips/debris, and spend an additional few minutes of your time contributing to improving the state of the shared space.
+- Leave the Makerspace cleaner and better than when you entered. **No one should know what type of tools and materials you used because your workspace should be completely clean when you leave.** Put away tools when done, clean up all chips/debris, and spend an additional few minutes of your time contributing to improving the state of the shared space.
 - **Do not remove tools from the space without explicit approval and a documented equipment checkout.** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, please ask management and fill out the checkout form.
 - **Do not remove complete stocks of consumable components** (e.g. rolls of tape, bottles of glue, screw containers, etc.) **from the space without checking them out.** Taking stocked components for a project is fine, but if you need a large quantity (like a full roll), check it out. If you take the last of something, share with management so supplies can be replenished.
 - No food or drink in the Makerspace.
@@ -56,7 +56,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="hand-power-tools-checkbox" class="policies-checkbox"> I have read and agree to the rules around hand and power tools.
 
 ## Machine Tools
-- Formal training is required to operate the  drill press, vertical bandsaw, horizontal bandsaw, mill, lathe, and rotary tools (e.g., Dremel).
+- Formal training is required to operate the drill press, vertical bandsaw, horizontal bandsaw, mill, lathe, and rotary tools (e.g., Dremel).
 - Training and authorization are provided by Raphael. Additional training may be required to be completed at the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
 - **Do not machine steel on the Makerspace machines.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html). If you need to cut a steel shaft, you may use a vise and hack saw to cut it by hand.
 - The drill press, bandsaws, mini‑mill, and mini‑lathe require permission from management and a key to operate. Check out the key from Raphael or authorized personnel before use and return it immediately after.
@@ -89,7 +89,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - **The printer must be reserved for every print job.** This can be done [online](https://nu-msr.github.io/crb-makerspace/scheduler-app/) or using the QR code on each machine.
 - The Makerspace printers are for research and educational purposes only. No trinkets. (Personal projects can be completed at the [Corner Makery](https://design.northwestern.edu/about/design-facilities/corner-makery.html).)
 - Most printing is done in PLA. Ask management if specialized materials are needed. Filament changes should only be completed by authorized individuals.
-- Long or large prints (4+ hours) should be coordinated with managment.
+- Long or large prints (4+ hours) should be coordinated with management.
 - When your print is done, promptly remove parts, clean the build surface, and leave the printer ready for the next user.
 
 !!! note ""
