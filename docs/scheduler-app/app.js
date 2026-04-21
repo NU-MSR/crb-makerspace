@@ -123,6 +123,9 @@ const resLabOther = document.getElementById('resLabOther');
 const resMaterialOther = document.getElementById('resMaterialOther');
 const resProjectPart = document.getElementById('resProjectPart');
 const resNotes = document.getElementById('resNotes');
+const resStartNowBtn = document.getElementById('resStartNowBtn');
+const resDurationAdd30Btn = document.getElementById('resDurationAdd30Btn');
+const resDurationAdd60Btn = document.getElementById('resDurationAdd60Btn');
 
 // Initialize controls
 function initControls() {
@@ -562,6 +565,21 @@ resStart.addEventListener('input', onReservationInput);
 resDuration.addEventListener('input', onReservationInput);
 resPrinter.addEventListener('change', checkConflicts);
 resDate.addEventListener('input', checkConflicts);
+
+resStartNowBtn.addEventListener('click', () => {
+  resDate.value = getCurrentDateInChicago();
+  resStart.value = hhmmFromMinutes(getCurrentMinutesInChicago());
+  onReservationInput();
+});
+
+function addMinutesToDuration(minutes) {
+  const current = parseFloat(resDuration.value) || 0;
+  const next = Math.min(168, current + minutes / 60);
+  resDuration.value = Math.round(next * 100) / 100;
+  onReservationInput();
+}
+resDurationAdd30Btn.addEventListener('click', () => addMinutesToDuration(30));
+resDurationAdd60Btn.addEventListener('click', () => addMinutesToDuration(60));
 
 // Toggle "Other" text inputs when select values change
 resLab.addEventListener('change', toggleOtherInputs);
