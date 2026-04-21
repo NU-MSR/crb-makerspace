@@ -38,6 +38,7 @@
 
   <dialog id="reservationDialog">
     <form method="dialog" id="reservationForm">
+      <div class="form-body">
       <h2>New 3D Printer Reservation</h2>
       <div class="field">
         <label for="resPrinter">Printer</label>
@@ -99,6 +100,7 @@
         <input id="resNotes" type="text" maxlength="200" />
       </div>
       <div class="error" id="formError" role="alert" aria-live="assertive"></div>
+      </div>
       <menu class="dialog-actions">
         <button type="reset" id="cancelBtn">Cancel</button>
         <button type="submit" id="reserveBtn" value="confirm">Reserve</button>

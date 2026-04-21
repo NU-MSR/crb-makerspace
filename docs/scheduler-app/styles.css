@@ -468,6 +468,12 @@ dialog {
   border-radius: 10px;
   padding: 0;
   width: min(560px, 92vw);
+  max-height: 92vh;
+}
+
+dialog[open] {
+  display: flex;
+  flex-direction: column;
 }
 
 dialog::backdrop {
@@ -475,7 +481,19 @@ dialog::backdrop {
 }
 
 form#reservationForm {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.form-body {
   padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 form h2 {
@@ -537,9 +555,13 @@ select {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 8px;
   width: 100%;
   box-sizing: border-box;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: 12px 16px;
+  flex-shrink: 0;
 }
 
 .dialog-actions button {
@@ -693,33 +715,10 @@ select {
     font-size: 16px !important;
   }
 
-  form#reservationForm {
-    padding: 16px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    box-sizing: border-box;
-  }
-
   .dialog-actions {
-    margin: 0;
-    margin-top: auto;
-    /* Push to bottom */
-    padding: 16px 0 0 0;
-    /* Top padding only, no side padding (which might come from menu defaults) */
     flex-wrap: nowrap;
     /* Force single row */
     gap: 12px;
-    flex-shrink: 0;
-    display: flex;
-    /* Ensure flex is active */
-    width: 100%;
-  }
-
-  /* Reset menu default padding if browser applies it */
-  menu.dialog-actions {
-    padding-inline-start: 0;
   }
 
   .dialog-actions button {
