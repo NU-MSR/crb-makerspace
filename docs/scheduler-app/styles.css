@@ -606,6 +606,41 @@ select {
   border-color: var(--accent);
 }
 
+#reserveBtn:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.checkbox-field .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.checkbox-field input[type="checkbox"] {
+  -webkit-appearance: checkbox;
+  appearance: checkbox;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  flex-shrink: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
 .error {
   color: #991b1b;
   background-color: #fee2e2;

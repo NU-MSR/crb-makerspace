@@ -123,6 +123,8 @@ const resLabOther = document.getElementById('resLabOther');
 const resMaterialOther = document.getElementById('resMaterialOther');
 const resProjectPart = document.getElementById('resProjectPart');
 const resNotes = document.getElementById('resNotes');
+const resVerifyFile = document.getElementById('resVerifyFile');
+const reserveBtn = document.getElementById('reserveBtn');
 const resStartNowBtn = document.getElementById('resStartNowBtn');
 const resDurationAdd30Btn = document.getElementById('resDurationAdd30Btn');
 const resDurationAdd60Btn = document.getElementById('resDurationAdd60Btn');
@@ -489,9 +491,14 @@ function checkConflicts() {
   }
 }
 
+function updateReserveButtonState() {
+  reserveBtn.disabled = !form.checkValidity();
+}
+
 function onReservationInput() {
   calculateEndTime();
   checkConflicts();
+  updateReserveButtonState();
 }
 
 function toggleOtherInputs() {
@@ -552,11 +559,13 @@ function openReservationDialog() {
   resLabOther.value = '';
   resMaterialOther.value = '';
   resProjectPart.value = '';
+  resVerifyFile.checked = false;
   toggleOtherInputs();
 
   formError.textContent = '';
   formError.textContent = '';
   checkConflicts(); // Check immediately on open
+  updateReserveButtonState();
   if (typeof dialog.showModal === 'function') dialog.showModal();
 }
 
@@ -565,6 +574,10 @@ resStart.addEventListener('input', onReservationInput);
 resDuration.addEventListener('input', onReservationInput);
 resPrinter.addEventListener('change', checkConflicts);
 resDate.addEventListener('input', checkConflicts);
+
+// Keep Reserve button enabled/disabled in sync with form validity
+form.addEventListener('input', updateReserveButtonState);
+form.addEventListener('change', updateReserveButtonState);
 
 resStartNowBtn.addEventListener('click', () => {
   resDate.value = getCurrentDateInChicago();
