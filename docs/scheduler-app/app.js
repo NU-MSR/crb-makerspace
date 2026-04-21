@@ -594,6 +594,14 @@ function addMinutesToDuration(minutes) {
 resDurationAdd30Btn.addEventListener('click', () => addMinutesToDuration(30));
 resDurationAdd60Btn.addEventListener('click', () => addMinutesToDuration(60));
 
+const fabBtn = document.getElementById('fabNewReservation');
+if (fabBtn) {
+  fabBtn.addEventListener('click', () => {
+    state.selection = null;
+    openReservationDialog();
+  });
+}
+
 // Toggle "Other" text inputs when select values change
 resLab.addEventListener('change', toggleOtherInputs);
 resMaterial.addEventListener('change', toggleOtherInputs);

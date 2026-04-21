@@ -843,3 +843,48 @@ select {
     font-size: 10px;
   }
 }
+
+/* Floating action button */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 28px;
+  padding: 0 24px;
+  height: 56px;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(78, 42, 132, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  user-select: none;
+}
+.fab:hover {
+  background: #3d2169;
+  box-shadow: 0 6px 16px rgba(78, 42, 132, 0.45);
+}
+.fab:active {
+  transform: scale(0.97);
+}
+.fab-icon {
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .fab {
+    bottom: 20px;
+    right: 16px;
+    height: 52px;
+    padding: 0 18px;
+  }
+  .fab-label {
+    display: none;
+  }
+}
