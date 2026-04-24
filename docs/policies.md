@@ -49,7 +49,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 ## Hand and Power Tools
 - Hand and power tools can cause damage or injury. Make sure you know how to use the tool properly before use.
 - **All drilling or cutting must be done on fixed parts.** Do not drill or cut without properly securing the workpiece in a vise or appropriate fixture.
-- Return all tools to their designated locations after use. **Drill bits must be re-indexed after use.**
+- Return all tools to their designated locations after use. **Drill bits must be returned to their indexed storage positions.**
 
 !!! note ""
 
@@ -74,6 +74,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="machine-tools-checkbox" class="policies-checkbox"> I have read and agree to the rules around machine tools.
 
 ## Electronics Workstations
+- Be cautious when working around live circuits. Probing and measuring is fine, but power down and unplug before modifying components or connections.
 - Use fume extractors when soldering. The flux vapors in solder fumes can cause respiratory irritation.
 - Keep benches clean and organized. **Always clean up the space and put away tools when done.**
     - Power down soldering irons and store tools when finished.
