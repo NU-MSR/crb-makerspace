@@ -614,6 +614,11 @@ select {
   cursor: not-allowed;
 }
 
+#cancelBtn {
+  color: #e53935;
+  border-color: #e53935;
+}
+
 .checkbox-field .checkbox-label {
   display: flex;
   align-items: center;
