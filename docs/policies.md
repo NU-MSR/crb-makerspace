@@ -18,8 +18,8 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - Use the right tool for the job. If you are unsure of **anything** or need refreshing on procedure, just ask! Raphael is the most expensive and useful tool in the shop. **Ask questions often.**
 - Report broken or malfunctioning equipment immediately. **Do not attempt repairs yourself.**
 - Leave the Makerspace cleaner and better than when you entered. **No one should know what type of tools and materials you used because your workspace should be completely clean when you leave.** Put away tools when done, clean up all chips/debris, and spend an additional few minutes of your time contributing to improving the state of the shared space.
-- **Do not remove tools from the space without approval and a documented [equipment checkout](checkout.md).** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, please ask management and fill out the [checkout form](checkout.md). There is a QR code that links to the checkout form by the door. 
-- **Do not remove complete stocks of consumable components** (e.g. rolls of tape, bottles of glue, screw containers, etc.) **from the space without [checking them out](checkout.md).** Taking stocked components for a project is fine, but if you take a large quantity (like a full roll of something), please check it out. And if you use the last of something, share with management so supplies can be replenished.
+- **Do not remove tools from the space without approval and a documented [equipment checkout](checkout.md).** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, please ask management and fill out the [checkout form](checkout.md) — even if you only plan to use it for a few minutes. It helps us track where tools are and what tools are most popular. There is a QR code by the door that links to the [checkout form](checkout.md).
+- **Do not remove complete stocks of consumable components** (e.g. rolls of tape, bottles of glue, screw containers, etc.) **from the space without [checking them out](checkout.md).** Taking stocked components for a project is fine, but if you take a large quantity (like a full roll of something), please check it out and return it when you are done. If you use the last of something, share with management so supplies can be replenished.
 - No food or drink in the Makerspace.
 - Do not store project materials in the Makerspace for extended periods without explicit permission. If you leave something in the Makerspace, please label it with your name, phone number, and the time you expect to be back.
 
@@ -100,7 +100,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 
 ## CNC Machining
 - Training is mandatory before using the Carvera CNC machine. Only users who have completed the designated CNC training and received approval from Raphael may operate the machine.
-- Verify toolpaths, zeroing, tool length, and workholding before starting.
+- Verify tool positions, toolpaths, zeroing, spindle speed, feed rate, and workholding before starting.
 - Keep the enclosure door closed during operation; monitor the job at all times.
 - Vacuum chips and clean the machine and work area after use.
 
