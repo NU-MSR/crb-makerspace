@@ -89,6 +89,17 @@ body {
   transform: scale(0.96);
 }
 
+/* Menu Backdrop (catches taps/clicks outside the popover on mobile) */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+}
+
+.menu-backdrop[hidden] {
+  display: none;
+}
+
 /* Menu Popover */
 .menu-popover {
   position: fixed;

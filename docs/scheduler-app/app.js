@@ -873,9 +873,11 @@ function isMenuOpen() {
 function openMenu() {
   const btn = document.getElementById('menuButton');
   const popover = document.getElementById('menuPopover');
+  const backdrop = document.getElementById('menuBackdrop');
   if (!btn || !popover) return;
   renderMenuPrinters();
   updateShowHideAllButton();
+  if (backdrop) backdrop.hidden = false;
   popover.hidden = false;
   btn.setAttribute('aria-expanded', 'true');
   positionMenuPopover();
@@ -884,7 +886,9 @@ function openMenu() {
 function closeMenu() {
   const btn = document.getElementById('menuButton');
   const popover = document.getElementById('menuPopover');
+  const backdrop = document.getElementById('menuBackdrop');
   if (!btn || !popover) return;
+  if (backdrop) backdrop.hidden = true;
   popover.hidden = true;
   btn.setAttribute('aria-expanded', 'false');
 }
@@ -1000,11 +1004,11 @@ function setupMenu() {
     applyVisibilityChange();
   });
 
-  document.addEventListener('click', (e) => {
-    if (!isMenuOpen()) return;
-    if (popover.contains(e.target) || btn.contains(e.target)) return;
-    closeMenu();
-  });
+  const backdrop = document.getElementById('menuBackdrop');
+  if (backdrop) {
+    backdrop.addEventListener('click', closeMenu);
+    backdrop.addEventListener('touchend', (e) => { e.preventDefault(); closeMenu(); });
+  }
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isMenuOpen()) {
