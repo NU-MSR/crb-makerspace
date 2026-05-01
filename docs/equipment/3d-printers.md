@@ -35,21 +35,26 @@ The CRB Makerspace has access to several Fused Deposition Modeling (FDM) 3D prin
 
 ## Materials
 
-Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request. We usually use a 0.4mm nozzle, though smaller or larger nozzles may be available if needed for specific projects. [This filament guide](https://bambulab.com/en-us/filament/guide) provides a high level comparison of the properties of different FDM filaments.
+Parts in the CRB Makerspace are generally printed with PLA, or polylactic acid, which is a versatile, biodegradable plastic derived from renewable resources like corn starch or sugarcane. Other materials are available upon request. We usually use a 0.4mm nozzle, though smaller or larger nozzles may be available if needed for specific projects. [The Bambu Lab filament guide](https://bambulab.com/en-us/filament/guide) provides a good high level comparison of the properties of different FDM filaments.
 
 ### Changing Filaments
 
-**Do not attempt to change or reload filaments yourself without authorization.** Ask for assistance if a change or replacement is needed.
+**Do not change or reload filaments without authorization** — ask for assistance if a change is needed.
 
-When using a refill without a spool, be sure to follow [instructions](https://www.youtube.com/watch?v=8MMZstVnBOY) carefully to prevent issues with the filament wrapping.
+!!! success "Note"
+    ![Filament loading guide](../assets/filament-loading.png){ width="500" }
+
+    When using a refill without a spool, follow [instructions](https://www.youtube.com/watch?v=8MMZstVnBOY) carefully to prevent filament wrapping issues. **Be sure to align the spool's alignment block with the cardboard notch on the filament reel.** Bad loading has led to failed prints and wasted material.
 
 ## Guide
 
-- **You must schedule the printer for every print job.** This helps us track usage and provides contact information if there are issues.
-- Ask for assistance for changing filament.
-- Long or large prints (4+ hours) must be coordinated with Raphael.
-- Remove parts and clean the build surface when your print is done; leave the printer ready for the next user.
-- The 3D printers must be started in person. They are not connected to the network (on purpose). Set up the print with the printers software (e.g. [Bambu Studio](https://bambulab.com/en/download/studio) or [PrusaSlicer](https://www.prusa3d.com/page/prusaslicer_424/)), add the file to a microSD card or USB drive, and start the print on the device. **Ensure the correct printer type, material, and build plate is selected for use.**
+- Find an available printer. You can verify reservations in the scheduler below.
+- Use [Bambu Studio](https://bambulab.com/en/download/studio) or [PrusaSlicer](https://www.prusa3d.com/page/prusaslicer_424/) to set up your print. **Ensure the correct printer type, material, and build plate is selected for use.**
+- Export the sliced file onto a microSD card (Bambu Lab printers) or flash drive (Prusa XL). The 3D printers must be started in person. They are not connected to the network (on purpose). 
+- Scan the QR code on the printer to reserve your print time. **You must schedule the printer for every print job.** This helps us track usage and provides contact information if there are issues.
+    - Long or large prints (4+ hours) must be coordinated with Raphael.
+- Verify the right filament is in the printer. Ask for assistance to change filament.
+- Insert the microSD card or USB drive, select your sliced file, and start the print on the device. 
 - Watch the first layer complete before leaving. Most failures occur on the first layer.
 - Promptly remove prints when complete. **Do not use metal tools to remove parts from the print bed.** Use plastic tools instead to prevent damage to the print surfaces.
 - Clean up all pieces and reinstall the build plate in the printer before leaving.
