@@ -850,6 +850,173 @@ function handleAutoOpenParams() {
   }
 }
 
+// Menu
+
+const EYE_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>';
+
+const EYE_OFF_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>';
+
+function positionMenuPopover() {
+  const btn = document.getElementById('menuButton');
+  const popover = document.getElementById('menuPopover');
+  if (!btn || !popover || popover.hidden) return;
+  const rect = btn.getBoundingClientRect();
+  popover.style.top = `${rect.bottom + 4}px`;
+  popover.style.left = `${rect.left}px`;
+}
+
+function isMenuOpen() {
+  const popover = document.getElementById('menuPopover');
+  return popover && !popover.hidden;
+}
+
+function openMenu() {
+  const btn = document.getElementById('menuButton');
+  const popover = document.getElementById('menuPopover');
+  if (!btn || !popover) return;
+  renderMenuPrinters();
+  updateShowHideAllButton();
+  popover.hidden = false;
+  btn.setAttribute('aria-expanded', 'true');
+  positionMenuPopover();
+}
+
+function closeMenu() {
+  const btn = document.getElementById('menuButton');
+  const popover = document.getElementById('menuPopover');
+  if (!btn || !popover) return;
+  popover.hidden = true;
+  btn.setAttribute('aria-expanded', 'false');
+}
+
+function renderMenuPrinters() {
+  const list = document.getElementById('menuPrinterList');
+  if (!list) return;
+  const visibleIds = new Set(state.visiblePrinters.map(p => p.id));
+  list.innerHTML = '';
+  state.printers.forEach(p => {
+    const row = document.createElement('label');
+    row.className = 'menu-printer-row';
+
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'printer-label';
+    labelSpan.textContent = p.display_name;
+    row.appendChild(labelSpan);
+
+    const toggle = document.createElement('span');
+    toggle.className = 'toggle';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = visibleIds.has(p.id);
+    checkbox.dataset.printerId = p.id;
+    checkbox.addEventListener('change', () => {
+      togglePrinterVisibility(p.id, checkbox.checked);
+    });
+    const track = document.createElement('span');
+    track.className = 'toggle-track';
+    toggle.appendChild(checkbox);
+    toggle.appendChild(track);
+    row.appendChild(toggle);
+
+    list.appendChild(row);
+  });
+}
+
+function updateShowHideAllButton() {
+  const iconEl = document.getElementById('menuShowHideAllIcon');
+  const labelEl = document.getElementById('menuShowHideAllLabel');
+  if (!iconEl || !labelEl) return;
+  const allVisible = state.visiblePrinters.length === state.printers.length && state.printers.length > 0;
+  if (allVisible) {
+    iconEl.innerHTML = EYE_OFF_ICON_SVG;
+    labelEl.textContent = 'Hide All Printers';
+  } else {
+    iconEl.innerHTML = EYE_ICON_SVG;
+    labelEl.textContent = 'Show All Printers';
+  }
+}
+
+function togglePrinterVisibility(printerId, makeVisible) {
+  if (makeVisible) {
+    if (!state.visiblePrinters.some(p => p.id === printerId)) {
+      const printer = state.printers.find(p => p.id === printerId);
+      if (printer) {
+        const order = new Map(state.printers.map((p, i) => [p.id, i]));
+        state.visiblePrinters = [...state.visiblePrinters, printer]
+          .sort((a, b) => order.get(a.id) - order.get(b.id));
+      }
+    }
+  } else {
+    state.visiblePrinters = state.visiblePrinters.filter(p => p.id !== printerId);
+  }
+  applyVisibilityChange();
+}
+
+function applyVisibilityChange() {
+  buildPrinters();
+  renderReservations();
+  syncHeaderHeights();
+
+  const url = new URL(window.location.href);
+  url.searchParams.delete('printer-name');
+  url.searchParams.delete('printer-id');
+  if (state.visiblePrinters.length !== state.printers.length) {
+    const ids = state.visiblePrinters.map(p => p.id).join(',');
+    url.searchParams.set('printer-id', ids);
+  }
+  history.replaceState({}, '', url.toString());
+
+  updateShowHideAllButton();
+  // Refresh checkbox states (in case Show/Hide All was used)
+  const list = document.getElementById('menuPrinterList');
+  if (list) {
+    const visibleIds = new Set(state.visiblePrinters.map(p => p.id));
+    list.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = visibleIds.has(cb.dataset.printerId);
+    });
+  }
+}
+
+function setupMenu() {
+  const btn = document.getElementById('menuButton');
+  const popover = document.getElementById('menuPopover');
+  if (!btn || !popover) return;
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isMenuOpen()) closeMenu();
+    else openMenu();
+  });
+
+  document.getElementById('menuNewReservation').addEventListener('click', () => {
+    closeMenu();
+    state.selection = null;
+    openReservationDialog();
+  });
+
+  document.getElementById('menuShowHideAll').addEventListener('click', () => {
+    const allVisible = state.visiblePrinters.length === state.printers.length;
+    state.visiblePrinters = allVisible ? [] : [...state.printers];
+    applyVisibilityChange();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!isMenuOpen()) return;
+    if (popover.contains(e.target) || btn.contains(e.target)) return;
+    closeMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isMenuOpen()) {
+      closeMenu();
+      btn.focus();
+    }
+  });
+
+  window.addEventListener('resize', positionMenuPopover);
+  window.addEventListener('scroll', positionMenuPopover, true);
+}
+
 async function init() {
   // Fetch printers first
   await fetchPrinters();
@@ -867,6 +1034,7 @@ async function init() {
   buildTimeColumn();
   buildPrinters();
   initControls();
+  setupMenu();
   await refresh();
   updateStickyOffset();
   syncHeaderHeights();

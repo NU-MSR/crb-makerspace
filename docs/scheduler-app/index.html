@@ -11,7 +11,12 @@
 
 <body>
   <header class="app-header">
-    <h1>3D Printer Scheduler</h1>
+    <div class="header-left">
+      <button class="menu-button" id="menuButton" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" aria-controls="menuPopover">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+      <h1>3D Printer Scheduler</h1>
+    </div>
     <div class="controls">
       <button id="prevDay" aria-label="Previous day">◀</button>
       <button id="todayBtn">Today</button>
@@ -19,6 +24,23 @@
       <input id="datePicker" type="date" />
     </div>
   </header>
+
+  <div class="menu-popover" id="menuPopover" role="menu" hidden>
+    <button class="menu-item" id="menuNewReservation" role="menuitem" type="button">
+      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      <span>New Reservation</span>
+    </button>
+    <a class="menu-item" id="menuWebsite" role="menuitem" href="../">
+      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+      <span>Makerspace Website</span>
+    </a>
+    <button class="menu-item" id="menuShowHideAll" role="menuitem" type="button">
+      <span class="menu-icon" id="menuShowHideAllIcon" aria-hidden="true"></span>
+      <span id="menuShowHideAllLabel">Hide All Printers</span>
+    </button>
+    <div class="menu-divider"></div>
+    <div class="menu-printer-list" id="menuPrinterList"></div>
+  </div>
 
   <main class="calendar-container">
     <div class="loading" id="loading">
