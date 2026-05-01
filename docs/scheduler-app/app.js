@@ -1158,7 +1158,8 @@ function attachPointerHandlers(slotsEl, printer) {
       startMin,
       endMin,
       startX: ev.clientX,
-      startY: ev.clientY
+      startY: ev.clientY,
+      priorSelection: state.selection
     };
     // Reset scrolling flag
     state.isScrolling = false;
@@ -1205,8 +1206,9 @@ function attachPointerHandlers(slotsEl, printer) {
         // Cancel the drag - user is scrolling
         state.isScrolling = true;
         try { slotsEl.releasePointerCapture(ev.pointerId); } catch (e) { }
+        const priorSelectionOnMove = state.drag.priorSelection;
         state.drag = null;
-        state.selection = null;
+        state.selection = priorSelectionOnMove;
         renderReservations();
         // Clear scrolling flag after a short delay
         setTimeout(() => { state.isScrolling = false; }, 300);
@@ -1244,19 +1246,16 @@ function attachPointerHandlers(slotsEl, printer) {
     const movementDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     if (movementDistance > 10) {
-      // User was scrolling, clear selection and set flag
+      // User was scrolling, restore prior selection and set flag
       state.isScrolling = true;
-      state.selection = null;
+      state.selection = state.drag.priorSelection;
       // Clear scrolling flag after a short delay
       setTimeout(() => { state.isScrolling = false; }, 300);
     } else if (movementDistance <= 10 && state.drag.mode === 'creating') {
-      // Small movement - this was an intentional tap, create selection if not already created
-      // (mouse clicks already have selection created in onPointerDown)
-      if (!state.selection) {
-        const startMin = state.drag.startMin;
-        const endMin = state.drag.endMin;
-        state.selection = { printer, startMin, endMin };
-      }
+      // Small movement - this was an intentional tap, create/replace selection
+      const startMin = state.drag.startMin;
+      const endMin = state.drag.endMin;
+      state.selection = { printer, startMin, endMin };
     }
     // Don't auto-open dialog - user must click Reserve button
     state.drag = null;
@@ -1271,8 +1270,9 @@ function attachPointerHandlers(slotsEl, printer) {
     // Pointer cancel usually means scroll or gesture, treat as scroll
     if (state.drag && state.drag.printer === printer) {
       state.isScrolling = true;
+      const priorSelection = state.drag.priorSelection;
       state.drag = null;
-      state.selection = null;
+      state.selection = priorSelection;
       renderReservations();
       // Clear scrolling flag after a short delay
       setTimeout(() => { state.isScrolling = false; }, 300);
