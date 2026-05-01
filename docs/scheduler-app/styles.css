@@ -899,8 +899,9 @@ select {
 
   .controls {
     width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 4px;
   }
 
   .controls button#prevDay,
@@ -912,15 +913,15 @@ select {
   }
 
   .controls button#todayBtn {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     min-width: 60px;
     font-size: 13px;
     padding: 6px 10px;
   }
 
   .controls input[type="date"] {
-    width: 140px;
-    flex: 0 0 140px;
+    flex: 0 0 auto;
+    width: auto;
     font-size: 13px;
     padding: 6px 10px;
   }
