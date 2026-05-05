@@ -12,17 +12,22 @@ The CRB Makerspace has one [Lasersaur](https://www.lasersaur.cc/) laser cutter w
 
 !!! warning
 
-    - There is a 100 Watt Class 4 CO₂ laser containted within the Class 1 enclosure. **Never attempt to bypass the interlocks.** CO₂ lasers are invisible to the eye and can cause severe eye damage from direct or reflected laser beam if operated outside of an enclosure.
+    - 100 Watt Class 4 CO₂ laser contained within a Class 1 enclosure. CO₂ laser light is invisible to the eye and can cause severe eye damage from direct or reflected exposure outside of the enclosure. **Never defeat the safety interlocks.**
     - Fire hazard from materials igniting
+    - Toxic fume hazard from cutting the wrong materials
 
 ## Safety
 
 - **Never leave the laser cutter operating unattended.** Material may catch fire and/or the laser path may be altered or disrupted.
-- The machine contains a powerful CO₂ laser that is invisble to the human eye but can cause severe eye damage from direct or reflected exposure to the laser beam outside of the enclosure. The lid must ALWAYS be closed when operating. For safetly, the laser will turn off when the lid is opened.  **Never defeat the safety interlocks.**
+- The lid must always be closed when operating. The laser will turn off when the lid is opened. **Never defeat the safety interlocks.**
 - Always ensure proper ventilation before starting the laser cutter.
-- **Only cut acrylic on this machine.** Other materials may produce toxic fumes or catch fire.
-- If the material catches fire, stop the machine and follow fire safety precaustions. There is a fire extinguisher by the door of the Makerspace.
+- If the material catches fire, stop the machine and follow fire safety precautions. There is a fire extinguisher by the door of the Makerspace.
 - Refer to the [Northwestern University Laser Safety Manual](https://researchsafety.northwestern.edu/safety-information/laser-safety-handbook.html) for additional information.
+
+## Materials
+
+- **Only cut acrylic on this machine.** Other materials may produce toxic fumes, damage the optics, or catch fire.
+- Prohibited materials include (but are not limited to): PVC/vinyl, ABS, polycarbonate/PC, foams, and any unknown material.
 
 ## Manual
 
