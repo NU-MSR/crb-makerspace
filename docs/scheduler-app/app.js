@@ -126,6 +126,8 @@ const resNotes = document.getElementById('resNotes');
 const resVerifyFile = document.getElementById('resVerifyFile');
 const reserveBtn = document.getElementById('reserveBtn');
 const resStartNowBtn = document.getElementById('resStartNowBtn');
+const resStartAdd30Btn = document.getElementById('resStartAdd30Btn');
+const resDurationResetBtn = document.getElementById('resDurationResetBtn');
 const resDurationAdd30Btn = document.getElementById('resDurationAdd30Btn');
 const resDurationAdd60Btn = document.getElementById('resDurationAdd60Btn');
 
@@ -587,12 +589,21 @@ resStartNowBtn.addEventListener('click', () => {
   onReservationInput();
 });
 
+resStartAdd30Btn.addEventListener('click', () => {
+  const base = resStart.value
+    ? minutesSinceMidnight(resStart.value)
+    : getCurrentMinutesInChicago();
+  resStart.value = hhmmFromMinutes((base + 30) % 1440);
+  onReservationInput();
+});
+
 function addMinutesToDuration(minutes) {
   const current = parseFloat(resDuration.value) || 0;
   const next = Math.min(168, current + minutes / 60);
   resDuration.value = Math.round(next * 100) / 100;
   onReservationInput();
 }
+resDurationResetBtn.addEventListener('click', () => { resDuration.value = 0; onReservationInput(); });
 resDurationAdd30Btn.addEventListener('click', () => addMinutesToDuration(30));
 resDurationAdd60Btn.addEventListener('click', () => addMinutesToDuration(60));
 
