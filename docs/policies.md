@@ -14,12 +14,12 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 
 ## General
 - Always follow these policies, posted notices, and staff instructions.
-- **Do not use tools in the Makerspace alone.** There must be someone in the lab who can see you AND has access to the makerspace.
+- **Do not use tools in the Makerspace alone.** Use the buddy system – there must be someone in the lab who can see you AND has access to the makerspace.
 - Use the right tool for the job. If you are unsure of **anything** or need refreshing on procedure, just ask! Raphael is the most expensive and useful tool in the shop. **Ask questions often.**
-- Report broken or malfunctioning equipment immediately. **Do not attempt repairs yourself.**
 - Leave the Makerspace cleaner and better than when you entered. **No one should know what type of tools and materials you used because your workspace should be completely clean when you leave.** Put away tools when done, clean up all chips/debris, and spend an additional few minutes of your time contributing to improving the state of the shared space.
-- **Do not remove tools from the space without approval and a documented [equipment checkout](checkout.md).** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, please ask management and fill out the [checkout form](checkout.md) — even if you only plan to use it for a few minutes. It helps us track where tools are and what tools are most popular. There is a QR code by the door that links to the [checkout form](checkout.md).
-- **Do not remove complete stocks of consumable components** (e.g. rolls of tape, bottles of glue, screw containers, etc.) **from the space without [checking them out](checkout.md).** Taking stocked components for a project is fine, but if you take a large quantity (like a full roll of something), please check it out and return it when you are done. If you use the last of something, share with management so supplies can be replenished.
+- **Do not remove tools from the space without approval and a documented [equipment checkout](checkout.md).** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, ask management and fill out the [checkout form](checkout.md) — even if you only plan to use it for a few minutes. It helps us track where tools are and what tools are most popular. There is a QR code by the door that links to the [checkout form](checkout.md).
+- **Do not remove complete stocks of consumable components** (e.g. rolls of tape, bottles of glue, screw containers, etc.) **from the space without [checking them out](checkout.md).** Taking individual stocked components for a project is fine, but if you take a large quantity (like a full roll of something), check it out and return it when you are done. If you use the last of something, share with management so supplies can be replenished.
+- Report broken or malfunctioning equipment immediately. **Do not attempt repairs yourself.**
 - No food or drink in the Makerspace.
 - Do not store project materials in the Makerspace for extended periods without explicit permission. If you leave something in the Makerspace, please label it with your name, phone number, and the time you expect to be back.
 
