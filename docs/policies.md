@@ -14,7 +14,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 
 ## General
 - Always follow these policies, posted notices, and staff instructions.
-- **Do not use tools in the Makerspace alone.** Use the buddy system – there must be someone in the lab who can see you AND has access to the makerspace.
+- **Do not use tools in the Makerspace alone.** Use the buddy system – there must be someone in the lab who can see you AND has access to the Makerspace.
 - Use the right tool for the job. If you are unsure of **anything** or need refreshing on procedure, just ask! Raphael is the most expensive and useful tool in the shop. **Ask questions often.**
 - Leave the Makerspace cleaner and better than when you entered. **No one should know what type of tools and materials you used because your workspace should be completely clean when you leave.** Put away tools when done, clean up all chips/debris, and spend an additional few minutes of your time contributing to improving the state of the shared space.
 - **Do not remove tools from the space without approval and a documented [equipment checkout](checkout.md).** It is generally preferred that you work in the Makerspace when using Makerspace equipment, but if you need to borrow a tool, ask management and fill out the [checkout form](checkout.md) — even if you only plan to use it for a few minutes. It helps us track where tools are and what tools are most popular. There is a QR code by the door that links to the [checkout form](checkout.md).
@@ -28,7 +28,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="general-checkbox" class="policies-checkbox"> I have read and agree to the general rules.
 
 ## Access
-- The Makerspace is only open to authorized individuals. **Do not allow unauthorized personnel into the makerspace unless management invites them in.**
+- The Makerspace is only open to authorized individuals. **Do not allow unauthorized personnel into the Makerspace unless management invites them in.**
 - You must complete training and agree to these policies to be authorized for access.
 
 !!! note ""
@@ -37,7 +37,6 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 
 ## Personal Protective Equipment (PPE)
 - **ANSI Z87.1 safety glasses must be worn when using tools.** This includes any time you are cutting, sanding, drilling, or soldering. Safety glasses are available in a bin by the door before entering.
-- Safety glasses must be worn any time management requires it.
 - Masks are available for dust/particle-generating activities. Use local fume extraction when soldering or cutting materials that generate fumes.
 - Use hearing protection as posted or directed.
 - Gloves are available when using hand tools. **Do not wear gloves near rotating machine tools.** A glove can catch on a spinning bit, blade, or chuck and pull your hand into the machine far faster than you can react.
@@ -58,7 +57,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 ## Machine Tools
 - Formal training is required to operate the drill press, vertical bandsaw, horizontal bandsaw, mill, lathe, and rotary tools (e.g., Dremel).
     - Training and authorization are provided by Raphael. Additional training may be required to be completed at the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
-- **Do not machine steel on the Makerspace machines.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html). If you need to cut a steel shaft, you may use a vise and hack saw to cut it by hand.
+- **Do not machine steel on the Makerspace machines.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html). If you simply need to cut a steel shaft, you may use a vise and hacksaw to cut it by hand.
 - The drill press, bandsaws, mini‑mill, and mini‑lathe require permission from management and a key to operate. Check out the key from Raphael or authorized personnel before use and return it immediately after.
 - When using any machine tools:
     - Securely fix parts before machining.
@@ -77,11 +76,10 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - Be cautious when working around live circuits. Probing and measuring is fine, but power down and unplug before modifying components or connections.
 - Use fume extractors when soldering. The flux vapors in solder fumes can cause respiratory irritation.
 - Keep benches clean and organized. **Always clean up the space and put away tools when done.**
-    - Power down soldering irons and store tools when finished.
-    - Dispose of wire trimmings.
-    - Return equipment, cables, probes, and accessories to the racks/bins after use.
-    - Respool solder and wire.
-- Do not use soldering tweezers for prying, applying force, removing 3D print supports, or other tasks that stress the tips. Soldering tweezers are reserved for handling small components, wires, and SMD parts at the soldering station.
+    - Power down soldering irons and store tools.
+    - Return solder, wire, equipment, cables, probes, and accessories to their racks/bins.
+    - **Dispose of wire trimmings.**
+- Do not use soldering tweezers for prying, applying force, removing 3D print supports, or other tasks that stress the tips. Soldering tweezers are reserved for handling small components, wires, and surface-mount parts at the soldering station.
 
 !!! note ""
 
@@ -92,7 +90,7 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
 - The Makerspace printers are for research and educational purposes only. No trinkets. (Personal projects can be completed at the [Corner Makery](https://design.northwestern.edu/about/design-facilities/corner-makery.html).)
 - Most printing is done in PLA. Ask management if specialized materials are needed. Filament changes should only be completed by authorized individuals.
 - Long or large prints (4+ hours) should be coordinated with management.
-- When your print is done, promptly remove parts, clean the build surface, and leave the printer ready for the next user.
+- When your print is done, promptly remove parts, clean the build surface, and leave the printer ready for the next user. Don't forget to remove the priming line at the front of the build plate.
 
 !!! note ""
 
@@ -109,8 +107,8 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="cnc-machining-checkbox" class="policies-checkbox"> I have read and agree to the rules around CNC machining.
 
 ## Laser Cutting
-- The laser cutter may only be used after completing the laser cutting orientation.
-- **Only cut acrylic on this machine.** If you do not know what the material is, ask management.
+- The laser cutter may only be used after completing specialized laser cutting training.
+- **Only cut acrylic on this machine.** Usage of inappropriate materials may lead to toxic fumes or fire. If you do not know what the material is, ask management.
     - Prohibited materials include (but are not limited to): PVC/vinyl, ABS, polycarbonate/PC, foams, and any unknown material.
 - **Monitor the machine at all times while cutting is in progress.** Never leave the machine operating unattended.
 - Use scrap acrylic when possible before ordering a new sheet.
