@@ -55,10 +55,10 @@ All users of the CRB Makerspace (Room A277) must review these rules, formally ag
     <input type="checkbox" id="hand-power-tools-checkbox" class="policies-checkbox"> I have read and agree to the rules around hand and power tools.
 
 ## Machine Tools
-- Formal training is required to operate the drill press, vertical bandsaw, horizontal bandsaw, mill, lathe, and rotary tools (e.g., Dremel).
+- The drill press, vertical bandsaw, horizontal bandsaw, mill, and lathe require special training, permission from management for each use, and a key to operate.
     - Training and authorization are provided by Raphael. Additional training may be required to be completed at the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html).
+    - Check out the key from Raphael or authorized personnel before use and return it immediately after.
 - **Do not machine steel on the Makerspace machines.** Instead, use the equipment in the [Segal Prototyping and Fabrication Lab](https://design.northwestern.edu/about/design-facilities/prototyping-lab.html). If you simply need to cut a steel shaft, you may use a vise and hacksaw to cut it by hand.
-- The drill press, bandsaws, mini‑mill, and mini‑lathe require permission from management and a key to operate. Check out the key from Raphael or authorized personnel before use and return it immediately after.
 - When using any machine tools:
     - Securely fix parts before machining.
     - Tie back long hair to prevent entanglement.
