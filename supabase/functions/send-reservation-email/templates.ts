@@ -23,6 +23,11 @@ export interface RenderedEmail {
 }
 
 function formatDateTime(iso: string): string {
+  // Recent ICU inserts U+202F (narrow no-break space) before AM/PM. That non-ASCII
+  // byte forces denomailer to MIME-encode the Subject header, and its encoded-word
+  // output is malformed enough that some clients render the whole raw envelope as
+  // the body. Normalize U+202F (and U+00A0) to a regular space to keep Subjects
+  // ASCII-clean.
   return new Intl.DateTimeFormat('en-US', {
     timeZone: TIMEZONE,
     weekday: 'short',
@@ -33,7 +38,7 @@ function formatDateTime(iso: string): string {
     minute: '2-digit',
     hour12: true,
     timeZoneName: 'short',
-  }).format(new Date(iso));
+  }).format(new Date(iso)).replace(/[\u00a0\u202f]/g, ' ');
 }
 
 function formatDuration(startIso: string, endIso: string): string {
