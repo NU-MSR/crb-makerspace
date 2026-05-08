@@ -117,6 +117,7 @@ const resDuration = document.getElementById('resDuration');
 const resEndDisplay = document.getElementById('resEndDisplay');
 const resName = document.getElementById('resName');
 const resContact = document.getElementById('resContact');
+const resEmailOptIn = document.getElementById('resEmailOptIn');
 const resLab = document.getElementById('resLab');
 const resMaterial = document.getElementById('resMaterial');
 const resLabOther = document.getElementById('resLabOther');
@@ -697,6 +698,7 @@ async function createReservation(reservationData) {
         end_at: endAtISO,
         user_name: reservationData.name,
         user_contact: reservationData.contact,
+        email_opt_in: reservationData.email_opt_in,
         lab: reservationData.lab,
         material: reservationData.material,
         project_part: reservationData.project_part,
@@ -739,6 +741,7 @@ form.addEventListener('submit', async (e) => {
     printer: resPrinter.value,
     name: resName.value,
     contact: resContact.value,
+    email_opt_in: resEmailOptIn.checked,
     lab: labValue,
     material: materialValue,
     project_part: resProjectPart.value.trim(),

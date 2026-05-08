@@ -33,7 +33,14 @@ CREATE TABLE reservations (
   material TEXT,
   project_part TEXT,
   notes TEXT,
-  
+
+  -- Email notifications (see migration-email.sql for cron setup).
+  -- email_opt_in defaults to false so non-form inserts are opted out by
+  -- default; the form always sends an explicit value from the checkbox.
+  email_opt_in BOOLEAN NOT NULL DEFAULT false,
+  confirmation_email_sent_at TIMESTAMPTZ,
+  completion_email_sent_at TIMESTAMPTZ,
+
   -- Metadata
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now(),
@@ -50,6 +57,11 @@ CREATE INDEX idx_reservations_start_at ON reservations(start_at);
 CREATE INDEX idx_reservations_end_at ON reservations(end_at);
 CREATE INDEX idx_reservations_status ON reservations(status) WHERE status = 'confirmed';
 CREATE INDEX idx_printers_status ON printers(status) WHERE is_active = true;
+CREATE INDEX idx_reservations_pending_completion_email
+  ON reservations(end_at)
+  WHERE status = 'confirmed'
+    AND email_opt_in = true
+    AND completion_email_sent_at IS NULL;
 
 -- Function to automatically update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
