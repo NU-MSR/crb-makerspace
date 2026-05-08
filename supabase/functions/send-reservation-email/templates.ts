@@ -2,7 +2,7 @@
 // All times are formatted in America/Chicago to match the scheduler UI.
 
 const TIMEZONE = 'America/Chicago';
-const SCHEDULER_URL = Deno.env.get('SCHEDULER_URL') ?? 'https://crbmakerspace.github.io/crb-makerspace/scheduler-app/';
+const SCHEDULER_URL = Deno.env.get('SCHEDULER_URL') ?? 'https://nu-msr.github.io/crb-makerspace/scheduler-app/';
 
 export interface ReservationEmailData {
   user_name: string;
@@ -82,7 +82,7 @@ function detailsList(r: ReservationEmailData): { html: string; text: string } {
 }
 
 export function renderConfirmationEmail(r: ReservationEmailData): RenderedEmail {
-  const subject = `Makerspace 3D Printer Reservation Confirmed: ${r.printer_display_name} on ${formatDateTime(r.start_at)}`;
+  const subject = `3D Printer Reservation Confirmed: ${r.printer_display_name} on ${formatDateTime(r.start_at)}`;
   const details = detailsList(r);
   const html = `<!doctype html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#222;max-width:560px;margin:0 auto;padding:24px;">
@@ -112,7 +112,7 @@ ${SCHEDULER_URL}
 }
 
 export function renderCompletionEmail(r: ReservationEmailData): RenderedEmail {
-  const subject = `Your print on ${r.printer_display_name} should be finished`;
+  const subject = `Your 3D print on ${r.printer_display_name} should be finished`;
   const details = detailsList(r);
   const html = `<!doctype html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#222;max-width:560px;margin:0 auto;padding:24px;">
