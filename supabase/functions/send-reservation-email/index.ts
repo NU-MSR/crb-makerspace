@@ -17,6 +17,7 @@ import { SMTPClient } from 'denomailer';
 import {
   renderConfirmationEmail,
   renderCompletionEmail,
+  renderIssueReportEmail,
   type ReservationEmailData,
   type RenderedEmail,
 } from './templates.ts';
@@ -25,6 +26,22 @@ const GMAIL_USER = Deno.env.get('GMAIL_USER');
 const GMAIL_APP_PASSWORD = Deno.env.get('GMAIL_APP_PASSWORD');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const ADMIN_PASSWORD = Deno.env.get('ADMIN_PASSWORD') ?? '';
+
+const ALLOW_ORIGIN = '*';
+const CORS_HEADERS: Record<string, string> = {
+  'Access-Control-Allow-Origin': ALLOW_ORIGIN,
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, content-type, apikey, x-client-info',
+};
+const JSON_HEADERS: Record<string, string> = {
+  'Content-Type': 'application/json',
+  ...CORS_HEADERS,
+};
+
+const MIN_DURATION_MS = 30 * 60 * 1000;
+const MAX_DURATION_MS = 168 * 60 * 60 * 1000;
+const MAX_REPORT_MESSAGE_LEN = 1000;
 
 if (!GMAIL_USER || !GMAIL_APP_PASSWORD || !SUPABASE_URL || !SERVICE_ROLE_KEY) {
   throw new Error('Missing required env vars: GMAIL_USER, GMAIL_APP_PASSWORD, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
@@ -118,6 +135,132 @@ async function handleConfirmation(reservationId: string): Promise<{ ok: boolean;
   return { ok: true };
 }
 
+// Constant-time string compare to avoid timing-based credential leaks.
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return mismatch === 0;
+}
+
+function credentialMatches(reservation: { user_contact: string }, credential: string): boolean {
+  const trimmed = credential.trim();
+  if (!trimmed) return false;
+  if (ADMIN_PASSWORD && safeEqual(trimmed, ADMIN_PASSWORD)) return true;
+  return trimmed.toLowerCase() === reservation.user_contact.trim().toLowerCase();
+}
+
+interface CancelOrAdjustRow {
+  id: string;
+  printer_id: string;
+  status: string;
+  start_at: string;
+  end_at: string;
+  user_contact: string;
+}
+
+async function handleCancelReservation(reservationId: string, credential: string):
+  Promise<{ status: number; body: Record<string, unknown> }> {
+  const { data, error } = await supabase
+    .from('reservations')
+    .select('id, printer_id, status, start_at, end_at, user_contact')
+    .eq('id', reservationId)
+    .single<CancelOrAdjustRow>();
+  if (error || !data) return { status: 404, body: { ok: false, error: 'Reservation not found' } };
+  if (!credentialMatches(data, credential)) {
+    return { status: 403, body: { ok: false, error: 'Credential did not match' } };
+  }
+  if (data.status === 'cancelled') return { status: 200, body: { ok: true } };
+
+  const { error: updateError } = await supabase
+    .from('reservations')
+    .update({ status: 'cancelled' })
+    .eq('id', reservationId);
+  if (updateError) return { status: 500, body: { ok: false, error: updateError.message } };
+  return { status: 200, body: { ok: true } };
+}
+
+async function handleAdjustReservation(
+  reservationId: string,
+  newEndAtIso: string,
+): Promise<{ status: number; body: Record<string, unknown> }> {
+  const { data, error } = await supabase
+    .from('reservations')
+    .select('id, printer_id, status, start_at, end_at, user_contact')
+    .eq('id', reservationId)
+    .single<CancelOrAdjustRow>();
+  if (error || !data) return { status: 404, body: { ok: false, error: 'Reservation not found' } };
+  if (data.status !== 'confirmed') {
+    return { status: 409, body: { ok: false, error: 'Reservation is not active' } };
+  }
+
+  const startMs = new Date(data.start_at).getTime();
+  const endMs = new Date(newEndAtIso).getTime();
+  if (!Number.isFinite(endMs)) {
+    return { status: 400, body: { ok: false, error: 'Invalid end time' } };
+  }
+  const duration = endMs - startMs;
+  if (duration < MIN_DURATION_MS) {
+    return { status: 400, body: { ok: false, error: 'Duration must be at least 30 minutes' } };
+  }
+  if (duration > MAX_DURATION_MS) {
+    return { status: 400, body: { ok: false, error: 'Duration cannot exceed 168 hours' } };
+  }
+
+  const { data: overlaps, error: overlapError } = await supabase.rpc('check_reservation_overlap', {
+    p_printer_id: data.printer_id,
+    p_start_at: data.start_at,
+    p_end_at: newEndAtIso,
+    p_exclude_id: reservationId,
+  });
+  if (overlapError) return { status: 500, body: { ok: false, error: overlapError.message } };
+  if (Array.isArray(overlaps) && overlaps.length > 0) {
+    return { status: 409, body: { ok: false, error: 'Overlaps an existing reservation' } };
+  }
+
+  const { error: updateError } = await supabase
+    .from('reservations')
+    .update({ end_at: newEndAtIso })
+    .eq('id', reservationId);
+  if (updateError) return { status: 500, body: { ok: false, error: updateError.message } };
+  return { status: 200, body: { ok: true } };
+}
+
+async function handleSendIssueReport(
+  reservationId: string,
+  message: string,
+  reporterName: string | null,
+  reporterEmail: string | null,
+): Promise<{ status: number; body: Record<string, unknown> }> {
+  const trimmed = message.trim();
+  if (!trimmed) {
+    return { status: 400, body: { ok: false, error: 'Message is required' } };
+  }
+  if (trimmed.length > MAX_REPORT_MESSAGE_LEN) {
+    return { status: 400, body: { ok: false, error: 'Message is too long' } };
+  }
+
+  const { data, error } = await supabase
+    .from('reservations')
+    .select(RESERVATION_SELECT)
+    .eq('id', reservationId)
+    .single<JoinedReservation>();
+  if (error || !data) return { status: 404, body: { ok: false, error: 'Reservation not found' } };
+
+  const email = renderIssueReportEmail(toEmailData(data), {
+    message: trimmed,
+    reporter_name: reporterName ? reporterName.trim() : null,
+    reporter_email: reporterEmail ? reporterEmail.trim() : null,
+  });
+  const client = makeSmtpClient();
+  try {
+    await sendEmail(client, data.user_contact, email);
+  } finally {
+    await client.close();
+  }
+  return { status: 200, body: { ok: true } };
+}
+
 async function handleCompletionBatch(): Promise<{ sent: number; failed: number; errors: string[] }> {
   const { data, error } = await supabase
     .from('reservations')
@@ -159,48 +302,65 @@ async function handleCompletionBatch(): Promise<{ sent: number; failed: number; 
   return { sent, failed, errors };
 }
 
+function jsonResponse(status: number, body: Record<string, unknown>): Response {
+  return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+}
+
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+    return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS });
   }
 
   let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'invalid json' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(400, { error: 'invalid json' });
   }
 
   // Database webhook payload: INSERT on reservations.
   if (body.type === 'INSERT' && body.table === 'reservations' && body.record) {
     const record = body.record as { id?: string };
-    if (!record.id) {
-      return new Response(JSON.stringify({ error: 'missing record.id' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    if (!record.id) return jsonResponse(400, { error: 'missing record.id' });
     const result = await handleConfirmation(record.id);
-    return new Response(JSON.stringify(result), {
-      status: result.ok ? 200 : 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(result.ok ? 200 : 500, result);
   }
 
   // pg_cron payload.
   if (body.action === 'send_completion_emails') {
     const result = await handleCompletionBatch();
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(200, result);
   }
 
-  return new Response(JSON.stringify({ error: 'unrecognized payload' }), {
-    status: 400,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  // User actions from the calendar UI.
+  if (body.action === 'cancel_reservation') {
+    const reservationId = typeof body.reservation_id === 'string' ? body.reservation_id : '';
+    const credential = typeof body.credential === 'string' ? body.credential : '';
+    if (!reservationId || !credential) return jsonResponse(400, { ok: false, error: 'reservation_id and credential are required' });
+    const { status, body: respBody } = await handleCancelReservation(reservationId, credential);
+    return jsonResponse(status, respBody);
+  }
+
+  if (body.action === 'adjust_reservation') {
+    const reservationId = typeof body.reservation_id === 'string' ? body.reservation_id : '';
+    const endAt = typeof body.end_at === 'string' ? body.end_at : '';
+    if (!reservationId || !endAt) return jsonResponse(400, { ok: false, error: 'reservation_id and end_at are required' });
+    const { status, body: respBody } = await handleAdjustReservation(reservationId, endAt);
+    return jsonResponse(status, respBody);
+  }
+
+  if (body.action === 'send_issue_report') {
+    const reservationId = typeof body.reservation_id === 'string' ? body.reservation_id : '';
+    const message = typeof body.message === 'string' ? body.message : '';
+    if (!reservationId || !message) return jsonResponse(400, { ok: false, error: 'reservation_id and message are required' });
+    const reporterName = typeof body.reporter_name === 'string' ? body.reporter_name : null;
+    const reporterEmail = typeof body.reporter_email === 'string' ? body.reporter_email : null;
+    const { status, body: respBody } = await handleSendIssueReport(reservationId, message, reporterName, reporterEmail);
+    return jsonResponse(status, respBody);
+  }
+
+  return jsonResponse(400, { error: 'unrecognized payload' });
 });

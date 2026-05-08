@@ -111,6 +111,57 @@ ${SCHEDULER_URL}
   return { subject, html, text };
 }
 
+export interface IssueReport {
+  message: string;
+  reporter_name: string | null;
+  reporter_email: string | null;
+}
+
+export function renderIssueReportEmail(r: ReservationEmailData, report: IssueReport): RenderedEmail {
+  const subject = `Issue reported on your CRB Makerspace reservation (${r.printer_display_name})`;
+  const details = detailsList(r);
+
+  const reporterLine = report.reporter_name || report.reporter_email
+    ? `${report.reporter_name ?? 'Anonymous'}${report.reporter_email ? ` <${report.reporter_email}>` : ''}`
+    : 'Anonymous';
+
+  const messageHtml = escapeHtml(report.message).replace(/\n/g, '<br>');
+
+  const html = `<!doctype html>
+<html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#222;max-width:560px;margin:0 auto;padding:24px;">
+  <h2 style="margin:0 0 12px;">Someone flagged an issue with your reservation</h2>
+  <p>Hi ${escapeHtml(r.user_name)},</p>
+  <p>A user of the CRB Makerspace reported an issue with your reservation on <strong>${escapeHtml(r.printer_display_name)}</strong>. The message:</p>
+  <blockquote style="margin:12px 0;padding:12px 16px;background:#f6f8fa;border-left:3px solid #4E2A84;color:#222;">${messageHtml}</blockquote>
+  <p style="font-size:13px;color:#666;">Reported by: ${escapeHtml(reporterLine)}</p>
+  <p>Reservation details:</p>
+  ${details.html}
+  <p style="font-size:13px;color:#666;margin-top:20px;">If you need to act on this, you can adjust or cancel your reservation in the scheduler: <a href="${SCHEDULER_URL}">${SCHEDULER_URL}</a></p>
+  <p style="font-size:12px;color:#999;margin-top:24px;">— CRB Makerspace</p>
+</body></html>`;
+
+  const text = `Someone flagged an issue with your reservation
+
+Hi ${r.user_name},
+
+A user of the CRB Makerspace reported an issue with your reservation on ${r.printer_display_name}. The message:
+
+${report.message}
+
+Reported by: ${reporterLine}
+
+Reservation details:
+
+${details.text}
+
+If you need to act on this, you can adjust or cancel your reservation in the scheduler:
+${SCHEDULER_URL}
+
+— CRB Makerspace`;
+
+  return { subject, html, text };
+}
+
 export function renderCompletionEmail(r: ReservationEmailData): RenderedEmail {
   const subject = `Your 3D print on ${r.printer_display_name} should be finished`;
   const details = detailsList(r);

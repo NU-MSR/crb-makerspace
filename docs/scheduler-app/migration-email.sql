@@ -51,6 +51,17 @@ SELECT cron.schedule(
   $$
 );
 
+-- 6. Reservation management actions (cancel / adjust / report issue) are
+--    handled by the same Edge Function via additional `action` payloads.
+--    They require an admin password secret so a designated operator can
+--    cancel or adjust any reservation without knowing the booker's email:
+--
+--      supabase secrets set ADMIN_PASSWORD=<chosen-password>
+--
+--    Email-match auth is the primary path; ADMIN_PASSWORD is the override.
+--    No extra DB setup is needed — the function uses the service-role key
+--    that's already auto-injected.
+
 -- To remove the job later:
 -- SELECT cron.unschedule('send-completion-emails');
 

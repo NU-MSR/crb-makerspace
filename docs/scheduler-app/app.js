@@ -300,7 +300,43 @@ function renderReservations() {
     blocks.forEach(r => {
       const top = (minutesSinceMidnight(r.start) / 30) * rowHeight;
       const height = ((minutesSinceMidnight(r.end) - minutesSinceMidnight(r.start)) / 30) * rowHeight;
-      const el = document.createElement('div'); el.className = 'block'; el.style.top = `${top}px`; el.style.height = `${height}px`; el.textContent = 'Reserved';
+      const el = document.createElement('div');
+      el.className = 'block';
+      el.style.top = `${top}px`;
+      el.style.height = `${height}px`;
+      if (r.id) el.dataset.reservationId = r.id;
+
+      const label = document.createElement('span');
+      label.className = 'block-label';
+      label.textContent = 'Reserved';
+      el.appendChild(label);
+
+      if (r.id) {
+        const menuBtn = document.createElement('span');
+        menuBtn.className = 'block-menu-btn';
+        menuBtn.setAttribute('aria-hidden', 'true');
+        menuBtn.innerHTML = ELLIPSIS_ICON_SVG;
+        el.appendChild(menuBtn);
+
+        el.setAttribute('role', 'button');
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('aria-label', 'Reservation actions');
+        el.setAttribute('aria-haspopup', 'menu');
+        el.setAttribute('aria-expanded', 'false');
+        el.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+        el.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          openBlockMenu(r.id, menuBtn);
+        });
+        el.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            openBlockMenu(r.id, menuBtn);
+          }
+        });
+      }
+
       slots.appendChild(el);
     });
 
@@ -397,7 +433,7 @@ async function fetchReservations() {
 
     const { data, error } = await supabase
       .from('public_reservations')
-      .select('start_at, end_at, printer_display_name')
+      .select('id, start_at, end_at, printer_id, printer_display_name')
       .gte('end_at', startOfDay)
       .lte('start_at', endOfDay);
 
@@ -420,9 +456,13 @@ async function fetchReservations() {
       const endTime = formatTime(displayEnd);
 
       return {
+        id: r.id,
+        printer_id: r.printer_id,
         printer: r.printer_display_name,
         start: startTime,
-        end: endTime
+        end: endTime,
+        start_at: r.start_at,
+        end_at: r.end_at
       };
     });
 
@@ -1035,6 +1075,421 @@ function setupMenu() {
   window.addEventListener('scroll', positionMenuPopover, true);
 }
 
+// Per-reservation block menu
+
+const ELLIPSIS_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>';
+
+const FUNCTION_URL = `${CONFIG.SUPABASE_URL}/functions/v1/send-reservation-email`;
+
+let activeBlockMenu = null; // { reservationId, anchorEl }
+
+function isBlockMenuOpen() {
+  const popover = document.getElementById('blockMenuPopover');
+  return popover && !popover.hidden;
+}
+
+function positionBlockMenuPopover() {
+  const popover = document.getElementById('blockMenuPopover');
+  if (!popover || popover.hidden || !activeBlockMenu) return;
+  const rect = activeBlockMenu.anchorEl.getBoundingClientRect();
+  // Show below the button by default; align right edge to button's right edge.
+  const popRect = popover.getBoundingClientRect();
+  const margin = 4;
+  let top = rect.bottom + margin;
+  let left = rect.right - popRect.width;
+  // Keep within viewport
+  left = Math.max(8, Math.min(left, window.innerWidth - popRect.width - 8));
+  if (top + popRect.height > window.innerHeight - 8) {
+    // Flip above if not enough room below
+    top = Math.max(8, rect.top - popRect.height - margin);
+  }
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+}
+
+function openBlockMenu(reservationId, anchorEl) {
+  // Close the main menu if open
+  if (isMenuOpen()) closeMenu();
+  if (isBlockMenuOpen()) closeBlockMenu();
+  const popover = document.getElementById('blockMenuPopover');
+  const backdrop = document.getElementById('blockMenuBackdrop');
+  if (!popover || !backdrop) return;
+  const blockEl = anchorEl.closest('.block') || anchorEl;
+  activeBlockMenu = { reservationId, anchorEl, blockEl };
+  blockEl.setAttribute('aria-expanded', 'true');
+  backdrop.hidden = false;
+  popover.hidden = false;
+  // Position after layout — popover's size depends on its visible content
+  requestAnimationFrame(positionBlockMenuPopover);
+}
+
+function closeBlockMenu() {
+  const popover = document.getElementById('blockMenuPopover');
+  const backdrop = document.getElementById('blockMenuBackdrop');
+  if (!popover || !backdrop) return;
+  if (activeBlockMenu?.blockEl) {
+    activeBlockMenu.blockEl.setAttribute('aria-expanded', 'false');
+  }
+  activeBlockMenu = null;
+  popover.hidden = true;
+  backdrop.hidden = true;
+}
+
+function findReservation(id) {
+  return state.reservations.find(r => r.id === id) || null;
+}
+
+function formatTimeShort(iso) {
+  // Render an ISO timestamp as "Mon, Jan 1, 9:00 AM" in the configured timezone.
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE,
+    weekday: 'short', month: 'short', day: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  }).format(new Date(iso)).replace(/[  ]/g, ' ');
+}
+
+function fillReservationSummary(el, r) {
+  if (!el || !r) return;
+  el.innerHTML = '';
+  const rows = [
+    ['Printer', r.printer],
+    ['Start', formatTimeShort(r.start_at)],
+    ['End', formatTimeShort(r.end_at)],
+  ];
+  rows.forEach(([label, value]) => {
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    const lab = document.createElement('span');
+    lab.className = 'summary-label';
+    lab.textContent = label;
+    const val = document.createElement('span');
+    val.className = 'summary-value';
+    val.textContent = value;
+    row.appendChild(lab);
+    row.appendChild(val);
+    el.appendChild(row);
+  });
+}
+
+async function callEdgeFunction(body) {
+  const res = await fetch(FUNCTION_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${CONFIG.SUPABASE_PUBLISHABLE_KEY}`,
+    },
+    body: JSON.stringify(body),
+  });
+  let data = null;
+  try { data = await res.json(); } catch { /* not json */ }
+  return { status: res.status, ok: res.ok && data && data.ok !== false, data };
+}
+
+// Cancel dialog
+
+const cancelDialog = document.getElementById('cancelReservationDialog');
+const cancelForm = document.getElementById('cancelReservationForm');
+const cancelCredentialInput = document.getElementById('cancelCredential');
+const cancelFormError = document.getElementById('cancelFormError');
+const cancelSummaryEl = document.getElementById('cancelReservationSummary');
+
+function openCancelDialog(id) {
+  const r = findReservation(id);
+  if (!r) return;
+  cancelForm.dataset.reservationId = id;
+  fillReservationSummary(cancelSummaryEl, r);
+  cancelCredentialInput.value = '';
+  cancelFormError.textContent = '';
+  if (typeof cancelDialog.showModal === 'function') cancelDialog.showModal();
+}
+
+function closeCancelDialog() {
+  if (cancelDialog.open) cancelDialog.close();
+}
+
+cancelForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = cancelForm.dataset.reservationId;
+  const credential = cancelCredentialInput.value.trim();
+  if (!id || !credential) return;
+  cancelFormError.textContent = '';
+  const submitBtn = document.getElementById('cancelDialogConfirmBtn');
+  submitBtn.disabled = true;
+  try {
+    const { status, ok, data } = await callEdgeFunction({
+      action: 'cancel_reservation', reservation_id: id, credential,
+    });
+    if (!ok) {
+      cancelFormError.textContent = (data && data.error) ||
+        (status === 403 ? 'That email or password did not match this reservation.' : 'Could not cancel. Please try again.');
+      return;
+    }
+    closeCancelDialog();
+    await refresh();
+  } catch (err) {
+    cancelFormError.textContent = err?.message || 'Network error. Please try again.';
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+document.getElementById('cancelDialogKeepBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  closeCancelDialog();
+});
+
+// Adjust dialog
+
+const adjustDialog = document.getElementById('adjustReservationDialog');
+const adjustForm = document.getElementById('adjustReservationForm');
+const adjustDuration = document.getElementById('adjustDuration');
+const adjustEndDisplay = document.getElementById('adjustEndDisplay');
+const adjustConflictStatus = document.getElementById('adjustConflictStatus');
+const adjustFormError = document.getElementById('adjustFormError');
+const adjustSummaryEl = document.getElementById('adjustReservationSummary');
+const adjustSaveBtn = document.getElementById('adjustDialogSaveBtn');
+
+function adjustOriginalDurationHours() {
+  const r = findReservation(adjustForm.dataset.reservationId);
+  if (!r) return 1;
+  const ms = new Date(r.end_at).getTime() - new Date(r.start_at).getTime();
+  return Math.round((ms / 3600000) * 100) / 100;
+}
+
+function adjustComputeNewEndAt() {
+  const r = findReservation(adjustForm.dataset.reservationId);
+  if (!r) return null;
+  const hours = parseFloat(adjustDuration.value);
+  if (!isFinite(hours) || hours <= 0) return null;
+  const startMs = new Date(r.start_at).getTime();
+  const endMs = startMs + Math.round(hours * 3600000);
+  return new Date(endMs).toISOString();
+}
+
+async function adjustCheckOverlap() {
+  const r = findReservation(adjustForm.dataset.reservationId);
+  if (!r) return null;
+  const newEndAt = adjustComputeNewEndAt();
+  if (!newEndAt) return null;
+  const { data, error } = await supabase.rpc('check_reservation_overlap', {
+    p_printer_id: r.printer_id,
+    p_start_at: r.start_at,
+    p_end_at: newEndAt,
+    p_exclude_id: r.id,
+  });
+  if (error) return null;
+  return Array.isArray(data) && data.length > 0;
+}
+
+function adjustHasChange() {
+  const r = findReservation(adjustForm.dataset.reservationId);
+  const newEndAt = adjustComputeNewEndAt();
+  if (!r || !newEndAt) return false;
+  const originalMs = new Date(r.end_at).getTime() - new Date(r.start_at).getTime();
+  const newMs = new Date(newEndAt).getTime() - new Date(r.start_at).getTime();
+  return newMs !== originalMs;
+}
+
+async function adjustOnInput() {
+  const newEndAt = adjustComputeNewEndAt();
+  adjustEndDisplay.value = newEndAt ? formatTimeShort(newEndAt) : '';
+
+  const hours = parseFloat(adjustDuration.value);
+  if (!isFinite(hours) || hours < 0.5 || hours > 168) {
+    adjustConflictStatus.textContent = 'Duration must be between 30 minutes and 168 hours';
+    adjustConflictStatus.className = 'conflict-status error';
+    adjustSaveBtn.disabled = true;
+    return;
+  }
+
+  const overlap = await adjustCheckOverlap();
+  if (overlap) {
+    adjustConflictStatus.textContent = 'Overlaps an existing reservation';
+    adjustConflictStatus.className = 'conflict-status error';
+    adjustSaveBtn.disabled = true;
+  } else {
+    adjustConflictStatus.textContent = 'No conflicts';
+    adjustConflictStatus.className = 'conflict-status success';
+    adjustSaveBtn.disabled = !adjustForm.checkValidity() || !adjustHasChange();
+  }
+}
+
+function openAdjustDialog(id) {
+  const r = findReservation(id);
+  if (!r) return;
+  adjustForm.dataset.reservationId = id;
+  fillReservationSummary(adjustSummaryEl, r);
+  adjustDuration.value = adjustOriginalDurationHours();
+  adjustFormError.textContent = '';
+  if (typeof adjustDialog.showModal === 'function') adjustDialog.showModal();
+  adjustOnInput();
+}
+
+function closeAdjustDialog() {
+  if (adjustDialog.open) adjustDialog.close();
+}
+
+adjustDuration.addEventListener('input', adjustOnInput);
+adjustForm.addEventListener('input', () => {
+  if (!adjustConflictStatus.classList.contains('error')) {
+    adjustSaveBtn.disabled = !adjustForm.checkValidity() || !adjustHasChange();
+  }
+});
+
+document.getElementById('adjustDurationMinus30Btn').addEventListener('click', () => {
+  const cur = parseFloat(adjustDuration.value) || 0;
+  const next = Math.max(0.5, Math.round((cur - 0.5) * 100) / 100);
+  adjustDuration.value = next;
+  adjustOnInput();
+});
+document.getElementById('adjustDurationResetBtn').addEventListener('click', () => {
+  adjustDuration.value = adjustOriginalDurationHours();
+  adjustOnInput();
+});
+document.getElementById('adjustDurationAdd30Btn').addEventListener('click', () => {
+  const cur = parseFloat(adjustDuration.value) || 0;
+  const next = Math.min(168, Math.round((cur + 0.5) * 100) / 100);
+  adjustDuration.value = next;
+  adjustOnInput();
+});
+document.getElementById('adjustDurationAdd60Btn').addEventListener('click', () => {
+  const cur = parseFloat(adjustDuration.value) || 0;
+  const next = Math.min(168, Math.round((cur + 1) * 100) / 100);
+  adjustDuration.value = next;
+  adjustOnInput();
+});
+
+adjustForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = adjustForm.dataset.reservationId;
+  const newEndAt = adjustComputeNewEndAt();
+  if (!id || !newEndAt) return;
+  adjustFormError.textContent = '';
+  adjustSaveBtn.disabled = true;
+  try {
+    const { ok, data } = await callEdgeFunction({
+      action: 'adjust_reservation', reservation_id: id, end_at: newEndAt,
+    });
+    if (!ok) {
+      adjustFormError.textContent = (data && data.error) || 'Could not save. Please try again.';
+      return;
+    }
+    closeAdjustDialog();
+    await refresh();
+  } catch (err) {
+    adjustFormError.textContent = err?.message || 'Network error. Please try again.';
+  } finally {
+    adjustSaveBtn.disabled = false;
+  }
+});
+
+document.getElementById('adjustDialogCancelBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  closeAdjustDialog();
+});
+
+// Report Issue dialog
+
+const reportDialog = document.getElementById('reportIssueDialog');
+const reportForm = document.getElementById('reportIssueForm');
+const reportMessage = document.getElementById('reportMessage');
+const reportName = document.getElementById('reportName');
+const reportEmail = document.getElementById('reportEmail');
+const reportFormError = document.getElementById('reportFormError');
+const reportSummaryEl = document.getElementById('reportReservationSummary');
+const reportSendBtn = document.getElementById('reportDialogSendBtn');
+
+function updateReportSendButtonState() {
+  reportSendBtn.disabled = !reportMessage.value.trim();
+}
+
+function openReportDialog(id) {
+  const r = findReservation(id);
+  if (!r) return;
+  reportForm.dataset.reservationId = id;
+  fillReservationSummary(reportSummaryEl, r);
+  reportMessage.value = '';
+  reportName.value = '';
+  reportEmail.value = '';
+  reportFormError.textContent = '';
+  updateReportSendButtonState();
+  if (typeof reportDialog.showModal === 'function') reportDialog.showModal();
+}
+
+reportMessage.addEventListener('input', updateReportSendButtonState);
+
+function closeReportDialog() {
+  if (reportDialog.open) reportDialog.close();
+}
+
+reportForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = reportForm.dataset.reservationId;
+  const message = reportMessage.value.trim();
+  if (!id || !message) return;
+  reportFormError.textContent = '';
+  reportSendBtn.disabled = true;
+  try {
+    const { ok, data } = await callEdgeFunction({
+      action: 'send_issue_report',
+      reservation_id: id,
+      message,
+      reporter_name: reportName.value.trim() || null,
+      reporter_email: reportEmail.value.trim() || null,
+    });
+    if (!ok) {
+      reportFormError.textContent = (data && data.error) || 'Could not send. Please try again.';
+      return;
+    }
+    closeReportDialog();
+  } catch (err) {
+    reportFormError.textContent = err?.message || 'Network error. Please try again.';
+  } finally {
+    reportSendBtn.disabled = false;
+  }
+});
+
+document.getElementById('reportDialogCancelBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  closeReportDialog();
+});
+
+function setupBlockMenu() {
+  const popover = document.getElementById('blockMenuPopover');
+  const backdrop = document.getElementById('blockMenuBackdrop');
+  if (!popover || !backdrop) return;
+
+  document.getElementById('blockMenuReport').addEventListener('click', () => {
+    const id = activeBlockMenu?.reservationId;
+    closeBlockMenu();
+    if (id) openReportDialog(id);
+  });
+  document.getElementById('blockMenuAdjust').addEventListener('click', () => {
+    const id = activeBlockMenu?.reservationId;
+    closeBlockMenu();
+    if (id) openAdjustDialog(id);
+  });
+  document.getElementById('blockMenuCancel').addEventListener('click', () => {
+    const id = activeBlockMenu?.reservationId;
+    closeBlockMenu();
+    if (id) openCancelDialog(id);
+  });
+
+  backdrop.addEventListener('click', closeBlockMenu);
+  backdrop.addEventListener('touchend', (e) => { e.preventDefault(); closeBlockMenu(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isBlockMenuOpen()) {
+      const block = activeBlockMenu?.blockEl;
+      closeBlockMenu();
+      block?.focus();
+    }
+  });
+
+  window.addEventListener('resize', positionBlockMenuPopover);
+  window.addEventListener('scroll', positionBlockMenuPopover, true);
+}
+
 async function init() {
   // Fetch printers first
   await fetchPrinters();
@@ -1053,6 +1508,7 @@ async function init() {
   buildPrinters();
   initControls();
   setupMenu();
+  setupBlockMenu();
   await refresh();
   updateStickyOffset();
   syncHeaderHeights();
