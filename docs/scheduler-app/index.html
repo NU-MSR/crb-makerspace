@@ -26,6 +26,21 @@
   </header>
 
   <div class="menu-backdrop" id="menuBackdrop" hidden></div>
+  <div class="menu-backdrop" id="blockMenuBackdrop" hidden></div>
+  <div class="menu-popover" id="blockMenuPopover" role="menu" hidden>
+    <button class="menu-item" id="blockMenuReport" role="menuitem" type="button">
+      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v2"/><path d="M12 13h.01"/></svg>
+      <span>Report Issue</span>
+    </button>
+    <button class="menu-item" id="blockMenuAdjust" role="menuitem" type="button">
+      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/><path d="M9 13h6"/><path d="M12 10v6"/></svg>
+      <span>Adjust Reservation</span>
+    </button>
+    <button class="menu-item danger" id="blockMenuCancel" role="menuitem" type="button">
+      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      <span>Cancel Reservation</span>
+    </button>
+  </div>
   <div class="menu-popover" id="menuPopover" role="menu" hidden>
     <button class="menu-item" id="menuNewReservation" role="menuitem" type="button">
       <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -109,6 +124,13 @@
         <label for="resContact">Email</label>
         <input id="resContact" type="email" maxlength="120" required />
       </div>
+      <div class="field checkbox-field">
+        <label for="resEmailOptIn">Notifications</label>
+        <label class="checkbox-label">
+          <input id="resEmailOptIn" type="checkbox" checked />
+          Email me when my print finishes or needs attention.
+        </label>
+      </div>
       <div class="row">
         <div class="field">
           <label for="resLab">Lab/Program</label>
@@ -143,6 +165,85 @@
       <menu class="dialog-actions">
         <button type="reset" id="cancelBtn">Cancel</button>
         <button type="submit" id="reserveBtn" value="confirm">Reserve</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="cancelReservationDialog">
+    <form method="dialog" id="cancelReservationForm">
+      <div class="form-body">
+        <h2>Cancel reservation?</h2>
+        <div class="reservation-summary" id="cancelReservationSummary"></div>
+        <p class="dialog-help">This cannot be undone. The slot will become available immediately.</p>
+        <div class="field">
+          <label for="cancelCredential">Email used at reservation, or admin password</label>
+          <input id="cancelCredential" type="text" autocomplete="off" required />
+        </div>
+        <div class="error" id="cancelFormError" role="alert" aria-live="assertive"></div>
+      </div>
+      <menu class="dialog-actions">
+        <button type="reset" id="cancelDialogKeepBtn">Keep reservation</button>
+        <button type="submit" id="cancelDialogConfirmBtn" class="danger-button">Cancel reservation</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="adjustReservationDialog">
+    <form method="dialog" id="adjustReservationForm">
+      <div class="form-body">
+        <h2>Adjust Reservation</h2>
+        <div class="reservation-summary" id="adjustReservationSummary"></div>
+        <div class="field">
+          <label for="adjustDuration">Duration (h)</label>
+          <div class="input-with-btn">
+            <input id="adjustDuration" type="number" min="0.5" max="168" step="0.01" required />
+            <button type="button" id="adjustDurationMinus30Btn">−30m</button>
+            <button type="button" id="adjustDurationResetBtn">Reset</button>
+            <button type="button" id="adjustDurationAdd30Btn">+30m</button>
+            <button type="button" id="adjustDurationAdd60Btn">+1h</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="adjustEndDisplay">New end (calculated)</label>
+          <input id="adjustEndDisplay" type="text" readonly />
+        </div>
+        <div class="field">
+          <div id="adjustConflictStatus" class="conflict-status"></div>
+        </div>
+        <div class="error" id="adjustFormError" role="alert" aria-live="assertive"></div>
+      </div>
+      <menu class="dialog-actions">
+        <button type="reset" id="adjustDialogCancelBtn">Cancel</button>
+        <button type="submit" id="adjustDialogSaveBtn">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="reportIssueDialog">
+    <form method="dialog" id="reportIssueForm">
+      <div class="form-body">
+        <h2>Report an Issue</h2>
+        <div class="reservation-summary" id="reportReservationSummary"></div>
+        <p class="dialog-help">A short note will be emailed to the person who made this reservation. Please be respectful.</p>
+        <div class="field">
+          <label for="reportMessage">Message</label>
+          <textarea id="reportMessage" maxlength="1000" rows="4" required placeholder="e.g. The print appears to have failed after the first few layers — material is piling up on the bed."></textarea>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="reportName">Your name (optional)</label>
+            <input id="reportName" type="text" maxlength="80" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="reportEmail">Your email (optional)</label>
+            <input id="reportEmail" type="email" maxlength="120" autocomplete="email" />
+          </div>
+        </div>
+        <div class="error" id="reportFormError" role="alert" aria-live="assertive"></div>
+      </div>
+      <menu class="dialog-actions">
+        <button type="reset" id="reportDialogCancelBtn">Cancel</button>
+        <button type="submit" id="reportDialogSendBtn">Send</button>
       </menu>
     </form>
   </dialog>

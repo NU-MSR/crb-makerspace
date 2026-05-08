@@ -514,13 +514,136 @@ body {
   border: 1px solid #c7c9ff;
   color: #3730a3;
   font-size: 12px;
-  padding: 4px 6px;
+  padding: 2px 2px 2px 6px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   box-sizing: border-box;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.block[role="button"]:hover {
+  background: #d8d9ff;
+}
+
+.block[role="button"]:focus-visible {
+  outline: 2px solid var(--nw-purple);
+  outline-offset: 1px;
+}
+
+.block[role="button"]:hover .block-menu-btn,
+.block[role="button"]:focus-visible .block-menu-btn {
+  background: rgba(78, 42, 132, 0.12);
+  border-color: rgba(78, 42, 132, 0.25);
+}
+
+.block .block-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.block-menu-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  pointer-events: none;
+}
+
+.menu-item.danger {
+  color: #dc2626;
+}
+
+.menu-item.danger:hover,
+.menu-item.danger:focus-visible {
+  background: #fee2e2;
+}
+
+.reservation-summary {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.reservation-summary .summary-row {
+  display: flex;
+  gap: 8px;
+}
+
+.reservation-summary .summary-label {
+  color: var(--muted);
+  flex: 0 0 64px;
+}
+
+.dialog-help {
+  margin: -4px 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background-color: #fff;
+  color: var(--text);
+  resize: vertical;
+}
+
+.dialog-actions .danger-button {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.dialog-actions .danger-button:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+#reportDialogSendBtn,
+#adjustDialogSaveBtn {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+#reportDialogSendBtn:hover:not(:disabled),
+#adjustDialogSaveBtn:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+#reportDialogSendBtn:disabled,
+#adjustDialogSaveBtn:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 .selection {
@@ -951,7 +1074,12 @@ select {
 
   .block {
     font-size: 11px;
-    padding: 3px 4px;
+    padding: 2px 2px 2px 4px;
+  }
+
+  .block-menu-btn {
+    width: 22px;
+    height: 22px;
   }
 
   .row {
