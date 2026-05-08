@@ -597,7 +597,7 @@ function openReservationDialog() {
   resDate.value = state.date;
   resStart.value = hhmmFromMinutes(sel.startMin);
   const durationHours = (sel.endMin - sel.startMin) / 60;
-  resDuration.value = durationHours;
+  resDuration.value = Math.round(durationHours * 100) / 100;
   calculateEndTime();
 
   // Reset and toggle "Other" inputs
