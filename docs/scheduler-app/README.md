@@ -22,6 +22,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
      - Database functions for overlap checking
      - Initial printer data
    - **Existing projects only:** also run `migration-email.sql` to add the email-notification columns and the `pg_cron` job. (Fresh installs already have the columns from `schema.sql`, but still need `migration-email.sql` for the cron job.)
+   - **Existing projects only:** also run `migration-grants.sql` to add explicit Data API `GRANT`s on `printers`, `reservations`, and `check_reservation_overlap`. Supabase is removing automatic Data API exposure for `public`-schema tables ([discussion](https://github.com/orgs/supabase/discussions/45329)); without these grants the frontend will start returning HTTP 403 once enforcement lands (Oct 30, 2026 for existing projects). Fresh installs already have these grants from `schema.sql`.
 
 3. **Get your Supabase credentials**:
    - Go to **Project Settings** → **Data API**
