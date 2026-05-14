@@ -167,8 +167,16 @@ WHERE r.status = 'confirmed'
   AND p.is_active = true
   AND p.status = 'operational';
 
--- Grant access to the view
+-- Data API grants. Supabase is moving to explicit opt-in for Data API
+-- exposure (enforced on all projects Oct 30, 2026), so RLS policies alone
+-- are not enough — anon/authenticated also need table-level GRANTs.
+-- See migration-grants.sql for the same statements as a standalone migration.
+GRANT SELECT ON printers TO anon, authenticated;
+GRANT SELECT, INSERT ON reservations TO anon, authenticated;
 GRANT SELECT ON public_reservations TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION
+  check_reservation_overlap(UUID, TIMESTAMPTZ, TIMESTAMPTZ, UUID)
+  TO anon, authenticated;
 
 -- Seed initial printers (adjust as needed)
 -- sort_order: lower numbers appear first (left to right)
