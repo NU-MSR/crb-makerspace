@@ -28,3 +28,7 @@ Thumbs.db
 supabase/.temp/
 supabase/.branches/
 
+# Claude Code local state
+.claude/worktrees/
+.claude/settings.local.json
+
