@@ -48,7 +48,7 @@ nav:
       - Laser Cutter: equipment/laser-cutter.md
     - Electronics:
       - Overview: electronics.md
-      #- Soldering Stations: equipment/soldering-stations.md
+      - Soldering Stations: equipment/soldering-stations.md
       #- Oscilloscopes: equipment/oscilloscopes.md
       #- Power Supplies: equipment/power-supplies.md
   - Tool Checkout: checkout.md
