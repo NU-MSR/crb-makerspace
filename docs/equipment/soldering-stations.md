@@ -48,7 +48,7 @@ The [Adafruit Guide to Excellent Soldering](https://learn.adafruit.com/adafruit-
 - **Clean off flux residue.** It is best to clean off flux using 99% Isopropyl Alcohol (IPA) and a stiff brush and immediately absorb the dissolved residue with a lint-free wipe (e.g. Kimwipes).
 - **Store the iron tinned.** When you are done, leave a fresh blob of solder on the tip before shutting down. This protects the tip from oxidation between sessions and dramatically extends tip life.
 
-## Short through-hole soldering overview (Video)
+## Through-hole soldering example video
 
 <iframe
     width="360"
@@ -59,7 +59,7 @@ The [Adafruit Guide to Excellent Soldering](https://learn.adafruit.com/adafruit-
     referrerpolicy="strict-origin-when-cross-origin" 
     allowfullscreen></iframe>
 
-## Short SMD soldering overview (Video)
+## SMD soldering example video
 
 <iframe
     width="360"
