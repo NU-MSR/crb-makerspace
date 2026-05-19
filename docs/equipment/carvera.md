@@ -53,10 +53,6 @@ The best way to get acquainted with the machine is to go through the tutorial vi
 - Run your program, being sure to set the correct work origin and Z probe position (where it will measure the Z height of your stock). You can optionally set Auto Leveling if you only care about the cutting depth relative to the top of the piece (e.g. for PCB milling). Be sure to keep Scan Margin enabled to have the machine trace out a bounding box with the laser.
     - **Be sure to confirm that there is no interference between the cutting tool and the mounting hardware.** The laser bounding box should help with this, but does not capture the width of the cutting tools.
 
-!!! tip
-
-    You can try adding one inch to tool length to air cut first.
-
 ## Manual
 
 <iframe
