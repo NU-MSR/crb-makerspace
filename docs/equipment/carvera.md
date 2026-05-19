@@ -52,6 +52,12 @@ The best way to get acquainted with the machine is to go through the tutorial vi
 - Load your gcode file onto the machine.
 - Run your program, being sure to set the correct work origin and Z probe position (where it will measure the Z height of your stock). You can optionally set Auto Leveling if you only care about the cutting depth relative to the top of the piece (e.g. for PCB milling). Be sure to keep Scan Margin enabled to have the machine trace out a bounding box with the laser.
     - **Be sure to confirm that there is no interference between the cutting tool and the mounting hardware.** The laser bounding box should help with this, but does not capture the width of the cutting tools.
+- When you are done:
+    - Remove all cutting tools from the automatic tool changer (ATC) and return them to their labeled containers.
+        - **Tell management about any broken or damaged cutting tools so they can be replaced.**
+    - Remove your workpiece, any clamps or screws, and the MDF spoilboard you added.
+    - Vacuum all chips inside and around the machine.
+    - Close the enclosure. The machine can be left powered on.
 
 ## Manual
 
