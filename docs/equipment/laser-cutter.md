@@ -1,33 +1,65 @@
 # Lasersaur Laser Cutter
 
-The CRB Makerspace has one [Lasersaur](https://www.lasersaur.cc/) laser cutter with a work area of 1220x610mm (48x24").
+![Lasersaur Laser Cutter](../assets/lasersaur.jpg){ width="600" }
 
-!!! warning "Currently Under Maintenance"
-    
-    The laser cutter is currently under maintenance and cannot be used.
+The CRB Makerspace has one [Lasersaur](https://www.lasersaur.cc/) laser cutter with a work area of 1220x610mm (48x24").
 
 ## Hazard level
 
 <span style="background-color: red; color: white; padding: 4px 8px; border-radius: 4px; font-size: 2.2em; font-weight: bold;">RED</span>
 
 !!! warning
-
-    - 100 Watt Class 4 CO₂ laser contained within a Class 1 enclosure. CO₂ laser light is invisible to the eye and can cause severe eye damage from direct or reflected exposure outside of the enclosure. **Never defeat the safety interlocks.**
-    - Fire hazard from materials igniting
-    - Toxic fume hazard from cutting the wrong materials
+    
+    - The Lasersaur uses a 100 W CO₂ laser contained within a Class 1 enclosure. CO₂ laser light is invisible to the eye and can cause severe eye damage or fire through direct or reflected exposure outside the enclosure.
+    - **Never defeat the safety interlocks.** Doing so is dangerous and violates federal and Illinois law.
+    - Fire hazard from materials igniting during cutting.
+    - Toxic fume hazard from cutting the wrong materials.
 
 ## Safety
 
-- **Never leave the laser cutter operating unattended.** Material may catch fire and/or the laser path may be altered or disrupted.
+- **NEVER leave the laser cutter operating unattended.** Material may catch fire and/or the laser path may be altered or disrupted.
 - The lid must always be closed when operating. The laser will turn off when the lid is opened. **Never defeat the safety interlocks.**
-- Always ensure proper ventilation before starting the laser cutter.
-- If the material catches fire, stop the machine and follow fire safety precautions. There is a fire extinguisher by the door of the Makerspace.
+- Always ensure proper ventilation before starting the laser cutter. Make sure air is flowing into the exhaust vent and that there are no leaks in or around the exhaust hose.
+- **The biggest risk of using the laser cutter is fire.** If you see a flame, press the e-stop and watch closely. A small flame will usually burn out on its own within a few seconds. If it does not, spray it with the water sprayer kept by the machine. If that does not extinguish it, use the fire extinguisher and/or pull the fire alarm.
 - Refer to the [Northwestern University Laser Safety Manual](https://researchsafety.northwestern.edu/safety-information/laser-safety-handbook.html) for additional information.
+
+## Training
+
+All users of the laser cutter must complete training and sign the [Laser Cutter User Agreement](https://docs.google.com/forms/d/e/1FAIpQLScNfDLSuRgTxsmXStFUIbFBRf9WtSJh-jAURYJhVYSE5c7ZVw/viewform?usp=sharing&ouid=100806786810159707352).
+
+<!-- To add users, run `sudo add_netid FirstName LastName nid1234` -->
+<!-- Maintenance procedures documented at https://nuwildcat-my.sharepoint.com/:w:/r/personal/mle641_ads_northwestern_edu/Documents/CRB%20Laser%20Cutter%20Maintenance.docx?d=we228d654e58b4af2baba3801382cb877&csf=1&web=1&e=y1R2dq -->
 
 ## Materials
 
-- **Only cut acrylic on this machine.** Other materials may produce toxic fumes, damage the optics, or catch fire.
+- **Only cut acrylic on this machine.** Other materials may produce toxic fumes or large amounts of particulate and soot, damage the optics, or catch fire.
 - Prohibited materials include (but are not limited to): PVC/vinyl, ABS, polycarbonate/PC, foams, and any unknown material.
+- **If it is not verified to be acrylic, do not cut it.**
+
+## Recommended Settings
+
+| Material | Thickness | Feed (mm/min) | Power (%) |
+| --- | --- | --- | --- |
+| Acrylic (cutting) | 1/8" / 3mm | 700 | 100% |
+| Acrylic (cutting) | 1/4" / 6mm | 220 | 100% |
+
+If the laser is not cutting all the way through the material, slow down the feed rate.
+
+## Usage
+
+- Log in to the Lasersaur computer. Everyone has their own login—no sharing allowed. If you cannot log in, you are not allowed to use the machine.
+- Release the E-stop and turn on the Beaglebone and Electronics switches.
+- Open Firefox and navigate to [http://cutter/](http://cutter/). This connects you to the server running inside the Lasersaur.
+- Press the Home button to home/zero the X and Y axes.
+- Optionally, move the cutting head to the desired position within the cutting area.
+- Open your file.
+- Offset your drawing.
+- Select the cutting settings for your path (feed rate and power).
+- Turn on the laser power. Wait 30 seconds for the laser to reach power.
+- Press Run and **monitor the cut at all times.**
+- When the cut is complete, wait briefly for the fumes to clear, open the lid, and remove your parts.
+- When done, turn off the power switches for the Laser, Electronics, and Beaglebone, then press the E-stop to power down the system.
+- Vacuum up any small debris from the work area before leaving.
 
 ## Manual
 
