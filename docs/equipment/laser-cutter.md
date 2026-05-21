@@ -51,11 +51,11 @@ If the laser is not cutting all the way through the material, slow down the feed
 - Release the E-stop and turn on the Beaglebone and Electronics switches.
 - Open Firefox and navigate to [http://cutter/](http://cutter/). This connects you to the server running inside the Lasersaur.
 - Press the Home button to home/zero the X and Y axes.
-- Optionally, move the cutting head to the desired position within the cutting area.
+- Open the lid, place your stock material in the machine, and close the lid.
 - Open your file.
-- Offset your drawing.
-- Select the cutting settings for your path (feed rate and power).
-- Turn on the laser power. Wait 30 seconds for the laser to reach power.
+- Use the Offset command to place your drawing in the correct position. Optionally, use the Move button to jog the cutting head over your stock to help with alignment.
+- Select the cutting settings for your path (feed rate and power) based on the thickness of your acrylic stock.
+- Turn on the laser power. Wait 30 seconds for the laser to fully power up.
 - Press Run and **monitor the cut at all times.**
 - When the cut is complete, wait briefly for the fumes to clear, open the lid, and remove your parts.
 - When done, turn off the power switches for the Laser, Electronics, and Beaglebone, then press the E-stop to power down the system.
