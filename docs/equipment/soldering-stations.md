@@ -16,7 +16,7 @@ The CRB Makerspace has Metcal MX-500P and Metcal MFR-PS1300 soldering stations, 
 
 ## Safety
 
-- **Always wear safety glasses when soldering.** Solder and flux can pop, especially when reflowing or desoldering.
+- **Always wear safety glasses when soldering.** Solder and flux can pop when heated.
 - Use the fume extractor. Position the intake within a few inches of the joint so you are not breathing in the flux fumes.
 - Return the iron to its stand whenever you are not actively soldering. Never set a hot iron on the bench or work mat.
 - Assume the tip is hot. Check the station display before touching, and let tips cool fully before swapping.
