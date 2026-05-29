@@ -23,6 +23,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
      - Initial printer data
    - **Existing projects only:** also run `migration-email.sql` to add the email-notification columns and the `pg_cron` job. (Fresh installs already have the columns from `schema.sql`, but still need `migration-email.sql` for the cron job.)
    - **Existing projects only:** also run `migration-grants.sql` to add explicit Data API `GRANT`s on `printers`, `reservations`, and `check_reservation_overlap`. Supabase is removing automatic Data API exposure for `public`-schema tables ([discussion](https://github.com/orgs/supabase/discussions/45329)); without these grants the frontend will start returning HTTP 403 once enforcement lands (Oct 30, 2026 for existing projects). Fresh installs already have these grants from `schema.sql`.
+   - **Existing projects only:** also run `migration-restrict-pii.sql` to replace any table-wide SELECT on `reservations` with column-level SELECT on the non-PII columns only. Without it, the `anon` role can read `user_name`, `user_contact`, and other PII directly via the Data API, bypassing the `public_reservations` view. Fresh installs already have the correct column-level grant from `schema.sql`.
 
 3. **Get your Supabase credentials**:
    - Go to **Project Settings** → **Data API**
@@ -138,7 +139,7 @@ Both are delivered through a single Supabase Edge Function (`supabase/functions/
 
 - **Public read access**: Anyone can view reservation times (without PII) and operational printers
 - **Public write access**: Anyone can create reservations
-- **PII protection**: `user_name`, `user_contact`, `lab`, `material`, and `notes` are stored but never returned in public queries (via the `public_reservations` view)
+- **PII protection (column-level GRANTs)**: The `anon`/`authenticated` roles are granted SELECT on only the non-PII columns of `reservations` (`id`, `printer_id`, `start_at`, `end_at`, `status`, `created_at`, `updated_at`). The PII columns (`user_name`, `user_contact`, `lab`, `material`, `project_part`, `notes`, `email_opt_in`, the `*_email_sent_at` timestamps) are **not** granted, so Postgres/PostgREST refuses to return them on any query — direct Data API calls included, not just the `public_reservations` view. The Edge Function reads PII via the `service_role` key, which is unaffected. See `migration-restrict-pii.sql`.
 - **Email-sent timestamps are written with the auto-injected service role key**: The `send-reservation-email` Edge Function uses the `SUPABASE_SERVICE_ROLE_KEY` that Supabase auto-injects into every function — you never set or store it. The `pg_cron` job that triggers the function uses only the **publishable key** (already public in `app.js`), so no service-role credential lives in user-managed storage. Emails are only sent for rows where `email_opt_in = true`.
 
 ## API (Direct Supabase Client)
@@ -292,4 +293,4 @@ Free Supabase projects are paused after 1 week of inactivity. This repository in
 - Time resolution is 30 minutes, 24-hour view
 - Client performs a simple overlap check for UX; server is authoritative
 - No cookies or credentials used (public access via publishable key)
-- Submitted PII (name and contact) is stored in database but protected by RLS policies
+- Submitted PII (name and contact) is stored in the database but withheld from the public Data API via column-level SELECT grants (see Security section)

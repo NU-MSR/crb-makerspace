@@ -129,7 +129,9 @@ CREATE POLICY "Printers are viewable by everyone"
   ON printers FOR SELECT
   USING (is_active = true);
 
--- Reservations: Public can read non-PII fields only
+-- Reservations: Public can read rows, but PII columns are withheld at the
+-- GRANT layer (column-level SELECT below), not by this row policy. This policy
+-- only governs which ROWS are visible; the column GRANTs govern which COLUMNS.
 CREATE POLICY "Reservations are viewable by everyone (without PII)"
   ON reservations FOR SELECT
   USING (true);
@@ -171,8 +173,17 @@ WHERE r.status = 'confirmed'
 -- exposure (enforced on all projects Oct 30, 2026), so RLS policies alone
 -- are not enough — anon/authenticated also need table-level GRANTs.
 -- See migration-grants.sql for the same statements as a standalone migration.
+--
+-- IMPORTANT: anon/authenticated get column-level SELECT on reservations,
+-- NOT table-wide SELECT. PII columns (user_name, user_contact, lab, material,
+-- project_part, notes, email_opt_in, *_email_sent_at) are intentionally NOT
+-- granted, so the Data API cannot return them. The public_reservations view,
+-- check_reservation_overlap, and the insert-return only need the columns
+-- granted below. See migration-restrict-pii.sql for the standalone migration.
 GRANT SELECT ON printers TO anon, authenticated;
-GRANT SELECT, INSERT ON reservations TO anon, authenticated;
+GRANT INSERT ON reservations TO anon, authenticated;
+GRANT SELECT (id, printer_id, start_at, end_at, status, created_at, updated_at)
+  ON reservations TO anon, authenticated;
 GRANT SELECT ON public_reservations TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION
   check_reservation_overlap(UUID, TIMESTAMPTZ, TIMESTAMPTZ, UUID)
