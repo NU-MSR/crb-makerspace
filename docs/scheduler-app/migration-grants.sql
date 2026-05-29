@@ -19,7 +19,13 @@
 
 GRANT SELECT ON printers TO anon, authenticated;
 
-GRANT SELECT, INSERT ON reservations TO anon, authenticated;
+-- Column-level SELECT only — PII columns (user_name, user_contact, lab,
+-- material, project_part, notes, email_opt_in, *_email_sent_at) are NOT
+-- granted, so the Data API cannot return them. See migration-restrict-pii.sql
+-- for the rationale and the matching REVOKE.
+GRANT INSERT ON reservations TO anon, authenticated;
+GRANT SELECT (id, printer_id, start_at, end_at, status, created_at, updated_at)
+  ON reservations TO anon, authenticated;
 
 GRANT EXECUTE ON FUNCTION
   check_reservation_overlap(UUID, TIMESTAMPTZ, TIMESTAMPTZ, UUID)

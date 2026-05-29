@@ -745,7 +745,10 @@ async function createReservation(reservationData) {
         notes: reservationData.notes,
         status: 'confirmed'
       })
-      .select()
+      // Only `id` is read back below, and anon has column-level SELECT on `id`
+      // only (PII columns are not granted). Selecting '*' here would fail with
+      // "permission denied for column user_name".
+      .select('id')
       .single();
 
     if (error) throw error;
