@@ -49,7 +49,7 @@ If the laser is not cutting all the way through the material, slow down the feed
 
 - Log in to the Lasersaur computer. Everyone has their own login—no sharing allowed. If you cannot log in, you are not allowed to use the machine.
 - Release the E-stop and turn on the Beaglebone and Electronics switches.
-- Open Firefox and navigate to [http://cutter/](http://cutter/) (http not https). This connects you to the server running inside the Lasersaur.
+- Open Firefox and navigate to [`http://cutter/`](http://cutter/) (`http` not `https`). This connects you to the server running inside the Lasersaur.
 - Press the Home button to home/zero the X and Y axes.
 - Open the lid, place your stock material in the machine, and close the lid.
 - Open your file.
