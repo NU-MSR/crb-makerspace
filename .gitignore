@@ -22,6 +22,7 @@ ENV/
 
 # OS
 .DS_Store
+**/.DS_Store
 Thumbs.db
 
 # Supabase CLI local cache
