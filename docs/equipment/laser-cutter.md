@@ -61,6 +61,32 @@ If the laser is not cutting all the way through the material, slow down the feed
 - When done, turn off the power switches for the Laser, Electronics, and Beaglebone, then press the E-stop to power down the system.
 - Vacuum up any small debris from the work area before leaving.
 
+## Troubleshooting
+
+### `Error 400: Bad Request` when opening a file
+
+This usually means the BeagleBone's storage is full. You'll need to SSH in and
+clear the cached cut files.
+
+First, connect:
+
+```shell
+ssh root@cutter
+```
+Then change into the cache directory and clear it:
+
+```shell
+cd ~/.driveboardapp && pwd    # the leading period matters — see note below
+ls                            # confirm these are cut files, not source code
+rm -r *
+```
+
+!!! warning "Important"
+    
+    `.driveboardapp` (with the leading period) is the **cache** while `driveboardapp` (no period) is the **application code**. Make sure you are deleting the cache and not the application code. The `pwd` and `ls` steps above are there to verify you're in the right place before running `rm`.
+
+<!-- TODO: Automate this with a script that runs regularly -->
+
 ## Manual
 
 Review the [Lasersaur Manual](https://github.com/nortd/lasersaur/wiki) for details.
