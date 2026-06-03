@@ -50,21 +50,44 @@ The [Adafruit Guide to Excellent Soldering](https://learn.adafruit.com/adafruit-
 
 ## Through-hole soldering example video
 
+Watch this video for a 30 second intro to through hole soldering.
+
 <iframe
     width="360"
-    height="640" 
-    src="https://www.youtube.com/embed/nPz37an_7ng?si=y6BBWBvpx8GN57zd&amp;start=16" 
-    title="YouTube video player" frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-    referrerpolicy="strict-origin-when-cross-origin" 
+    height="640"
+    src="https://www.youtube.com/embed/nPz37an_7ng?si=y6BBWBvpx8GN57zd&amp;start=16"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
     allowfullscreen></iframe>
 
 ## SMD soldering example video
+
+This video demonstrates three methods to solder surface mount (SMD) components.
+
+1. Pin-by-pin soldering (use fine solder wire for this!)
+2. Drag soldering (use a cup or large chisel tip that can hold solder)
+3. Reflow soldering (can be done with a stencil or manual solder paste application)
+
+Excess solder can be removed with a solder wick.
 
 <iframe
     width="360"
     height="640"
     src="https://www.youtube.com/embed/qd8y-bnLycU?si=Ai4kSzoZ9Qgtkyoq"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen></iframe>
+
+## SMD soldering tutorial
+
+For more in-depth lessons on soldering, I recommend the [Mr SolderFix YouTube channel](https://www.youtube.com/@mrsolderfix3996). This video covers SMD soldering well with many examples.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/EW9Y8rDm4kE?si=eTypvtlZBWLBrZIt"
     title="YouTube video player"
     frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
