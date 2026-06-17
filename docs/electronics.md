@@ -2,7 +2,7 @@
 
 ## Workbenches
 
-There are two workbenches for use. Each workbench should be equipped with the following:
+There are two workbenches available for use. Each workbench should be equipped with the following:
 
 ### Core tools
 
@@ -23,7 +23,7 @@ There are two workbenches for use. Each workbench should be equipped with the fo
 - Bench power supply (Keithley 2231A-30-3)
 - Oscilloscope (Rigol DS1054Z and Tektronix MSO 2012B)
 - Microscope (Nikon SMZ-U)
-- Solder stations (Metcal MX-500P and Metcal MFR-PS1300)
+- Soldering stations (Metcal MX-500P and Metcal MFR-PS1300)
 - Hot air rework station (Aoyue 852)
 
 ### Consumables
@@ -44,4 +44,10 @@ The lab also has a variety of electronics components and materials for use, incl
 - Resistors
 - Capacitors
 - Jumper wires
-- Heat shrink tubing
+- Heat-shrink tubing
+
+## Oscilloscope basics
+
+Rigol provides quick, convenient videos that explain the various functions of an oscilloscope.
+
+[Oscilloscope Tutorial Videos](https://www.rigolna.com/scopebasics/){ .md-button .md-button--primary }
