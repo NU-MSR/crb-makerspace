@@ -27,7 +27,10 @@ The CRB Makerspace has one [Lasersaur](https://www.lasersaur.cc/) laser cutter w
 
 All users of the laser cutter must complete training and sign the [Laser Cutter User Agreement](https://docs.google.com/forms/d/e/1FAIpQLScNfDLSuRgTxsmXStFUIbFBRf9WtSJh-jAURYJhVYSE5c7ZVw/viewform?usp=sharing&ouid=100806786810159707352).
 
-<!-- To add users, run `sudo add_netid FirstName LastName nid1234` -->
+!!! info "Adding users"
+
+    Administrators can add users with the command `sudo add_netid FirstName LastName nid1234`.
+
 <!-- Maintenance procedures documented at https://nuwildcat-my.sharepoint.com/:w:/r/personal/mle641_ads_northwestern_edu/Documents/CRB%20Laser%20Cutter%20Maintenance.docx?d=we228d654e58b4af2baba3801382cb877&csf=1&web=1&e=y1R2dq -->
 
 ## Materials
