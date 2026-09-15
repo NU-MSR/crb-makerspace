@@ -74,104 +74,129 @@
     </div>
   </main>
 
-  <dialog id="reservationDialog">
+  <dialog id="reservationDialog" aria-labelledby="resDialogTitle">
     <form method="dialog" id="reservationForm">
       <div class="form-body">
-      <h2>New 3D Printer Reservation</h2>
-      <div class="field">
-        <label for="resPrinter">Printer</label>
-        <select id="resPrinter" required></select>
-      </div>
-      <div class="field">
-        <button type="button" id="resNextAvailableBtn" class="next-available-btn" aria-pressed="false">
-          <svg class="next-available-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><path d="M17.5 17.5 16 16.3V14"/><circle cx="16" cy="16" r="6"/></svg>
-          <span class="next-available-text">
-            <span class="next-available-title">Next available</span>
-            <span class="next-available-detail" id="resNextAvailableDetail">Start at the earliest open time</span>
-          </span>
-          <span class="next-available-check" aria-hidden="true"></span>
-        </button>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label for="resDate">Date</label>
-          <input id="resDate" type="date" required />
-        </div>
-        <div class="field">
-          <label for="resStart">Start</label>
-          <div class="input-with-btn">
-            <input id="resStart" type="time" step="60" required />
-            <button type="button" id="resStartNowBtn">Now</button>
-            <button type="button" id="resStartAdd30Btn">+30m</button>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label for="resDuration">Duration Estimate (h)</label>
-          <div class="input-with-btn">
-            <input id="resDuration" type="number" min="0.1" max="168" step="any" value="1" required />
-            <button type="button" id="resDurationResetBtn">Reset</button>
-            <button type="button" id="resDurationAdd30Btn">+30m</button>
-            <button type="button" id="resDurationAdd60Btn">+1h</button>
-          </div>
-        </div>
-        <div class="field" style="opacity: 0.6;">
-          <label for="resEndDisplay">End (calculated)</label>
-          <input id="resEndDisplay" type="time" readonly />
-          <div id="endMultiDayNote" style="font-size:12px; color: var(--muted);"></div>
-        </div>
-      </div>
+      <h2 id="resDialogTitle">New 3D Printer Reservation</h2>
 
-      <div class="field">
-        <div id="conflictStatus" class="conflict-status"></div>
-      </div>
-      <div class="field">
-        <label for="resName">Name</label>
-        <input id="resName" type="text" maxlength="80" required />
-      </div>
-      <div class="field">
-        <label for="resContact">Email</label>
-        <input id="resContact" type="email" maxlength="120" required />
-      </div>
-      <div class="field checkbox-field">
-        <label for="resEmailOptIn">Notifications</label>
-        <label class="checkbox-label">
-          <input id="resEmailOptIn" type="checkbox" checked />
-          Email me when my print finishes or needs attention.
-        </label>
-      </div>
-      <div class="row">
+      <section class="form-section" aria-labelledby="resSectionTime">
+        <h3 class="form-section-title" id="resSectionTime">Printer &amp; time</h3>
+        <div class="field">
+          <label for="resPrinter">Printer</label>
+          <select id="resPrinter" required></select>
+          <div class="inline-suggestion" id="resPrinterSuggestion" hidden></div>
+        </div>
+        <div class="field">
+          <label for="resDurationHours">Print time estimate</label>
+          <div class="duration-input">
+            <label class="duration-part">
+              <input id="resDurationHours" type="text" inputmode="decimal" autocomplete="off" aria-label="Hours" />
+              <span aria-hidden="true">h</span>
+            </label>
+            <label class="duration-part">
+              <input id="resDurationMinutes" type="text" inputmode="numeric" autocomplete="off" aria-label="Minutes" />
+              <span aria-hidden="true">m</span>
+            </label>
+            <button type="button" class="chip-btn" id="resDurationAdd30Btn">+30m</button>
+            <button type="button" class="chip-btn" id="resDurationAdd60Btn">+1h</button>
+          </div>
+          <div class="field-hint">From your slicer — you can paste times like “2h 17m”.</div>
+        </div>
+        <div class="field">
+          <span class="field-label" id="resStartLabel">Start</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="resStartLabel">
+            <button type="button" role="radio" class="segmented-option" id="resModeNext" data-mode="next">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><path d="M17.5 17.5 16 16.3V14"/><circle cx="16" cy="16" r="6"/></svg>
+              Next available
+            </button>
+            <button type="button" role="radio" class="segmented-option" id="resModePick" data-mode="pick">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+              Pick a time
+            </button>
+          </div>
+        </div>
+        <div class="row" id="resPickFields" hidden>
+          <div class="field">
+            <label for="resDate">Date</label>
+            <input id="resDate" type="date" required />
+          </div>
+          <div class="field">
+            <label for="resStart">Start time</label>
+            <div class="input-with-btn">
+              <input id="resStart" type="time" step="60" required />
+              <button type="button" id="resStartNowBtn">Now</button>
+              <button type="button" id="resStartAdd30Btn">+30m</button>
+            </div>
+          </div>
+        </div>
+        <div class="time-summary" id="resTimeSummary" aria-live="polite">
+          <div class="time-summary-main">
+            <span class="time-summary-range" id="resSummaryRange"></span>
+            <span class="status-badge" id="resSummaryStatus"></span>
+          </div>
+          <div class="time-summary-actions" id="resSummaryActions" hidden></div>
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="resSectionYou">
+        <div class="form-section-header">
+          <h3 class="form-section-title" id="resSectionYou">About you</h3>
+          <span class="saved-profile" id="resSavedProfile" hidden>
+            Saved on this device · <button type="button" class="link-btn" id="resForgetProfileBtn">Forget</button>
+          </span>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="resName">Name</label>
+            <input id="resName" type="text" maxlength="80" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="resContact">Email</label>
+            <input id="resContact" type="email" maxlength="120" autocomplete="email" required />
+          </div>
+        </div>
         <div class="field">
           <label for="resLab">Lab/Program</label>
           <select id="resLab"></select>
           <input id="resLabOther" type="text" placeholder="Specify lab/program" maxlength="80"
-            style="display:none; margin-top:6px;" />
+            aria-label="Lab/program name" style="display:none;" />
+        </div>
+        <div class="field checkbox-field">
+          <label class="checkbox-label">
+            <input id="resEmailOptIn" type="checkbox" checked />
+            Email me when my print finishes or needs attention.
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="resSectionPrint">
+        <h3 class="form-section-title" id="resSectionPrint">About the print</h3>
+        <div class="row">
+          <div class="field">
+            <label for="resMaterial">Filament Material</label>
+            <select id="resMaterial"></select>
+            <input id="resMaterialOther" type="text" placeholder="Specify material" maxlength="80"
+              aria-label="Material name" style="display:none;" />
+          </div>
+          <div class="field">
+            <label for="resProjectPart">Project / Part</label>
+            <input id="resProjectPart" type="text" maxlength="120" />
+          </div>
         </div>
         <div class="field">
-          <label for="resMaterial">Filament Material</label>
-          <select id="resMaterial"></select>
-          <input id="resMaterialOther" type="text" placeholder="Specify material" maxlength="80"
-            style="display:none; margin-top:6px;" />
+          <label for="resNotes">Notes</label>
+          <input id="resNotes" type="text" maxlength="200" />
         </div>
-      </div>
-      <div class="field checkbox-field">
-        <label for="resVerifyFile">Confirmation</label>
-        <label class="checkbox-label">
-          <input id="resVerifyFile" type="checkbox" required />
-          I've verified my sliced file uses the correct printer model, build plate, and filament.
-        </label>
-      </div>
-      <div class="field">
-        <label for="resProjectPart">Project / Part</label>
-        <input id="resProjectPart" type="text" maxlength="120" />
-      </div>
-      <div class="field">
-        <label for="resNotes">Notes</label>
-        <input id="resNotes" type="text" maxlength="200" />
-      </div>
+        <div class="field checkbox-field">
+          <label class="checkbox-label">
+            <input id="resVerifyFile" type="checkbox" required />
+            I've verified my sliced file uses the correct printer model, build plate, and filament.
+          </label>
+        </div>
+      </section>
       <div class="error" id="formError" role="alert" aria-live="assertive"></div>
       </div>
+      <button type="button" class="reserve-hint" id="reserveHint" hidden></button>
       <menu class="dialog-actions">
         <button type="reset" id="cancelBtn">Cancel</button>
         <button type="submit" id="reserveBtn" value="confirm">Reserve</button>
