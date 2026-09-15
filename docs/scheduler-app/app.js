@@ -131,6 +131,16 @@ const resStartAdd30Btn = document.getElementById('resStartAdd30Btn');
 const resDurationResetBtn = document.getElementById('resDurationResetBtn');
 const resDurationAdd30Btn = document.getElementById('resDurationAdd30Btn');
 const resDurationAdd60Btn = document.getElementById('resDurationAdd60Btn');
+const resNextAvailableBtn = document.getElementById('resNextAvailableBtn');
+const resNextAvailableDetail = document.getElementById('resNextAvailableDetail');
+
+// "Next available" start mode: while active, Date/Start follow the earliest
+// open slot for the selected printer and duration.
+const nextAvailable = {
+  active: false,
+  loading: false,
+  requestId: 0
+};
 
 // Initialize controls
 function initControls() {
@@ -500,6 +510,13 @@ function checkConflicts() {
     return;
   }
 
+  if (nextAvailable.active) {
+    // Found from a live query of this printer's upcoming reservations
+    statusEl.textContent = nextAvailable.loading ? 'Finding next available time…' : 'No conflicts';
+    statusEl.className = nextAvailable.loading ? 'conflict-status' : 'conflict-status success';
+    return;
+  }
+
   // If date doesn't match current view, we can't rely on loaded reservations
   if (resDate.value !== state.date) {
     statusEl.textContent = 'Date changed - check on save';
@@ -537,7 +554,100 @@ function checkConflicts() {
 function updateReserveButtonState() {
   const conflictEl = document.getElementById('conflictStatus');
   const hasConflict = conflictEl && conflictEl.classList.contains('error');
-  reserveBtn.disabled = !form.checkValidity() || hasConflict;
+  reserveBtn.disabled = !form.checkValidity() || hasConflict || nextAvailable.loading;
+}
+
+// Format an instant as "Today, 3:45 PM" / "Tomorrow, 9:00 AM" / "Wed, Sep 17, 9:00 AM"
+function formatRelativeStart(date) {
+  const dateStr = getDateStrInChicago(date);
+  const time = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE, hour: 'numeric', minute: '2-digit', hour12: true
+  }).format(date);
+  const today = getCurrentDateInChicago();
+  if (dateStr === today) return `Today, ${time}`;
+  if (dateStr === addDaysToDateStr(today, 1)) return `Tomorrow, ${time}`;
+  const day = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE, weekday: 'short', month: 'short', day: 'numeric'
+  }).format(date);
+  return `${day}, ${time}`;
+}
+
+function getDateStrInChicago(date) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(date);
+  const get = (type) => parts.find(p => p.type === type).value;
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+
+// Earliest start (>= now, whole minute) on the printer with a gap of at least durationMin
+async function findNextAvailableStart(printerId, durationMin) {
+  const MINUTE = 60000;
+  const now = Date.now();
+  const { data, error } = await supabase
+    .from('public_reservations')
+    .select('start_at, end_at')
+    .eq('printer_id', printerId)
+    .gt('end_at', new Date(now).toISOString())
+    .order('start_at', { ascending: true });
+  if (error) throw error;
+
+  let candidate = Math.ceil(now / MINUTE) * MINUTE;
+  for (const r of data || []) {
+    const rStart = new Date(r.start_at).getTime();
+    const rEnd = new Date(r.end_at).getTime();
+    if (rStart - candidate >= durationMin * MINUTE) break;
+    candidate = Math.max(candidate, Math.ceil(rEnd / MINUTE) * MINUTE);
+  }
+  return { start: new Date(candidate), isNow: candidate - now < MINUTE };
+}
+
+function renderNextAvailableButton(detail, isError = false) {
+  resNextAvailableBtn.setAttribute('aria-pressed', String(nextAvailable.active));
+  resNextAvailableBtn.classList.toggle('error', isError);
+  resNextAvailableDetail.textContent = detail;
+}
+
+async function updateNextAvailable() {
+  if (!nextAvailable.active) return;
+  const printer = state.printers.find(p => p.display_name === resPrinter.value);
+  const durationMin = Math.round((parseFloat(resDuration.value) || 0) * 60);
+  if (!printer || durationMin <= 0) {
+    renderNextAvailableButton('Set a printer and duration first');
+    return;
+  }
+
+  const requestId = ++nextAvailable.requestId;
+  nextAvailable.loading = true;
+  renderNextAvailableButton('Checking the schedule…');
+  onReservationInput();
+
+  try {
+    const { start, isNow } = await findNextAvailableStart(printer.id, durationMin);
+    if (requestId !== nextAvailable.requestId || !nextAvailable.active) return;
+    resDate.value = getDateStrInChicago(start);
+    resStart.value = formatTime(start);
+    nextAvailable.loading = false;
+    renderNextAvailableButton(isNow ? `Available now · ${formatRelativeStart(start)}` : formatRelativeStart(start));
+  } catch (err) {
+    if (requestId !== nextAvailable.requestId) return;
+    console.error('Error finding next available time:', err);
+    nextAvailable.active = false;
+    nextAvailable.loading = false;
+    renderNextAvailableButton("Couldn't check the schedule — try again", true);
+  }
+  onReservationInput();
+}
+
+function setNextAvailableActive(active) {
+  nextAvailable.active = active;
+  nextAvailable.requestId++; // Discard any in-flight lookup
+  nextAvailable.loading = false;
+  if (active) {
+    updateNextAvailable();
+  } else {
+    renderNextAvailableButton('Start at the earliest open time');
+  }
 }
 
 function onReservationInput() {
@@ -578,7 +688,7 @@ function toggleOtherInputs() {
   }
 }
 
-function openReservationDialog() {
+function openReservationDialog({ useNextAvailable = false } = {}) {
   // Seed select options from state.printers (ALL printers, not just visible ones)
   resPrinter.innerHTML = state.printers
     .filter(p => p.status === 'operational')
@@ -608,17 +718,34 @@ function openReservationDialog() {
   toggleOtherInputs();
 
   formError.textContent = '';
-  formError.textContent = '';
+  setNextAvailableActive(useNextAvailable);
   checkConflicts(); // Check immediately on open
   updateReserveButtonState();
   if (typeof dialog.showModal === 'function') dialog.showModal();
 }
 
+// Editing the start manually leaves "Next available" mode
+function onManualStartEdit() {
+  if (nextAvailable.active) setNextAvailableActive(false);
+  onReservationInput();
+}
+
 // Update end time display when start or duration changes
-resStart.addEventListener('input', onReservationInput);
-resDuration.addEventListener('input', onReservationInput);
-resPrinter.addEventListener('change', checkConflicts);
-resDate.addEventListener('input', checkConflicts);
+resStart.addEventListener('input', onManualStartEdit);
+resDate.addEventListener('input', onManualStartEdit);
+resDuration.addEventListener('input', () => {
+  onReservationInput();
+  updateNextAvailable();
+});
+resPrinter.addEventListener('change', () => {
+  checkConflicts();
+  updateNextAvailable();
+});
+
+resNextAvailableBtn.addEventListener('click', () => {
+  setNextAvailableActive(!nextAvailable.active);
+  onReservationInput();
+});
 
 // Keep Reserve button enabled/disabled in sync with form validity
 form.addEventListener('input', updateReserveButtonState);
@@ -627,7 +754,7 @@ form.addEventListener('change', updateReserveButtonState);
 resStartNowBtn.addEventListener('click', () => {
   resDate.value = getCurrentDateInChicago();
   resStart.value = hhmmFromMinutes(getCurrentMinutesInChicago());
-  onReservationInput();
+  onManualStartEdit();
 });
 
 resStartAdd30Btn.addEventListener('click', () => {
@@ -635,7 +762,7 @@ resStartAdd30Btn.addEventListener('click', () => {
     ? minutesSinceMidnight(resStart.value)
     : getCurrentMinutesInChicago();
   resStart.value = hhmmFromMinutes((base + 30) % 1440);
-  onReservationInput();
+  onManualStartEdit();
 });
 
 function addMinutesToDuration(minutes) {
@@ -643,8 +770,9 @@ function addMinutesToDuration(minutes) {
   const next = Math.min(168, current + minutes / 60);
   resDuration.value = Math.round(next * 100) / 100;
   onReservationInput();
+  updateNextAvailable();
 }
-resDurationResetBtn.addEventListener('click', () => { resDuration.value = 0; onReservationInput(); });
+resDurationResetBtn.addEventListener('click', () => { resDuration.value = 0; onReservationInput(); updateNextAvailable(); });
 resDurationAdd30Btn.addEventListener('click', () => addMinutesToDuration(30));
 resDurationAdd60Btn.addEventListener('click', () => addMinutesToDuration(60));
 
@@ -652,7 +780,7 @@ const fabBtn = document.getElementById('fabNewReservation');
 if (fabBtn) {
   fabBtn.addEventListener('click', () => {
     state.selection = null;
-    openReservationDialog();
+    openReservationDialog({ useNextAvailable: true });
   });
 }
 
@@ -689,8 +817,8 @@ function validateForm() {
     return 'Please specify the filament material';
   }
 
-  // client-side overlap hint
-  const overlap = state.reservations.some(r => r.printer === resPrinter.value && !(minutesSinceMidnight(end) <= minutesSinceMidnight(r.start) || minutesSinceMidnight(start) >= minutesSinceMidnight(r.end)));
+  // client-side overlap hint (loaded reservations only cover the viewed date)
+  const overlap = resDate.value === state.date && state.reservations.some(r => r.printer === resPrinter.value && !(minutesSinceMidnight(end) <= minutesSinceMidnight(r.start) || minutesSinceMidnight(start) >= minutesSinceMidnight(r.end)));
   if (overlap) return 'Overlaps an existing reservation';
   return '';
 }
@@ -903,7 +1031,7 @@ function handleAutoOpenParams() {
       endMin: endMin
     };
 
-    openReservationDialog();
+    openReservationDialog({ useNextAvailable: true });
   }
 }
 
@@ -1052,7 +1180,7 @@ function setupMenu() {
   document.getElementById('menuNewReservation').addEventListener('click', () => {
     closeMenu();
     state.selection = null;
-    openReservationDialog();
+    openReservationDialog({ useNextAvailable: true });
   });
 
   document.getElementById('menuShowHideAll').addEventListener('click', () => {

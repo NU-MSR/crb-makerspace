@@ -889,6 +889,92 @@ select {
   white-space: nowrap;
 }
 
+.next-available-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.next-available-btn:hover {
+  border-color: #c4b5dd;
+  background: #faf8fd;
+}
+
+.next-available-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.next-available-icon {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.next-available-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.next-available-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.next-available-detail {
+  font-size: 13px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.next-available-check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 50%;
+  background: #fff center / 12px no-repeat;
+}
+
+.next-available-btn[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #f3effa;
+}
+
+.next-available-btn[aria-pressed="true"] .next-available-icon,
+.next-available-btn[aria-pressed="true"] .next-available-title {
+  color: var(--accent);
+}
+
+.next-available-btn[aria-pressed="true"] .next-available-detail {
+  color: var(--text);
+}
+
+.next-available-btn[aria-pressed="true"] .next-available-check {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%223.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%206%209%2017l-5-5%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.next-available-btn.error .next-available-detail {
+  color: #991b1b;
+}
+
 .dialog-actions {
   display: flex;
   justify-content: flex-end;

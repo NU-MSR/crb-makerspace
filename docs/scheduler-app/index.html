@@ -82,6 +82,16 @@
         <label for="resPrinter">Printer</label>
         <select id="resPrinter" required></select>
       </div>
+      <div class="field">
+        <button type="button" id="resNextAvailableBtn" class="next-available-btn" aria-pressed="false">
+          <svg class="next-available-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><path d="M17.5 17.5 16 16.3V14"/><circle cx="16" cy="16" r="6"/></svg>
+          <span class="next-available-text">
+            <span class="next-available-title">Next available</span>
+            <span class="next-available-detail" id="resNextAvailableDetail">Start at the earliest open time</span>
+          </span>
+          <span class="next-available-check" aria-hidden="true"></span>
+        </button>
+      </div>
       <div class="row">
         <div class="field">
           <label for="resDate">Date</label>
