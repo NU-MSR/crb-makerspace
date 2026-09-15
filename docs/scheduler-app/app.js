@@ -1054,6 +1054,20 @@ resStart.addEventListener('input', updateReservationForm);
 [resDurationHours, resDurationMinutes].forEach(input => {
   input.addEventListener('input', updateReservationForm);
   input.addEventListener('change', () => { normalizeDurationInputs(); updateReservationForm(); });
+  // Select the value on focus so typing replaces it. The mouseup from the
+  // click that focused the input would collapse the selection to a caret, so
+  // cancel that one mouseup; later clicks still place the caret normally.
+  let suppressNextMouseUp = false;
+  input.addEventListener('pointerdown', () => {
+    suppressNextMouseUp = document.activeElement !== input;
+  });
+  input.addEventListener('focus', () => input.select());
+  input.addEventListener('mouseup', (e) => {
+    if (!suppressNextMouseUp) return;
+    suppressNextMouseUp = false;
+    e.preventDefault();
+    input.select();
+  });
   // Accept a whole slicer estimate (e.g. "2h 17m") pasted into either box
   input.addEventListener('paste', (e) => {
     const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
