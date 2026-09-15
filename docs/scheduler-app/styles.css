@@ -54,7 +54,7 @@ body {
 }
 
 .app-header h1 {
-  font-size: 21px;
+  font-size: 24px;
   margin: 0;
   flex-shrink: 0;
 }
@@ -812,8 +812,9 @@ form#reservationForm {
 }
 
 form h2 {
-  margin: 0 0 12px 0;
-  font-size: 18px;
+  margin: 0 0 14px 0;
+  font-size: 22px;
+  line-height: 1.25;
 }
 
 .field {
@@ -1321,7 +1322,11 @@ select {
   }
 
   .app-header h1 {
-    font-size: 16px;
+    font-size: 20px;
+  }
+
+  form h2 {
+    font-size: 21px;
   }
 
   .header-left {
