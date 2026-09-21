@@ -140,6 +140,13 @@ const resProjectPart = document.getElementById('resProjectPart');
 const resNotes = document.getElementById('resNotes');
 const resVerifyFile = document.getElementById('resVerifyFile');
 const reserveHint = document.getElementById('reserveHint');
+const resBusyBanner = document.getElementById('resBusyBanner');
+const resBusyTitle = document.getElementById('resBusyTitle');
+const resBusyDetail = document.getElementById('resBusyDetail');
+const resBusySwitchBtn = document.getElementById('resBusySwitchBtn');
+const resBusySwitchLabel = document.getElementById('resBusySwitchLabel');
+const resBusyReportBtn = document.getElementById('resBusyReportBtn');
+const resBusyAdjustBtn = document.getElementById('resBusyAdjustBtn');
 const reserveBtn = document.getElementById('reserveBtn');
 
 // Initialize controls
@@ -577,6 +584,25 @@ function formatFreeAt(startMs) {
   return `free ${day}, ${formatClockTime(start)}`;
 }
 
+// "today at 5:45 PM" / "tomorrow at 9:00 AM" / "on Wed, Sep 17 at 9:00 AM"
+function formatAtTime(ms) {
+  const date = new Date(ms);
+  const day = formatRelativeDay(date);
+  const prefix = day === 'Today' || day === 'Tomorrow' ? day.toLowerCase() : `on ${day}`;
+  return `${prefix} at ${formatClockTime(date)}`;
+}
+
+// "1h 50m" / "25m" / "2d 3h"
+function formatWait(ms) {
+  const totalMin = Math.max(1, Math.ceil(ms / MINUTE_MS));
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+  if (d) return h ? `${d}d ${h}h` : `${d}d`;
+  if (h) return m ? `${h}h ${m}m` : `${h}h`;
+  return `${m}m`;
+}
+
 // Schedule data
 
 async function loadSchedule() {
@@ -587,13 +613,16 @@ async function loadSchedule() {
   try {
     const { data, error } = await supabase
       .from('public_reservations')
-      .select('printer_id, start_at, end_at')
+      .select('id, printer_id, start_at, end_at')
       .gt('end_at', new Date(windowStartMs).toISOString())
       .order('start_at', { ascending: true });
     if (error) throw error;
     if (requestId !== schedule.requestId) return;
     schedule.windowStartMs = windowStartMs;
     schedule.reservations = (data || []).map(r => ({
+      id: r.id,
+      startAt: r.start_at,
+      endAt: r.end_at,
       printerId: r.printer_id,
       startMs: new Date(r.start_at).getTime(),
       endMs: new Date(r.end_at).getTime()
@@ -619,6 +648,12 @@ function findEarliestFit(printerId, fromMs, durationMs) {
     candidate = Math.max(candidate, Math.ceil(r.endMs / MINUTE_MS) * MINUTE_MS);
   }
   return candidate;
+}
+
+// Reservation occupying the printer right now, if any
+function getCurrentReservation(printerId) {
+  const now = Date.now();
+  return reservationsForPrinter(printerId).find(r => r.startMs <= now && r.endMs > now) || null;
 }
 
 function hasOverlap(printerId, startMs, endMs) {
@@ -713,10 +748,87 @@ function renderPrinterOptions() {
   resPrinter.querySelectorAll('option').forEach(opt => {
     const printer = state.printers.find(p => p.id === opt.dataset.printerId);
     if (!printer) return;
-    opt.textContent = canLabel
-      ? `${printer.display_name} — ${formatFreeAt(findEarliestFit(printer.id, now, durationMin * MINUTE_MS))}`
-      : printer.display_name;
+    if (!canLabel) {
+      opt.textContent = printer.display_name;
+      return;
+    }
+    // Native dropdowns ignore text colors on iOS/macOS, so status uses emoji
+    const current = getCurrentReservation(printer.id);
+    const fitMs = findEarliestFit(printer.id, now, durationMin * MINUTE_MS);
+    if (current) {
+      opt.textContent = `🔴 ${printer.display_name} — in use until ${formatEndTime(current.endMs)}`;
+    } else if (fitMs - now < MINUTE_MS) {
+      opt.textContent = `🟢 ${printer.display_name} — free now`;
+    } else {
+      opt.textContent = `🟠 ${printer.display_name} — ${formatFreeAt(fitMs)}`;
+    }
   });
+}
+
+// End time of a current reservation: "5:45 PM" today, otherwise with the day
+function formatEndTime(endMs) {
+  const end = new Date(endMs);
+  return formatRelativeDay(end) === 'Today' ? formatClockTime(end) : formatRelativeDateTime(end);
+}
+
+// Same-model printer that can start this print meaningfully sooner, or null
+function findSoonerSameModelPrinter(printer, durationMs) {
+  const now = Date.now();
+  const selectedStartMs = findEarliestFit(printer.id, now, durationMs);
+  let best = null;
+  state.printers
+    .filter(p => p.id !== printer.id && p.printer_type === printer.printer_type)
+    .forEach(p => {
+      const startMs = findEarliestFit(p.id, now, durationMs);
+      if (!best || startMs < best.startMs) best = { printer: p, startMs };
+    });
+  return best && best.startMs <= selectedStartMs - SUGGEST_OTHER_PRINTER_MIN_GAIN_MS ? best : null;
+}
+
+// Reservations opened from the busy banner, which may not be on the calendar's day
+const bannerReservations = new Map();
+
+function toCalendarReservation(r) {
+  const printer = state.printers.find(p => p.id === r.printerId);
+  return {
+    id: r.id,
+    printer_id: r.printerId,
+    printer: printer?.display_name || '',
+    start_at: r.startAt,
+    end_at: r.endAt
+  };
+}
+
+// Prominent notice when the selected printer is occupied right now
+function renderBusyBanner(planned) {
+  const printer = getSelectedPrinter();
+  const current = printer && schedule.status === 'ready' ? getCurrentReservation(printer.id) : null;
+  resBusyBanner.hidden = !current;
+  resBusyBanner.dataset.reservationId = current?.id || '';
+  if (!current) return false;
+
+  bannerReservations.set(current.id, toCalendarReservation(current));
+  resBusyTitle.textContent = `${printer.display_name} is in use until ${formatEndTime(current.endMs)}`;
+
+  const now = Date.now();
+  if (resForm.mode === 'next' && planned) {
+    resBusyDetail.textContent = `Your print would start ${formatAtTime(planned.startMs)} (in ${formatWait(planned.startMs - now)}).`;
+  } else if (resForm.mode === 'pick') {
+    resBusyDetail.textContent = 'Pick a start time after it finishes, or switch printers.';
+  } else {
+    resBusyDetail.textContent = 'Your print will start after this reservation ends.';
+  }
+
+  const durationMin = getDurationMin();
+  const sooner = durationMin > 0 && durationMin <= MAX_DURATION_MIN
+    ? findSoonerSameModelPrinter(printer, durationMin * MINUTE_MS)
+    : null;
+  resBusySwitchBtn.hidden = !sooner;
+  if (sooner) {
+    resBusySwitchLabel.textContent = `Switch to ${sooner.printer.display_name} — ${formatFreeAt(sooner.startMs)}`;
+    resBusySwitchBtn.onclick = () => switchPrinter(sooner.printer.display_name);
+  }
+  return true;
 }
 
 function renderSuggestionButton(container, text, buttonLabel, onClick) {
@@ -740,21 +852,12 @@ function switchPrinter(displayName) {
 }
 
 // In "Next available" mode, point out a same-model printer that frees up sooner
-function renderPrinterSuggestion(planned) {
+function renderPrinterSuggestion(planned, bannerShown) {
   resPrinterSuggestion.innerHTML = '';
   const printer = getSelectedPrinter();
-  let best = null;
-  if (resForm.mode === 'next' && planned && printer && schedule.status === 'ready') {
-    const durationMs = planned.endMs - planned.startMs;
-    const now = Date.now();
-    state.printers
-      .filter(p => p.id !== printer.id && p.printer_type === printer.printer_type)
-      .forEach(p => {
-        const startMs = findEarliestFit(p.id, now, durationMs);
-        if (!best || startMs < best.startMs) best = { printer: p, startMs };
-      });
-    if (best && best.startMs > planned.startMs - SUGGEST_OTHER_PRINTER_MIN_GAIN_MS) best = null;
-  }
+  const best = !bannerShown && resForm.mode === 'next' && planned && printer && schedule.status === 'ready'
+    ? findSoonerSameModelPrinter(printer, planned.endMs - planned.startMs)
+    : null;
   if (best) {
     renderSuggestionButton(
       resPrinterSuggestion,
@@ -789,7 +892,9 @@ function renderTimeSummary(planned, availability) {
     loading: ['', ''],
     error: ['', ''],
     incomplete: ['', ''],
-    ok: [resForm.mode === 'next' && planned?.isNow ? 'Available now' : 'Available', 'is-success'],
+    ok: resForm.mode === 'next' && planned && !planned.isNow
+      ? [`Starts in ${formatWait(planned.startMs - Date.now())}`, 'is-warning']
+      : [resForm.mode === 'next' ? 'Available now' : 'Available', 'is-success'],
     conflict: ['Overlaps a reservation', 'is-error'],
     unknown: ['Checked when you reserve', 'is-neutral']
   }[availability];
@@ -875,7 +980,8 @@ function updateReservationForm() {
 
   renderModeToggle();
   renderPrinterOptions();
-  renderPrinterSuggestion(planned);
+  const bannerShown = renderBusyBanner(planned);
+  renderPrinterSuggestion(planned, bannerShown);
   renderTimeSummary(planned, availability);
   renderReserveState(planned, availability);
 }
@@ -1029,6 +1135,15 @@ function openReservationDialog({ mode = 'pick', printer = null } = {}) {
     if (form.dataset.submitting !== 'true') updateReservationForm();
   }, 30000);
 }
+
+resBusyReportBtn.addEventListener('click', () => {
+  const id = resBusyBanner.dataset.reservationId;
+  if (id) openReportDialog(id);
+});
+resBusyAdjustBtn.addEventListener('click', () => {
+  const id = resBusyBanner.dataset.reservationId;
+  if (id) openAdjustDialog(id);
+});
 
 dialog.addEventListener('close', () => {
   clearInterval(resForm.tickTimer);
@@ -1601,7 +1716,7 @@ function closeBlockMenu() {
 }
 
 function findReservation(id) {
-  return state.reservations.find(r => r.id === id) || null;
+  return state.reservations.find(r => r.id === id) || bannerReservations.get(id) || null;
 }
 
 function formatTimeShort(iso) {
@@ -1793,6 +1908,11 @@ function openAdjustDialog(id) {
 function closeAdjustDialog() {
   if (adjustDialog.open) adjustDialog.close();
 }
+
+// An adjustment made from the reservation dialog's busy banner changes availability
+adjustDialog.addEventListener('close', () => {
+  if (dialog.open) refreshScheduleAndForm();
+});
 
 adjustDuration.addEventListener('input', adjustOnInput);
 adjustForm.addEventListener('input', () => {
