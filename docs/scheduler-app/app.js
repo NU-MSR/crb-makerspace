@@ -812,7 +812,7 @@ function renderBusyBanner(planned) {
 
   const now = Date.now();
   if (resForm.mode === 'next' && planned) {
-    resBusyDetail.textContent = `Your print would start ${formatAtTime(planned.startMs)} (in ${formatWait(planned.startMs - now)}).`;
+    resBusyDetail.textContent = `Your print would start ${formatAtTime(planned.startMs)} (in ${formatWait(planned.startMs - now).replace(/ /g, '\u00a0')}).`;
   } else if (resForm.mode === 'pick') {
     resBusyDetail.textContent = 'Pick a start time after it finishes, or switch printers.';
   } else {

@@ -1077,9 +1077,14 @@ select {
 }
 
 .busy-banner-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.busy-banner-actions .busy-btn {
+  /* Side by side when they fit, otherwise one per row */
+  flex: 1 1 auto;
 }
 
 .busy-btn {
