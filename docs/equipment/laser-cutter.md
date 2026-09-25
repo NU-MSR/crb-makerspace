@@ -76,6 +76,8 @@ First, connect:
 ```shell
 ssh root@cutter
 ```
+
+<!-- Password is `bone` -->
 Then change into the cache directory and clear it:
 
 ```shell
@@ -89,6 +91,7 @@ rm -r *
     `.driveboardapp` (with the leading period) is the **cache** while `driveboardapp` (no period) is the **application code**. Make sure you are deleting the cache and not the application code. The `pwd` and `ls` steps above are there to verify you're in the right place before running `rm`.
 
 <!-- TODO: Automate this with a script that runs regularly -->
+
 
 ## Manual
 
