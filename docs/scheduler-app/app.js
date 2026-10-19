@@ -1875,8 +1875,8 @@ async function adjustOnInput() {
   adjustEndDisplay.value = newEndAt ? formatTimeShort(newEndAt) : '';
 
   const hours = parseFloat(adjustDuration.value);
-  if (!isFinite(hours) || hours < 0.5 || hours > 168) {
-    adjustConflictStatus.textContent = 'Duration must be between 30 minutes and 168 hours';
+  if (!isFinite(hours) || hours * 60 < 1 || hours > 168) {
+    adjustConflictStatus.textContent = 'Duration must be between 1 minute and 168 hours';
     adjustConflictStatus.className = 'conflict-status error';
     adjustSaveBtn.disabled = true;
     return;
@@ -1923,7 +1923,7 @@ adjustForm.addEventListener('input', () => {
 
 document.getElementById('adjustDurationMinus30Btn').addEventListener('click', () => {
   const cur = parseFloat(adjustDuration.value) || 0;
-  const next = Math.max(0.5, Math.round((cur - 0.5) * 100) / 100);
+  const next = Math.max(0.02, Math.round((cur - 0.5) * 100) / 100);
   adjustDuration.value = next;
   adjustOnInput();
 });

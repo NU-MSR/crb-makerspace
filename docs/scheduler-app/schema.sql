@@ -48,7 +48,7 @@ CREATE TABLE reservations (
   -- Constraints
   CONSTRAINT valid_duration CHECK (end_at > start_at),
   CONSTRAINT max_duration CHECK (end_at - start_at <= INTERVAL '168 hours'),
-  CONSTRAINT min_duration CHECK (end_at - start_at >= INTERVAL '30 minutes')
+  CONSTRAINT min_duration CHECK (end_at - start_at >= INTERVAL '1 minute')
 );
 
 -- Indexes for performance
