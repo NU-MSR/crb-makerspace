@@ -24,6 +24,7 @@ A simple, mobile-first single-page web app to reserve 3D printers. Data is store
    - **Existing projects only:** also run `migration-email.sql` to add the email-notification columns and the `pg_cron` job. (Fresh installs already have the columns from `schema.sql`, but still need `migration-email.sql` for the cron job.)
    - **Existing projects only:** also run `migration-grants.sql` to add explicit Data API `GRANT`s on `printers`, `reservations`, and `check_reservation_overlap`. Supabase is removing automatic Data API exposure for `public`-schema tables ([discussion](https://github.com/orgs/supabase/discussions/45329)); without these grants the frontend will start returning HTTP 403 once enforcement lands (Oct 30, 2026 for existing projects). Fresh installs already have these grants from `schema.sql`.
    - **Existing projects only:** also run `migration-restrict-pii.sql` to replace any table-wide SELECT on `reservations` with column-level SELECT on the non-PII columns only. Without it, the `anon` role can read `user_name`, `user_contact`, and other PII directly via the Data API, bypassing the `public_reservations` view. Fresh installs already have the correct column-level grant from `schema.sql`.
+   - **Existing projects only:** also run `migration-min-duration.sql` to lower the minimum reservation length from 30 minutes to 1 minute. Without it, the database rejects reservations shorter than 30 minutes.
 
 3. **Get your Supabase credentials**:
    - Go to **Project Settings** → **Data API**
@@ -130,7 +131,7 @@ Both are delivered through a single Supabase Edge Function (`supabase/functions/
 - `created_at`, `updated_at` (timestamps)
 
 ### Constraints
-- Minimum duration: 30 minutes
+- Minimum duration: 1 minute
 - Maximum duration: 168 hours (7 days)
 - Time slots must be in 30-minute increments
 - No overlapping reservations for the same printer
